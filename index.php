@@ -7,29 +7,29 @@
 		<link href="ressources\fontawesome\fontawesome-free-6.5.1-web\css\all.css" rel="stylesheet">
 		<title>MUSEOFLOW -CONNEXION</title>
 	</head>
-	<body>
+	<body class="fond">
 		<div class="container">
 
-            <!--Création de la premiere ligne -->
-			<div class="row case ">
-				<div class="col-12">
-					<h1>MUSEOFLOW</h1>
+            <!--Création de la première ligne -->
+			<div class="row case">
+				<div class="col-12 text-center">
+					<h1 class="caveat">MUSEOFLOW</h1>
 				</div>
             </div>
 
             <!-- Formulaire de login -->
             <div id="loginContainer" class="login-container">
                 <form id="loginForm" class="login-form">
-                    <h2>Connexion</h2>
+                    <h2>Connexion</h2><br>
                     <div class="form-group">
-                    <label>Identifiant</label>
-                    <input type="text" name="username" required>
-                    </div>
+                        <label>Identifiant</label><br>
+                        <input type="text" name="login" required>
+                    </div><br>
                     <div class="form-group">
-                    <label>Mot de passe</label>
-                    <input type="password" name="password" required>
-                    </div>
-                    <button type="submit" class="button">Se connecter</button>
+                        <label>Mot de passe</label><br>
+                        <input type="password" name="password" required>
+                    </div><br>
+                    <button type="submit" class="btn btn-primary">Se connecter</button>
                 </form>
             </div>
 
