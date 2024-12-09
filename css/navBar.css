@@ -1,0 +1,46 @@
+:root {
+  --primary: #2c3e50;
+  --secondary: #34495e;
+  --accent: #e74c3e;
+  --light: #ecf0f1;
+  --success: #27ae60;
+  --warning: #f39c12;
+  --danger: #c0392b;
+}
+
+.navbar {
+  background: var(--primary);
+  padding: 1rem;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-img {
+	width: 50px;
+}
+
+.main-menu {
+  display: flex;
+  gap: 1rem;
+}
+
+.menu-item {
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.menu-item:hover {
+  background: var(--secondary);
+}
