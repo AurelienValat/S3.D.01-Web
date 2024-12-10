@@ -1,5 +1,6 @@
 <?php 
-require './bdd/connecterBD.php';
+require ('./bdd/connecterBD.php');
+require ('./bdd/fonctions.php');
 
 // Objet de connexion à la BD
 $pdo = initierConnexion();
@@ -14,6 +15,25 @@ function reafficherSaisie($nomChamp) {
         return '';
     }
 }
+
+$login = isset($_POST['login']) ? $_POST['login'] : '';
+$password = isset($_POST['mdp']) ? $_POST['mdp'] : '';
+
+if (!empty($login) && !empty($password)) {
+    // Authentification utilisateur
+    $user = verifLoginMDP($pdo, $login, $password);
+    if ($user) {
+        // Démarrer la session pour l'utilisateur authentifié
+        startSession($user);
+        header('Location: pages/accueil.php');
+        exit;	
+    } else {
+        $erreur = true;
+    }
+} else {
+    $erreur = false;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -35,7 +55,7 @@ function reafficherSaisie($nomChamp) {
 
             <!-- Formulaire de login -->
             <div id="loginContainer" class="login-container">
-                <form id="loginForm" class="login-form">
+                <form action="" method="post" id="loginForm" class="login-form">
                     <h2>Connexion</h2><br>
                     <div class="form-group">
                         <label>Identifiant</label><br>
@@ -43,7 +63,7 @@ function reafficherSaisie($nomChamp) {
                     </div><br>
                     <div class="form-group">
                         <label>Mot de passe</label><br>
-                        <input type="password" name="password" required>
+                        <input type="password" name="mdp" required>
                     </div><br>
                     <button type="submit" class="btn btn-primary">Se connecter</button>
                 </form>

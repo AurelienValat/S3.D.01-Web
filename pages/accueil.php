@@ -1,11 +1,9 @@
 <?php 
-require '../bdd/connecterBD.php';
+require ('../bdd/connecterBD.php');
+require ('../bdd/fonctions.php');
 
-// Objet de connexion à la BD
-$pdo = initierConnexion();
-if ($pdo == FALSE) {
-    header("Location: ./erreurs/erreurBD.php");
-}
+verifSession(); // Vérifie si une session valide existe
+
 // Pour réafficher la saisie utilisateur pour les champs texte
 function reafficherSaisie($nomChamp) {
     if (isset($_POST[$nomChamp]) && trim($_POST[$nomChamp]) !== '') {
@@ -44,7 +42,7 @@ function reafficherSaisieOption($valeurOption, $nomChamp) {
                 <div class="menu-item">Conférenciers</div>
                 <div class="menu-item">Visites</div>
                 <div class="menu-item">Exportation</div>
-                <div class="menu-item">Déconnexion</div>
+                <a href="deconnexion.php"><div class="menu-item">Déconnexion</div></a>
             </div>
         </nav>
 </html>
