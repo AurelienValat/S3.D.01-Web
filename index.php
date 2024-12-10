@@ -44,10 +44,10 @@ if (!empty($login) && !empty($password)) {
 		<title>MUSEOFLOW - CONNEXION</title>
 	</head>
     
-	<body class="fond">
+	<body>
 		<div class="container">
             <!--Création de la première ligne -->
-			<div class="row case">
+			<div class="row">
 				<div class="col-12 text-center">
 					<h1 class="caveat">MUSEOFLOW</h1>
 				</div>

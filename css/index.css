@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap');
 
 /* Fond d'écran appliqué au body */
-.fond {
+body{
   background-image: url("../ressources/images/Background.png");
   background-size: cover; /* Ajuste l'image pour couvrir tout l'écran */
   background-repeat: no-repeat; /* Évite la répétition de l'image */
@@ -37,4 +37,9 @@
   font-optical-sizing: auto;
   font-style: normal;
   font-size: 70px;
+}
+
+.fond-blanc {
+	background-color: white;
+	border-radius: 5px;
 }
