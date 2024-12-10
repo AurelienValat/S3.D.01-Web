@@ -33,8 +33,8 @@ if (!empty($login) && !empty($password)) {
 } else {
     $erreur = false;
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 	<head>
@@ -57,14 +57,21 @@ if (!empty($login) && !empty($password)) {
             <div id="loginContainer" class="login-container">
                 <form action="" method="post" id="loginForm" class="login-form">
                     <h2>Connexion</h2><br>
+
                     <div class="form-group">
                         <label>Identifiant</label><br>
-                        <input type="text" name="login" required>
+                        <input type="text" name="login" value ="<?php echo reafficherSaisie('login') ?>" required>
                     </div><br>
                     <div class="form-group">
                         <label>Mot de passe</label><br>
                         <input type="password" name="mdp" required>
+
                     </div><br>
+                    <?php 
+                        if ($erreur) {
+                             echo '<div class="alert alert-danger">Identifiant ou mot de passe incorrect.</div>';
+                        }
+                    ?>
                     <button type="submit" class="btn btn-primary">Se connecter</button>
                 </form>
             </div>

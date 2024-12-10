@@ -33,7 +33,7 @@ function reafficherSaisieOption($valeurOption, $nomChamp) {
     <body>
         <nav class="navbar">
             <div class="logo">
-                <a href="..\index.php"><img class="logo-img" src="../ressources/images/logo.png" alt="Logo MuseoFlow"></a>
+                <a href="accueil.php"><img class="logo-img" src="../ressources/images/logo.png" alt="Logo MuseoFlow"></a>
                 Intranet du Musée
             </div>
             <div class="main-menu">
@@ -45,4 +45,6 @@ function reafficherSaisieOption($valeurOption, $nomChamp) {
                 <a href="deconnexion.php"><div class="menu-item">Déconnexion</div></a>
             </div>
         </nav>
+
+        <h1>Bienvenue <?php echo htmlspecialchars($_SESSION['user_login']); ?></h1><br>
 </html>
