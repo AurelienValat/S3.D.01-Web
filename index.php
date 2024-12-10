@@ -1,3 +1,20 @@
+<?php 
+require './bdd/connecterBD.php';
+
+// Objet de connexion à la BD
+$pdo = initierConnexion();
+if ($pdo == FALSE) {
+    header("Location: ./erreurs/erreurBD.php");
+}
+// Pour réafficher la saisie utilisateur pour les champs texte
+function reafficherSaisie($nomChamp) {
+    if (isset($_POST[$nomChamp]) && trim($_POST[$nomChamp]) !== '') {
+        return $_POST[$nomChamp];
+    } else {
+        return '';
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 	<head>
