@@ -40,7 +40,7 @@ function reafficherSaisieOption($valeurOption, $nomChamp) {
                 <div class="menu-item">Utilisateurs</div>
                 <div class="menu-item">Expositions</div>
                 <div class="menu-item">Conférenciers</div>
-                <div class="menu-item">Visites</div>
+                <a href="visites.php"> <div class="menu-item">Visites</div> </a>
                 <div class="menu-item">Exportation</div>
                 <a href="deconnexion.php"><div class="menu-item">Déconnexion</div></a>
             </div>

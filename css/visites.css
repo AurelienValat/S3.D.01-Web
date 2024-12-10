@@ -1,0 +1,133 @@
+
+:root {
+    --primary: linear-gradient(#dbd5d5, #ceb9e9da);
+    --secondary: rgba(255, 255, 255, 0.2);
+    --light: #ecf0f1;
+    --success: #27ae60;
+    --warning: #f39c12;
+    --danger: #c0392b;
+}
+
+.fond {
+    background-image: url("../ressources/images/Background.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 0;
+    width: 1980px;
+    height: 1080px;
+}
+
+.navbar {
+    background: var(--primary);
+    padding: 1rem;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo-img {
+    width: 50px;
+}
+
+.main-menu {
+    display: flex;
+    gap: 1rem;
+}
+
+.menu-item {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+.menu-item:hover {
+    background: var(--secondary);
+}
+
+.content {
+    padding: 2rem;
+}
+
+.btn-red {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+}
+
+.btn-red:hover {
+    background-color: darkred;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+    text-align: center;
+}
+
+table th {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn-action {
+    margin: 0 0.5rem;
+    padding: 0.3rem 0.75rem;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+}
+
+.btn-modify {
+    background-color: #0275d8;
+}
+
+.btn-modify:hover {
+    background-color: #025aa5;
+}
+
+.btn-delete {
+    background-color: var(--danger);
+}
+
+.btn-delete:hover {
+    background-color: #962d22;
+}
+* {
+    color: black;
+    font-family: Caveat;
+}
+.policeBlanche {
+    color: #ffffff;
+    font-family: Caveat;
+}
+
+
+.container-blanc {
+    background-color: white;
+    border-radius: 10px; /* Bords arrondis */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Effet d'ombre */
+    padding: 2rem; /* Espace interne */
+    margin: 2rem auto; /* Centrer horizontalement */
+    max-width: 80%; /* Largeur maximale */
+    overflow: hidden;
+}
