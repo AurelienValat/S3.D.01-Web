@@ -105,6 +105,10 @@ button.btn {
     color: white;
 }
 
+.btn-modify:hover {
+    background-color: #025aa5;
+}
+
 .btn-delete {
     background-color: #ff0000;
     color: white;

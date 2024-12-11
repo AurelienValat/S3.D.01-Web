@@ -15,30 +15,31 @@
 </head>
 
 <body>
-<nav class="navbar">
-            <div class="logo">
-                <a href="accueil.php"><img class="logo-img" src="../ressources/images/logo.png" alt="Logo MuseoFlow"></a>
-                Intranet du Musée
-            </div>
-            <div class="main-menu">
-                <a href="utilisateurs.php" class="deco"><div class="menu-item">Utilisateurs</div></a>
-                <a href="expositions.php" class="deco"><div class="menu-item">Expositions</div></a>
-                <a href="conferenciers.php" class="deco"><div class="menu-item">Conférenciers</div></a>
-                <a href="visites.php" class="deco"><div class="menu-item">Visites</div> </a>
-                <a href="exportation.php" class="deco"><div class="menu-item">Exportation</div></a>
-                <a href="deconnexion.php" class="deco"><div class="menu-item">Déconnexion</div></a>
-            </div>
-        </nav>
-
-    <div class="container-blanc container content">
+    <nav class="navbar">
+        <div class="logo">
+            <a href="accueil.php"><img class="logo-img" src="../ressources/images/logo.png" alt="Logo MuseoFlow"></a>
+            Intranet du Musée
         </div>
-            <p>
-                Pour éviter tout conflits dans les données nous recommandons d'exporter la totalité des données en même temps.
-            </p>
-            <p>
-                Attention, nous vous conseillons de mettre vos fichiers une fois exportés dans un dossier prévu à cet effet.
-            </p>
-            <button class="btn-blue">Ajouter un utilisateur</button>
+        <div class="main-menu">
+            <a href="utilisateurs.php" class="deco"><div class="menu-item">Utilisateurs</div></a>
+            <a href="expositions.php" class="deco"><div class="menu-item">Expositions</div></a>
+            <a href="conferenciers.php" class="deco"><div class="menu-item">Conférenciers</div></a>
+            <a href="visites.php" class="deco"><div class="menu-item">Visites</div> </a>
+            <a href="exportation.php" class="deco"><div class="menu-item">Exportation</div></a>
+            <a href="deconnexion.php" class="deco"><div class="menu-item">Déconnexion</div></a>
+         </div>
+    </nav>
+    <div class="container content">
+        <div class="container-blanc justify-content-center">
+            </div>
+                <p>
+                    Pour éviter tout conflits dans les données nous recommandons d'exporter la totalité des données en même temps.
+                </p>
+                <p>
+                    Attention, nous vous conseillons de mettre vos fichiers une fois exportés dans un dossier prévu à cet effet.
+                </p>
+                <button class="btn-blue">Exporter lesdonnées</button>
+            </div>
         </div>
     </div>
 </div>
