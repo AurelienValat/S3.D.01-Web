@@ -70,7 +70,7 @@ body:not(.no-bg){
   overflow-y: auto; /* Permet le défilement vertical */
 }
 
-/* Conteneur de connexion */
+/* Conteneur du formulaire de connexion */
 .login-container {
   display: flex;
   justify-content: center;
