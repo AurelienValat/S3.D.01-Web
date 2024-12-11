@@ -7,14 +7,14 @@
 
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="utf-8"> 
-    <link href="../css/consultation.css" rel="stylesheet">
-    <link href="../css/navBar.css" rel="stylesheet"> 
-    <link href="../css/accueil.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>  
-    <title>MUSEOFLOW - Gestion des Expositions</title>
+    <head>
+        <meta charset="utf-8"> 
+        <link href="../css/consultation.css" rel="stylesheet">
+        <link href="../css/navBar.css" rel="stylesheet"> 
+        <link href="../css/accueil.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>  
+        <title>MUSEOFLOW - Gestion des Expositions</title>
 
 </head>
 <body class="fond">
@@ -39,47 +39,49 @@
                         <div class="dropdown-menu">
                             <a href="deconnexion.php" class="btn-red">Se déconnecter</a>
                         </div>
+
                     </div>
                 </div>
-            </nav>
+            </div>
+        </nav>
 
         <div class="container content">
 
-        <div class="container-blanc">
-            <h1 class="text-center">Gestion des Expositions</h1>
-            <div class="d-flex justify-content-between align-items-center">
-                <button class="btn-action btn-modify">Ajouter une Exposition</button>
-                <button class="btn btn-light d-flex align-items-center gap-2">
-                <i class="fa-solid fa-filter"></i>Filtres
-                </button>
-            </div>
-            <div class="table">
-                <table class="table table-striped table-bordered">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Intitulé</th>
-                            <th>Type</th>
-                            <th>Exposition</th>
-                            <th>Description</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Art moderne</td>
-                            <td>Permanent</td>
-                            <td>Art Moderne</td>
-                            <td>Jean Dupont</td>
-                            <td>
-                                <button class="btn-action btn-modify">Modifier la Description</button>
-                                <button class="btn-action btn-delete">Supprimer</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="container-blanc">
+                <h1 class="text-center">Gestion des Expositions</h1>
+                <div class="d-flex justify-content-between align-items-center">
+                    <button class="btn-action btn-modify">Ajouter une Exposition</button>
+                    <button class="btn btn-light d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-filter"></i>Filtres
+                    </button>
+                </div>
+                <div class="table">
+                    <table class="table table-striped table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Intitulé</th>
+                                <th>Type</th>
+                                <th>Exposition</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Art moderne</td>
+                                <td>Permanent</td>
+                                <td>Art Moderne</td>
+                                <td>Jean Dupont</td>
+                                <td>
+                                    <button class="btn-action btn-modify">Modifier la Description</button>
+                                    <button class="btn-action btn-delete">Supprimer</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
-</body>
+    </body>
 </html>
 
