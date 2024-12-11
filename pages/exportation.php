@@ -7,15 +7,13 @@
 
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="utf-8">  
-        <link href="../css/consultation.css" rel="stylesheet">
-        <link href="../css/navBar.css" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>   
-        <title>MUSEOFLOW - Exportation des fichiers</title>
-    </head>
-
+<head>
+    <meta charset="utf-8">  
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>   
+    <title>MUSEOFLOW - Exportation des fichiers</title>
+</head>
 <body>
     <nav class="navbar">
         <div class="logo">
@@ -35,19 +33,7 @@
             <a href="deconnexion.php" class="deco"><div class="menu-item">Déconnexion</div></a>
          </div>
     </nav>
-    <div class="container content">
-        <div class="container-blanc justify-content-center">
 
-            </div>
-            <div class="main-menu">
-                <a href="utilisateurs.php" class="deco"><div class="menu-item">Utilisateurs</div></a>
-                <a href="expositions.php" class="deco"><div class="menu-item">Expositions</div></a>
-                <a href="conferenciers.php" class="deco"><div class="menu-item">Conférenciers</div></a>
-                <a href="visites.php" class="deco"><div class="menu-item">Visites</div> </a>
-                <a href="exportation.php" class="deco"><div class="menu-item">Exportation</div></a>
-                <a href="deconnexion.php" class="deco"><div class="menu-item">Déconnexion</div></a>
-            </div>
-        </nav>
         <div class="container content">
             <div class="container-blanc justify-content-center">
                 <p>
