@@ -29,11 +29,11 @@
 
     <div class="container content">
     <div class="container-blanc">
-        <h1 class="text-center">Gestion des Visites</h1>
+        <h1 class="text-center">Gestion des Utilisateurs</h1>
         <div class="d-flex justify-content-between align-items-center">
-            <button class="btn-red">Ajouter/Réserver une visite</button>
+            <button class="btn-red">Ajouter un utilisateur</button>
             <button class="btn btn-light d-flex align-items-center gap-2">
-            <i class="fa-solid fa-filter"></i>                Filtres
+            <i class="fa-solid fa-filter"></i>Filtres
             </button>
         </div>
 
@@ -41,22 +41,21 @@
             <table class="table table-striped table-bordered">
                 <thead class="table-dark">
                     <tr>
-                        <th>Date</th>
-                        <th>Heure</th>
-                        <th>Exposition</th>
-                        <th>Conférencier</th>
-                        <th>Actions</th>
+                        <th>Identifiant</th>
+                        <th>Nom</th>
+                        <th>Prenom</th>
+                        <th>Numéro de téléphone</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>2024-01-20</td>
-                        <td>14:00</td>
-                        <td>Art Moderne</td>
-                        <td>Jean Dupont</td>
+                        <td>admin</td>
+                        <td>Admin</td>
+                        <td>par défaut</td>
+                        <td>0000000</td>
                         <td>
                             <button class="btn-action btn-modify">Modifier</button>
-                            <button class="btn-action btn-delete">Annuler</button>
+                            <button class="btn-action btn-delete">Supprimer</button>
                         </td>
                     </tr>
                 </tbody>
