@@ -14,13 +14,12 @@
     <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>   
     <title>MUSEOFLOW - Gestion des Visites</title>
 </head>
-
 <body class="fond">
-<nav class="navbar">
-    <div class="logo">
-         <a href="accueil.php"><img class="logo-img" src="../ressources/images/logo.png" alt="Logo MuseoFlow"></a>
-          Intranet du Musée
-     </div>
+    <nav class="navbar">
+        <div class="logo">
+            <a href="accueil.php"><img class="logo-img" src="../ressources/images/logo.png" alt="Logo MuseoFlow"></a>
+            Intranet du Musée
+        </div>
         <div class="main-menu">
             <a href="utilisateurs.php" class="deco"><div class="menu-item">Utilisateurs</div></a>
             <a href="expositions.php" class="deco"><div class="menu-item">Expositions</div></a>
@@ -36,7 +35,6 @@
                 </div>
         </div>
     </nav>
-
     <div class="container content">
     <div class="container-blanc">
         <h1 class="text-center">Gestion des Visites</h1>

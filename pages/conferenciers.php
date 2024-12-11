@@ -14,7 +14,6 @@
     <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>  
     <title>MUSEOFLOW - Gestion des Conférenciers</title>
 </head>
-
 <body class="fond">
     <nav class="navbar">
                 <div class="logo">
@@ -36,7 +35,6 @@
                     </div>
                 </div>
             </nav>
-
         <div class="container content">
         <div class="container-blanc">
             <h1 class="text-center">Gestion des Conférenciers</h1>
@@ -46,7 +44,6 @@
                 <i class="fa-solid fa-filter"></i>Filtres
                 </button>
             </div>
-
             <div class="table">
                 <table class="table table-striped table-bordered">
                     <thead class="table-dark">

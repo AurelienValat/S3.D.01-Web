@@ -1,8 +1,6 @@
 <?php 
 require ('../bdd/fonctions.php');
-
 verifSession(); // Vérifie si une session valide existe
-
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -38,4 +36,31 @@ verifSession(); // Vérifie si une session valide existe
         </nav>
 
         <h1>Bienvenue <?php echo htmlspecialchars($_SESSION['nom']) . " " . htmlspecialchars($_SESSION['prenom']); ?></h1><br>
+            <section class="actualites-section">
+                <h2>Actualités :</h2>
+                <div class="news-widget">
+                    <div class="news-header">
+                        <!-- Barre avec les ronds pour changer de fenêtre -->
+                        <div class="nav-dots">
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                        <!-- Barre horizontale -->
+                        <div class="progress-bar"></div>
+                    </div>
+                    <div class="news-content">
+                        <div class="image">
+                            <img src="../ressources/images/actu1.png" alt="Actualité">
+                        </div>
+                        <div class="news-title">
+                            <h3>Titre de l'actualité</h3>
+                            <p>Description ou résumé de l'actualité ici...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </body>
 </html>
