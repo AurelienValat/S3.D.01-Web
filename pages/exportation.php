@@ -42,7 +42,7 @@
                 <p>
                     Attention, nous vous conseillons de mettre vos fichiers une fois exportés dans un dossier prévu à cet effet.
                 </p>
-                <button class="btn-blue">Exporter les données</button>
+                <button class="btn-blue btn-action">Exporter les données</button>
             </div>
         </div>
 
