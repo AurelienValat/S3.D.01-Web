@@ -1,5 +1,4 @@
 <?php 
-require ('../bdd/connecterBD.php');
 require ('../bdd/fonctions.php');
 
 verifSession(); // Vérifie si une session valide existe
