@@ -48,7 +48,7 @@
             <div class="container-blanc">
                 <h1 class="text-center">Gestion des Expositions</h1>
                 <div class="d-flex justify-content-between align-items-center">
-                    <button class="btn-action btn-modify">Ajouter une Exposition</button>
+                    <button class="btn-action btn-blue">Ajouter une Exposition</button>
                     <button class="btn btn-light d-flex align-items-center gap-2">
                     <i class="fa-solid fa-filter"></i>Filtres
                     </button>
@@ -71,7 +71,7 @@
                                 <td>Art Moderne</td>
                                 <td>Jean Dupont</td>
                                 <td>
-                                    <button class="btn-action btn-modify">Modifier la Description</button>
+                                    <button class="btn-action btn-blue">Modifier la Description</button>
                                     <button class="btn-action btn-delete">Supprimer</button>
                                 </td>
                             </tr>

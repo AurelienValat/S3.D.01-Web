@@ -67,7 +67,7 @@
                             <td>par défaut</td>
                             <td>0000000</td>
                             <td>
-                                <button class="btn-action btn-modify">Modifier</button>
+                                <button class="btn-action btn-blue">Modifier</button>
                                 <button class="btn-action btn-delete">Supprimer</button>
                             </td>
                         </tr>
