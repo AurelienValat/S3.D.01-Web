@@ -11,7 +11,7 @@
     <title>MUSEOFLOW - Gestion des Utilisateurs</title>
 </head>
 
-<body class="fond">
+<body>
 <nav class="navbar">
             <div class="logo">
                 <a href="accueil.php"><img class="logo-img" src="../ressources/images/logo.png" alt="Logo MuseoFlow"></a>
