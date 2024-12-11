@@ -1,0 +1,36 @@
+/* Dropdown container */
+.dropdown {
+    position: relative; /* Nécessaire pour positionner le menu */
+}
+
+.dropdown-menu {
+    display: none; /* Masque le menu par défaut */
+    position: absolute;
+    top: 100%; /* Place le menu juste en dessous du bouton */
+    right: 0;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    z-index: 1000;
+}
+
+.dropdown-menu a {
+    text-decoration: none;
+    color: black;
+    display: block;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+.dropdown-menu a:hover {
+    background-color: #ff0000;
+    color: white;
+}
+
+/* Affiche le menu lorsqu'on survole la zone .dropdown */
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
