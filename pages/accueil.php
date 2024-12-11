@@ -1,7 +1,10 @@
 <?php 
 require ('../bdd/fonctions.php');
 verifSession(); // Vérifie si une session valide existe
+
+$estAdmin = isset($_SESSION['est_admin']) && $_SESSION['est_admin'] == 1;
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
     <head>
@@ -20,7 +23,11 @@ verifSession(); // Vérifie si une session valide existe
                 Intranet du Musée
             </div>
             <div class="main-menu">
-                <a href="utilisateurs.php" class="deco"><div class="menu-item">Utilisateurs</div></a>
+                <?php
+                    if ($estAdmin){
+                        echo '<a href="utilisateurs.php" class="deco"><div class="menu-item">Utilisateurs</div></a>';
+                    }
+                ?>
                 <a href="expositions.php" class="deco"><div class="menu-item">Expositions</div></a>
                 <a href="conferenciers.php" class="deco"><div class="menu-item">Conférenciers</div></a>
                 <a href="visites.php" class="deco"><div class="menu-item">Visites</div> </a>
@@ -35,7 +42,7 @@ verifSession(); // Vérifie si une session valide existe
             </div>
         </nav>
 
-        <h1>Bienvenue <?php echo htmlspecialchars($_SESSION['nom']) . " " . htmlspecialchars($_SESSION['prenom']); ?></h1><br>
+        <br><h1>Bienvenue <?php echo htmlspecialchars($_SESSION['prenom']) . ","; ?></h1><br>
             <section class="actualites-section">
                 <h2>Actualités :</h2>
                 <div class="news-widget">

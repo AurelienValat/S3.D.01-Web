@@ -1,7 +1,12 @@
 <?php 
     require ('../bdd/fonctions.php');
-
     verifSession(); // Vérifie si une session valide existe
+
+    if (!isset($_SESSION['est_admin']) || $_SESSION['est_admin'] != 1) {
+        // Rediriger l'utilisateur vers une autre page s'il n'est pas admin
+        header('Location: accueil.php');
+        exit();
+    }
 ?>
 <!DOCTYPE html>
 <html lang="fr">

@@ -2,7 +2,7 @@
 // Fonction pour vérifier les identifiants et mdp
 function verifLoginMDP($pdo, $login, $mdp) {
     $mdpHash = hash('sha256', $mdp);
-    $stmt = $pdo->prepare("SELECT nom, prenom, id_employe, nom_utilisateur FROM employe WHERE nom_utilisateur = :login AND mot_de_passe = :mdp");
+    $stmt = $pdo->prepare("SELECT nom, prenom, id_employe, nom_utilisateur, est_admin FROM employe WHERE nom_utilisateur = :login AND mot_de_passe = :mdp");
     $stmt->bindParam("login", $login);
     $stmt->bindParam("mdp", $mdpHash);
     $stmt->execute();
@@ -16,6 +16,7 @@ function startSession($user) {
     $_SESSION['login'] = $user['nom_utilisateur'];
     $_SESSION['nom'] = $user['nom'];
     $_SESSION['prenom'] = $user['prenom'];
+    $_SESSION['est_admin'] = $user['est_admin'];
 }
 
 // Fonction pour vérifier si un utilisateur est connecté
