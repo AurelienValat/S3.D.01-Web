@@ -12,7 +12,7 @@
     // Fonction pour démarrer une session et stocker les informations utilisateur
 	function startSession($user) {
 		session_start();
-		$_SESSION['id'] = $user['id_utilisateur'];
+		$_SESSION['id'] = $user['id_employe'];
 		$_SESSION['login'] = $user['nom_utilisateur'];
 	}
 
