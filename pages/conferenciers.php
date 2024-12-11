@@ -33,7 +33,7 @@
         <div class="container-blanc">
             <h1 class="text-center">Gestion des Visites</h1>
             <div class="d-flex justify-content-between align-items-center">
-                <button class="btn-red">Ajouter un Conférencier</button>
+                <button class="btn-blue">Ajouter un Conférencier</button>
                 <button class="btn btn-light d-flex align-items-center gap-2">
                 <i class="fa-solid fa-filter"></i>Filtres
                 </button>
@@ -58,7 +58,7 @@
                             <td>dribble</td>
                             <td>
                                 <button class="btn-action btn-modify">Planning</button>
-                                <button class="btn-action btn-delete">Modifier</button>
+                                <button class="btn-action btn-modify">Modifier</button>
                                 <button class="btn-action btn-delete">Supprimer</button>
                             </td>
                         </tr>

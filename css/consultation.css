@@ -16,8 +16,8 @@
     align-items: center;
 }
 
-.btn-red {
-    background-color: #c0392b;
+.btn-pink {
+    background-color: #CD3B89;
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -26,8 +26,8 @@
     font-weight: bold;
 }
 
-.btn-red:hover {
-    background-color: #962d22;
+.btn-pink:hover {
+    background-color: #7b1049;
 }
 
 button.btn {
@@ -86,17 +86,27 @@ button.btn {
     /* margin: 0 0.5rem; */
 }
 
+.btn-blue {
+    background-color: #0275d8;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.btn-blue:hover {
+    background-color: #025aa5;
+}
+
 .btn-modify {
     background-color: #0275d8;
     color: white;
 }
 
-.btn-modify:hover {
-    background-color: #025aa5;
-}
-
 .btn-delete {
-    background-color: #e74c3c;
+    background-color: #ff0000;
     color: white;
 }
 
