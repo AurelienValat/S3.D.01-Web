@@ -67,6 +67,7 @@ body:not(.no-bg){
   width: 100vw; /* Définit la largeur de l'image à la taille de l'écran */
   margin: 0; /* Supprime les marges */
   overflow: hidden; /* Empêche le débordement */
+  overflow-y: auto; /* Permet le défilement vertical */
 }
 
 /* Conteneur de connexion */
