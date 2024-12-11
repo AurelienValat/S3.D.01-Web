@@ -1,5 +1,7 @@
-<?php // TODO connection bd, appel de fonction
-      // initialisation des variables...
+<?php 
+    require ('../bdd/fonctions.php');
+
+    verifSession(); // Vérifie si une session valide existe
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -7,7 +9,7 @@
     <meta charset="utf-8">  
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link href="../css/consultation.css" rel="stylesheet">
-    <link href="../ressources\fontawesome-free-6.5.1-web\css\all.css" rel="stylesheet"></link>
+    <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>   
     <title>MUSEOFLOW - Gestion des Utilisateurs</title>
 </head>
 
@@ -45,6 +47,7 @@
                         <th>Nom</th>
                         <th>Prenom</th>
                         <th>Numéro de téléphone</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
