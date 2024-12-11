@@ -57,7 +57,7 @@
 /* ----------------------------------------------------------------------*/
 /* CSS pour l'index */
 
-/* Fond d'écran appliqué au body */
+/* Fond d'écran appliqué au body sauf à ceux qui ont no-bg en classe*/
 body:not(.no-bg){
   background-image: url("../ressources/images/Background.png");
   background-size: cover; /* Ajuste l'image pour couvrir tout l'écran */
@@ -154,12 +154,6 @@ body:not(.no-bg){
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #d3d3d3; /* Couleur de fond gris clair */
-    overflow-x: hidden; /* Empêche le débordement horizontal */
 }
 
 /* Styles généraux */
