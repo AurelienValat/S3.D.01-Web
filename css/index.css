@@ -14,7 +14,7 @@ body{
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 80vh; /* S'assure qu'il se centre verticalement */
+  min-height: 90vh; /* S'assure qu'il se centre verticalement */
 }
 
 /* Formulaire */
@@ -42,4 +42,8 @@ body{
 .fond-blanc {
 	background-color: white;
 	border-radius: 5px;
+}
+
+.blanc {
+  color : white;
 }

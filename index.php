@@ -47,7 +47,7 @@ if (!empty($login) && !empty($password)) {
             </div>
 
             <!-- Formulaire de login -->
-            <div id="loginContainer" class="login-container">
+            <div class="login-container">
                 <form action="" method="post" id="loginForm" class="login-form">
                     <h2>Connexion</h2><br>
 

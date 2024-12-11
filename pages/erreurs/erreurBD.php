@@ -12,7 +12,7 @@
 <!DOCTYPE HTML>
 <html lang="fr">
 <head>
-    <link rel="stylesheet" href="../../css/index.css"/>
+    <link  href="../../css/index.css" rel="stylesheet"/>
     <link href="../../css/navBar.css" rel="stylesheet">
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
@@ -25,11 +25,13 @@
 </head>
 <body>
     <!-- Containeur principal de la page -->
-    <div class="container">
+    <div class="container login-container">
 
-        <!-- Entête de la page -->
-        <div class="row col-12 fond-blanc">
-         test
+        <div class="row">
+            <!-- Entête de la page -->
+            <div class="col-12">
+                <h1 class="blanc">Erreur de connexion à la base de donnée. Veuillez réessayer plus tard.</h1>
+            </div>
         </div>
     </div>
 </body>
