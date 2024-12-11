@@ -7,6 +7,7 @@
 <html lang="fr">
 <head>
     <meta charset="utf-8">  
+    <link href="../css/navBar.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link href="../css/consultation.css" rel="stylesheet">
     <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>   
@@ -20,12 +21,12 @@
           Intranet du Musée
      </div>
         <div class="main-menu">
-            <a href="utilisateurs.php"><div class="menu-item">Utilisateurs</div>
-            <a href="expositions.php"><div class="menu-item">Expositions</div>
-            <a href="conferenciers.php"><div class="menu-item">Conférenciers</div>
-            <a href="visites.php"><div class="menu-item">Visites</div> </a>
-            <a href="exportation.php"><div class="menu-item">Exportation</div>
-            <a href="deconnexion.php"><div class="menu-item">Déconnexion</div></a>
+            <a href="utilisateurs.php" class="deco"><div class="menu-item">Utilisateurs</div>
+            <a href="expositions.php" class="deco"><div class="menu-item">Expositions</div>
+            <a href="conferenciers.php" class="deco"><div class="menu-item">Conférenciers</div>
+            <a href="visites.php" class="deco"><div class="menu-item">Visites</div> </a>
+            <a href="exportation.php" class="deco"><div class="menu-item">Exportation</div>
+            <a href="deconnexion.php" class="deco"><div class="menu-item">Déconnexion</div></a>
         </div>
     </nav>
 

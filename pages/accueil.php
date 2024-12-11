@@ -20,12 +20,12 @@ verifSession(); // Vérifie si une session valide existe
                 Intranet du Musée
             </div>
             <div class="main-menu">
-                <a href="utilisateurs.php"><div class="menu-item">Utilisateurs</div>
-                <a href="expositions.php"><div class="menu-item">Expositions</div>
-                <a href="conferenciers.php"><div class="menu-item">Conférenciers</div>
-                <a href="visites.php"><div class="menu-item">Visites</div> </a>
-                <a href="exportation.php"><div class="menu-item">Exportation</div>
-                <a href="deconnexion.php"><div class="menu-item">Déconnexion</div></a>
+                <a href="utilisateurs.php" class="deco"><div class="menu-item">Utilisateurs</div>
+                <a href="expositions.php" class="deco"><div class="menu-item">Expositions</div>
+                <a href="conferenciers.php" class="deco"><div class="menu-item">Conférenciers</div>
+                <a href="visites.php" class="deco"><div class="menu-item">Visites</div> </a>
+                <a href="exportation.php" class="deco"><div class="menu-item">Exportation</div>
+                <a href="deconnexion.php" class="deco"><div class="menu-item">Déconnexion</div></a>
             </div>
         </nav>
 

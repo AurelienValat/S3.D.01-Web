@@ -6,7 +6,7 @@ require ('./bdd/fonctions.php');
 // Objet de connexion à la BD
 $pdo = initierConnexion();
 if ($pdo == FALSE) {
-    header("Location: ./erreurs/erreurBD.php");
+    header("Location: pages/erreurs/erreurBD.php");
 }
 
 $login = isset($_POST['login']) ? $_POST['login'] : '';
