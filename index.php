@@ -7,14 +7,6 @@ $pdo = initierConnexion();
 if ($pdo == FALSE) {
     header("Location: ./erreurs/erreurBD.php");
 }
-// Pour réafficher la saisie utilisateur pour les champs texte
-function reafficherSaisie($nomChamp) {
-    if (isset($_POST[$nomChamp]) && trim($_POST[$nomChamp]) !== '') {
-        return $_POST[$nomChamp];
-    } else {
-        return '';
-    }
-}
 
 $login = isset($_POST['login']) ? $_POST['login'] : '';
 $password = isset($_POST['mdp']) ? $_POST['mdp'] : '';
@@ -26,7 +18,7 @@ if (!empty($login) && !empty($password)) {
         // Démarrer la session pour l'utilisateur authentifié
         startSession($user);
         header('Location: pages/accueil.php');
-        exit;	
+        exit;
     } else {
         $erreur = true;
     }

@@ -4,22 +4,6 @@ require ('../bdd/fonctions.php');
 
 verifSession(); // Vérifie si une session valide existe
 
-// Pour réafficher la saisie utilisateur pour les champs texte
-function reafficherSaisie($nomChamp) {
-    if (isset($_POST[$nomChamp]) && trim($_POST[$nomChamp]) !== '') {
-        return $_POST[$nomChamp];
-    } else {
-        return '';
-    }
-}
-// Pour réafficher la saisie utilisateur pour listes déroulantes
-function reafficherSaisieOption($valeurOption, $nomChamp) {
-    if (isset($_POST[$nomChamp]) && $_POST[$nomChamp] === $valeurOption) {
-        return 'selected';
-    } else {
-        return '';
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -42,7 +26,7 @@ function reafficherSaisieOption($valeurOption, $nomChamp) {
                 <div class="menu-item">Conférenciers</div>
                 <a href="visites.php"> <div class="menu-item">Visites</div> </a>
                 <div class="menu-item">Exportation</div>
-                <a href="deconnexion.php"><div class="menu-item">Déconnexion</div></a>
+                <a class="menu-item" href="deconnexion.php">Déconnexion</a>
             </div>
         </nav>
 
