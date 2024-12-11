@@ -207,3 +207,14 @@ body {
     object-fit: cover; /* Maintient un bon rapport d'aspect, remplit le conteneur */
     border-radius: 10px; /* Coins arrondis pour correspondre au design du conteneur */
 }
+
+.news-content.active {
+    display: flex; /* Affiche l'actualité active */
+}
+.news-content {
+    display: none; /* Cache toutes les actualités par défaut */
+}
+
+.news-content.active {
+    display: flex; /* Affiche uniquement l'actualité active */
+}

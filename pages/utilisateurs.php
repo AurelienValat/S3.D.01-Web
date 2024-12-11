@@ -42,7 +42,6 @@
             </div>
         </div>
     </nav>
-
     <div class="container content">
         <div class="container-blanc">
             <h1 class="text-center">Gestion des Utilisateurs</h1>
@@ -52,7 +51,6 @@
                 <i class="fa-solid fa-filter"></i>Filtres
                 </button>
             </div>
-
             <div class="table">
                 <table class="table table-striped table-bordered">
                     <thead class="table-dark">
