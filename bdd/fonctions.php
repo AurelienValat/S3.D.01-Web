@@ -20,7 +20,7 @@
 	function verifSession() {
 		session_start();
 		//Si la session n'existe plus, on redirige vers la page de connexion
-		if (!isset($_SESSION[''])) {
+		if (!isset($_SESSION['id'])) {
 			header('Location: ../index.php');
 			exit;
 		}

@@ -33,7 +33,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <button class="btn-red">Ajouter/Réserver une visite</button>
             <button class="btn btn-light d-flex align-items-center gap-2">
-            <i class="fa-solid fa-filter"></i>                Filtres
+            <i class="fa-solid fa-filter"></i>Filtres
             </button>
         </div>
 
@@ -64,9 +64,6 @@
         </div>
     </div>
 </div>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-mrcA6KGynlVHQy8MlUdJ+RbuMQVwBb0k6QZhi3EAv0eY6r60p20JztNQ2h3eG5eD" crossorigin="anonymous"></script>
 </body>
 </html>
 
