@@ -1,5 +1,7 @@
-<?php // TODO connection bd, appel de fonction
-      // initialisation des variables...
+<?php 
+      require ('../bdd/fonctions.php');
+
+      verifSession(); // Vérifie si une session valide existe
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -7,6 +9,7 @@
     <meta charset="utf-8"> 
     <link href="../css/consultation.css" rel="stylesheet">
     <link href="../css/navBar.css" rel="stylesheet"> 
+    <link href="../css/accueil.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link href="../ressources\fontawesome-free-6.5.1-web\css\all.css" rel="stylesheet"></link>
     <title>MUSEOFLOW - Gestion des Visites</title>
@@ -24,7 +27,13 @@
                     <a href="conferenciers.php" class="deco"><div class="menu-item">Conférenciers</div></a>
                     <a href="visites.php" class="deco"><div class="menu-item">Visites</div> </a>
                     <a href="exportation.php" class="deco"><div class="menu-item">Exportation</div></a>
-                    <a href="deconnexion.php" class="deco"><div class="menu-item">Déconnexion</div></a>
+                    <!-- Menu déroulant -->
+                    <div class="dropdown">
+                        <div class="menu-item"><i class="fa-solid fa-user"></i> <?php echo htmlspecialchars($_SESSION['prenom']); ?> <i class="fa-solid fa-angle-down"></i></i></div>
+                        <div class="dropdown-menu">
+                            <a href="deconnexion.php" class="btn-red">Se déconnecter</a>
+                        </div>
+                    </div>
                 </div>
             </nav>
 
