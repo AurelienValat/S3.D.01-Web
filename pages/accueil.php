@@ -30,5 +30,5 @@ verifSession(); // Vérifie si une session valide existe
             </div>
         </nav>
 
-        <h1>Bienvenue <?php echo htmlspecialchars($_SESSION['user_login']); ?></h1><br>
+        <h1>Bienvenue <?php echo htmlspecialchars($_SESSION['login']); ?></h1><br>
 </html>

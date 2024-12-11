@@ -12,14 +12,15 @@
     // Fonction pour démarrer une session et stocker les informations utilisateur
 	function startSession($user) {
 		session_start();
-		$_SESSION['user_id'] = $user['id_utilisateur'];
-		$_SESSION['user_login'] = $user['nom_utilisateur'];
+		$_SESSION['id'] = $user['id_utilisateur'];
+		$_SESSION['login'] = $user['nom_utilisateur'];
 	}
 
     // Fonction pour vérifier si un utilisateur est connecté
 	function verifSession() {
 		session_start();
-		if (!isset($_SESSION['user_id'])) {
+		//Si la session n'existe plus, on redirige vers la page de connexion
+		if (!isset($_SESSION[''])) {
 			header('Location: ../index.php');
 			exit;
 		}

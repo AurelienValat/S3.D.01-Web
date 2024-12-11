@@ -2,6 +2,7 @@
 require ('./bdd/connecterBD.php');
 require ('./bdd/fonctions.php');
 
+
 // Objet de connexion à la BD
 $pdo = initierConnexion();
 if ($pdo == FALSE) {
