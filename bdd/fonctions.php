@@ -9,19 +9,8 @@ function verifLoginMDP($pdo, $login, $mdp) {
     return $stmt->fetch();
 }
 
-// Fonction pour démarrer une session et stocker les informations utilisateur
-function startSession($user) {
-    session_start();
-    $_SESSION['id'] = $user['id_employe'];
-    $_SESSION['login'] = $user['nom_utilisateur'];
-    $_SESSION['nom'] = $user['nom'];
-    $_SESSION['prenom'] = $user['prenom'];
-    $_SESSION['est_admin'] = $user['est_admin'];
-}
-
 // Fonction pour vérifier si un utilisateur est connecté
 function verifSession() {
-    session_start();
     // Si la session n'existe plus, on redirige vers la page de connexion
     if (! isset($_SESSION['id'])) {
         header('Location: ../index.php');

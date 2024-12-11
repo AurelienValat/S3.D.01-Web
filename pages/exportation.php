@@ -1,4 +1,5 @@
 <?php 
+    session_start();
     require ('../bdd/fonctions.php');
     verifSession(); // Vérifie si une session valide existe
 

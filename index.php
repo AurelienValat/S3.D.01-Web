@@ -1,7 +1,14 @@
 <?php 
+session_start();
+
 require ('./bdd/connecterBD.php');
 require ('./bdd/fonctions.php');
 
+// Si l'utilisateur est déjà connecté, redirige vers accueil.php
+if (isset($_SESSION['id'])) {
+    header('Location: pages/accueil.php');
+    exit;
+}
 
 // Objet de connexion à la BD
 $pdo = initierConnexion();
@@ -16,8 +23,11 @@ if (!empty($login) && !empty($password)) {
     // Authentification utilisateur
     $user = verifLoginMDP($pdo, $login, $password);
     if ($user) {
-        // Démarrer la session pour l'utilisateur authentifié
-        startSession($user);
+        $_SESSION['id'] = $user['id_employe'];
+        $_SESSION['login'] = $user['nom_utilisateur'];
+        $_SESSION['nom'] = $user['nom'];
+        $_SESSION['prenom'] = $user['prenom'];
+        $_SESSION['est_admin'] = $user['est_admin'];
         header('Location: pages/accueil.php');
         exit;
     } else {
