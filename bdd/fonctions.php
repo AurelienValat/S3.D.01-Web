@@ -12,7 +12,7 @@ function verifLoginMDP($pdo, $login, $mdp) {
 // Fonction pour vérifier si un utilisateur est connecté
 function verifSession() {
     // Si la session n'existe plus, on redirige vers la page de connexion
-    if (! isset($_SESSION['id'])) {
+    if (!isset($_SESSION['id'])) {
         header('Location: ../index.php');
         exit();
     }

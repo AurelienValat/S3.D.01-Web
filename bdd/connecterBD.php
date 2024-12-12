@@ -37,7 +37,7 @@
         return $pdo;
     }
     
-    // Envoie la requette à la BD via l'objet PDO passé en 2ème param
-    function envoyerRequette($requete, $pdo) {
+    // Envoie la requete non préparée à la BD via l'objet PDO passé en 2ème param
+    function envoyerRequete($requete, $pdo) {
         return $pdo->query($requete);
     }
