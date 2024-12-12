@@ -40,4 +40,21 @@ function reafficherSaisieOption($valeurOption, $nomChamp) {
         return '';
     }
 }
+
+// Fonction qui affiche tous les conférenciers
+function afficherConferenciers($pdo){
+    try {
+        $conferenciers = array();
+        
+        $requete = 'SELECT DISTINCT nom, prenom, est_employe_par_musee, mots_cles_specialite FROM conferencier ORDER BY nom';
+        $resultats = $pdo->query($requete);
+        
+        while ($ligne = $resultats->fetch()) {
+            $conferenciers[] = $ligne; // Ajoute chaque médicament au tableau
+        }
+        return $conferenciers; // Retourne le tableau des médicaments
+    } catch (PDOException $e) {
+        throw new PDOException($e->getMessage(), (int)$e->getCode());
+    }
+}
 ?>

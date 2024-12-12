@@ -39,7 +39,7 @@
                 </div>
             </div>
         </nav>
-        <h1>Bienvenue <?php echo htmlspecialchars($_SESSION['nom']) . " " . htmlspecialchars($_SESSION['prenom']); ?></h1><br>
+        <h1>Bienvenue <?php echo htmlspecialchars($_SESSION['prenom']) . ','; ?></h1><br>
         <section class="actualites-section">
         <h2>Actualités :</h2>
         <div class="news-widget">

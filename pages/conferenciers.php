@@ -1,9 +1,15 @@
 <?php 
     session_start();
     require ('../bdd/fonctions.php');
+    require ('../bdd/connecterBD.php');
     verifSession(); // Vérifie si une session valide existe
 
     $estAdmin = isset($_SESSION['est_admin']) && $_SESSION['est_admin'] == 1;
+
+    $pdo = initierConnexion();
+    if ($pdo == FALSE) {
+        header("Location: erreurs/erreurBD.php");
+    }
 ?>
 
 <!DOCTYPE html>
@@ -51,28 +57,39 @@
             </div>
             <div class="table">
                 <table class="table table-striped table-bordered">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Nom</th>
-                            <th>Prénom</th>
-                            <th>Type</th>
-                            <th>Spécialités</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Désiré</td>
-                            <td>Doué</td>
-                            <td>polyvalent</td>
-                            <td>dribble</td>
-                            <td>
-                                <button class="btn-action btn-blue">Planning</button>
-                                <button class="btn-action btn-blue">Modifier</button>
-                                <button class="btn-action btn-delete">Supprimer</button>
-                            </td>
-                        </tr>
-                    </tbody>
+                    <?php   
+                        $conferenciers = afficherConferenciers($pdo);
+                    
+                        echo '<thead class="table-dark">';
+                            echo '<tr>';
+                                echo '<th>Nom</th>';
+                                echo '<th>Prénom</th>';
+                                echo '<th>Type</th>';
+                                echo '<th>Spécialités</th>';
+                                echo '<th>Actions</th>';
+                            echo '</tr>';
+                        echo '</thead>';
+                        echo '<tbody>';
+                        if (!empty($conferenciers)) {
+                            foreach ($conferenciers as $conferencier) {
+                                echo '<tr>';
+                                    echo '<td>'. htmlentities($conferencier["nom"], ENT_QUOTES) .'</td>';
+                                    echo '<td>'. htmlentities($conferencier["prenom"], ENT_QUOTES) .'</td>';
+                                    echo '<td>'. (htmlentities($conferencier["est_employe_par_musee"], ENT_QUOTES) == 0 ? "Externe" : "Interne"); '</td>';
+                                    echo '<td>'. htmlentities($conferencier["mots_cles_specialite"], ENT_QUOTES) .'</td>';
+                                    echo '<td>';
+                                        echo '<button class="btn-action btn-blue">Planning</button>';
+                                        echo '<button class="btn-action btn-blue">Modifier</button>';
+                                        echo '<button class="btn-action btn-delete">Supprimer</button>';
+                                    echo '</td>';
+                                echo '</tr>';
+                            }
+                        }
+                         else {
+                            echo "<tr><td colspan='5'>Aucun conférencier trouvé.</td></tr>";
+                        }
+                        echo '</tbody>';
+                    ?>
                 </table>
             </div>
         </div>
