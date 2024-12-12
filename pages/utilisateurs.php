@@ -54,7 +54,7 @@ if ($pdo == FALSE) {
     <div class="container-blanc">
         <h1 class="text-center">Gestion des Utilisateurs</h1>
         <div class="d-flex justify-content-between align-items-center">
-            <button class="btn-action btn-modify">Ajouter un utilisateur</button>
+            <button class="btn-action btn-modify btn-blue">Ajouter un utilisateur</button>
             <button class="btn btn-light d-flex align-items-center gap-2">
             <i class="fa-solid fa-filter"></i>Filtres
             </button>
@@ -85,10 +85,14 @@ if ($pdo == FALSE) {
                                 echo "<td>".$ligne['nom']."</td>";
                                 echo "<td>".$ligne['prenom']."</td>";
                                 echo "<td>".$ligne['no_tel']."</td>";
-                                echo "<td>".$ligne['est_admin']."</td>";
+                                if ($ligne['est_admin'] == 1) {
+                                    echo "<td>Oui</td>";
+                                } else {
+                                    echo "<td>Non</td>";
+                                }
                                 ?>
                                 <td>
-                                    <button class="btn-action btn-modify">Modifier</button>
+                                    <button class="btn-action btn-modify btn-blue">Modifier</button>
                                     <button class="btn-action btn-delete">Supprimer</button>
                                 </td>
                                 <?php 
