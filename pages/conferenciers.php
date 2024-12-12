@@ -39,7 +39,7 @@
                     <a href="exportation.php" class="deco"><div class="menu-item">Exportation</div></a>
                     <!-- Menu déroulant -->
                     <div class="dropdown">
-                        <div class="menu-item"><i class="fa-solid fa-user"></i> <?php echo htmlspecialchars($_SESSION['prenom']); ?> <i class="fa-solid fa-angle-down"></i></i></div>
+                        <div class="menu-item"><i class="fa-solid fa-user"></i> <?php echo htmlspecialchars($_SESSION['prenom']); ?> <i class="fa-solid fa-angle-down"></i></div>
                         <div class="dropdown-menu">
                             <a href="deconnexion.php" class="btn-red">Se déconnecter</a>
                         </div>
@@ -59,6 +59,7 @@
                 <table class="table table-striped table-bordered">
                     <?php   
                         $conferenciers = afficherConferenciers($pdo);
+                        $totalConferenciers = 0;
                     
                         echo '<thead class="table-dark">';
                             echo '<tr>';
@@ -83,14 +84,15 @@
                                         echo '<button class="btn-action btn-delete">Supprimer</button>';
                                     echo '</td>';
                                 echo '</tr>';
+                                $totalConferenciers++;
                             }
-                        }
-                         else {
-                            echo "<tr><td colspan='5'>Aucun conférencier trouvé.</td></tr>";
+                        } else {
+                            echo "<tr><td colspan='5'>Aucun conférencier enregistré.</td></tr>";
                         }
                         echo '</tbody>';
                     ?>
                 </table>
+                <?php  echo $totalConferenciers . " conferencier(s) trouvé(s)"; ?>
             </div>
         </div>
     </div>

@@ -57,4 +57,15 @@ function afficherConferenciers($pdo){
         throw new PDOException($e->getMessage(), (int)$e->getCode());
     }
 }
+
+function supprimerEmploye($pdo) {
+    try {
+        $pdo->prepare('DELETE FROM utilisateur WHERE id_employe =:id');
+        $stmt->bindparam("id", $id);
+        $stmt -> execute();
+        $employe = $stmt->fetch();
+    } catch (PDOException $e) {
+        throw new PDOException($e->getMessage(), (int)$e->getCode());
+    }
+}
 ?>

@@ -24,6 +24,7 @@ if ($pdo == FALSE) {
     <meta charset="utf-8">  
     <link href="../css/style.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>  
     <title>MUSEOFLOW - Gestion des Utilisateurs</title>
 </head>
 
@@ -68,47 +69,46 @@ if ($pdo == FALSE) {
                         <th>Nom</th>
                         <th>Prenom</th>
                         <th>Numéro de téléphone</th>
-                        <th>Administrateur</th>
+                        <th>Type</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                     <?php 
-                    // Récupération de la liste des employés/utilisateurs depuis la BD
-                    $utilisateurs = getUtilisateurs($pdo);
-                    $totalUtilisateurs = 0;
-                    $dernierUtilisateur = "";
-                    
-                    while($ligne = $utilisateurs->fetch()) {
-                            echo "<tr>";
-                                echo "<td>".$ligne['identifiant']."</td>";
-                                echo "<td>".$ligne['nom']."</td>";
-                                echo "<td>".$ligne['prenom']."</td>";
-                                echo "<td>".$ligne['no_tel']."</td>";
-                                if ($ligne['est_admin'] == 1) {
-                                    echo "<td>Oui</td>";
-                                } else {
-                                    echo "<td>Non</td>";
-                                }
-                                ?>
-                                <td>
-                                    <button class="btn-action btn-modify btn-blue">Modifier</button>
-                                    <button class="btn-action btn-delete">Supprimer</button>
-                                </td>
-                                <?php 
-                            echo "</tr>";
-                            echo "
-                        ";
-                            $totalUtilisateurs++ ;
-                            $dernierUtilisateur = $ligne['prenom'];
-                        }
+                        // Récupération de la liste des employés/utilisateurs depuis la BD
+                        $utilisateurs = getUtilisateurs($pdo);
+                        $totalUtilisateurs = 0;
+                        $dernierUtilisateur = "";
+                        
+                        while($ligne = $utilisateurs->fetch()) {
+                                echo "<tr>";
+                                    echo "<td>".$ligne['identifiant']."</td>";
+                                    echo "<td>".$ligne['nom']."</td>";
+                                    echo "<td>".$ligne['prenom']."</td>";
+                                    echo "<td>".$ligne['no_tel']."</td>";
+                                    if ($ligne['est_admin'] == 1){
+                                       echo "<td>". 'Administrateur' ."</td>";
+                                    } else {
+                                        echo "<td>". 'Employé' ."</td>";
+                                    }
+                                    echo "<td>";
+                                        echo "<button class='btn-action btn-modify btn-blue'>Modifier</button>";
+                                        if ($ligne['est_admin'] == 0){
+                                            echo "<button class='btn-action btn-delete'>Supprimer</button>";
+                                        }
+                                    echo "</td>";
+                                echo "</tr>";
+                                echo "";
+                                $totalUtilisateurs++ ;
+                                $dernierUtilisateur = $ligne['prenom'];
+                            }
                     ?>
                 </tbody>
             </table>
             <?php 
             echo $totalUtilisateurs . " utilisateur(s) trouvé(s)";
-            // Si seul de compte admin par défaut existe
+            // Si seul e compte admin par défaut existe
             if (strcmp($dernierUtilisateur, "par défaut") == 0 && $totalUtilisateurs == 1) {
                 echo "<div class='text-center'>Aucun employé n'est enregistré.</div>";
             }?>
