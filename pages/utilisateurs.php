@@ -78,6 +78,7 @@ if ($pdo == FALSE) {
                     // Récupération de la liste des employés/utilisateurs depuis la BD
                     $utilisateurs = getUtilisateurs($pdo);
                     $totalUtilisateurs = 0;
+                    $dernierUtilisateur = "";
                     
                     while($ligne = $utilisateurs->fetch()) {
                             echo "<tr>";
@@ -100,11 +101,17 @@ if ($pdo == FALSE) {
                             echo "
                         ";
                             $totalUtilisateurs++ ;
+                            $dernierUtilisateur = $ligne['prenom'];
                         }
                     ?>
                 </tbody>
             </table>
-            <?php echo $totalUtilisateurs . " utilisateur(s) trouvé(s)"?>
+            <?php 
+            echo $totalUtilisateurs . " utilisateur(s) trouvé(s)";
+            // Si seul de compte admin par défaut existe
+            if (strcmp($dernierUtilisateur, "par défaut") == 0 && $totalUtilisateurs == 1) {
+                echo "<div class='text-center'>Aucun employé n'est enregistré.</div>";
+            }?>
         </div>
     </div>
 </div>
