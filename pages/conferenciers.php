@@ -2,6 +2,7 @@
     session_start();
     require ('../bdd/fonctions.php');
     require ('../bdd/connecterBD.php');
+    require ('../bdd/requetes.php');
     verifSession(); // Vérifie si une session valide existe
 
     $estAdmin = isset($_SESSION['est_admin']) && $_SESSION['est_admin'] == 1;
