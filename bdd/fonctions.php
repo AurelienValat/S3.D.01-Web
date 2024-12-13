@@ -43,7 +43,7 @@ function reafficherSaisieOption($valeurOption, $nomChamp) {
 
 function supprimerEmploye($pdo) {
     try {
-        $pdo->prepare('DELETE FROM utilisateur WHERE id_employe =:id');
+        $pdo->prepare('DELETE FROM employe WHERE id_employe =:id');
         $stmt->bindparam("id", $id);
         $stmt -> execute();
         $employe = $stmt->fetch();

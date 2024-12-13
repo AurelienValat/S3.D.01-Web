@@ -12,8 +12,7 @@
 <!DOCTYPE HTML>
 <html lang="fr">
 <head>
-    <link  href="../../css/index.css" rel="stylesheet"/>
-    <link href="../../css/navBar.css" rel="stylesheet">
+    <link  href="../../css/style.css" rel="stylesheet"/>
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
         rel="stylesheet"
