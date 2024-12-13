@@ -3,12 +3,12 @@ require_once ('fonctions.php');
 
 // Récupère la liste des utilisteurs/employés
 function getUtilisateurs($pdo) {
-    return envoyerRequete("SELECT nom_utilisateur AS identifiant, nom, prenom, no_tel, est_admin FROM employe", $pdo);
+    return envoyerRequete("SELECT nom_utilisateur AS identifiant, nom, prenom, no_tel, est_admin FROM Employe", $pdo);
 }
 
 // Récupèle la liste des exxpositions
 function getExpositions($pdo) {
-    return envoyerRequete("SELECT intitule, periode_oeuvres, nombre_oeuvres, mots_cles, resume, date_debut, date_fin FROM exposition", $pdo);
+    return envoyerRequete("SELECT intitule, periode_oeuvres, nombre_oeuvres, mots_cles, resume, date_debut, date_fin FROM Exposition", $pdo);
 }
 
 // Fonction qui affiche tous les conférenciers
@@ -16,7 +16,7 @@ function afficherConferenciers($pdo){
     try {
         $conferenciers = array();
         
-        $requete = 'SELECT nom, prenom, specialite, no_tel, est_employe_par_musee, mots_cles_specialite FROM conferencier ORDER BY nom';
+        $requete = 'SELECT nom, prenom, specialite, no_tel, est_employe_par_musee, mots_cles_specialite FROM Conferencier ORDER BY nom';
         $resultats = $pdo->query($requete);
         
         while ($ligne = $resultats->fetch()) {
@@ -30,16 +30,16 @@ function afficherConferenciers($pdo){
 
 // Récupère la liste des visites avec des noms à la place des ID pour les clés étrangères
 function getVisites($pdo) {
-    return envoyerRequete("SELECT id_visite, exposition.intitule, conferencier.nom AS nom_conferencier, conferencier.prenom AS prenom_conferencier, employe.nom AS nom_employe, employe.prenom AS prenom_employe, horaire_debut, date_visite, intitule_client, no_tel_client
-                           FROM visite
+    return envoyerRequete("SELECT id_visite, Exposition.intitule, Conferencier.nom AS nom_conferencier, Conferencier.prenom AS prenom_conferencier, Employe.nom AS nom_employe, Employe.prenom AS prenom_employe, horaire_debut, date_visite, intitule_client, no_tel_client
+                           FROM Visite
 
-                           INNER JOIN exposition
-                           ON exposition.id_exposition = visite.id_exposition
+                           INNER JOIN Exposition
+                           ON Exposition.id_exposition = Visite.id_exposition
                             
-                           INNER JOIN conferencier
-                           ON conferencier.id_conferencier = visite.id_conferencier
+                           INNER JOIN Conferencier
+                           ON Conferencier.id_conferencier = Visite.id_conferencier
                             
-                           INNER JOIN employe
-                           ON employe.id_employe = visite.id_employe;"
+                           INNER JOIN Employe
+                           ON Employe.id_employe = Visite.id_employe;"
                           , $pdo);
 }

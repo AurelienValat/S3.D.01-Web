@@ -2,7 +2,7 @@
 // Fonction pour vérifier les identifiants et mdp
 function verifLoginMDP($pdo, $login, $mdp) {
     $mdpHash = hash('sha256', $mdp);
-    $stmt = $pdo->prepare("SELECT nom, prenom, id_employe, nom_utilisateur, est_admin FROM employe WHERE nom_utilisateur = :login AND mot_de_passe = :mdp");
+    $stmt = $pdo->prepare("SELECT nom, prenom, id_employe, nom_utilisateur, est_admin FROM Employe WHERE nom_utilisateur = :login AND mot_de_passe = :mdp");
     $stmt->bindParam("login", $login);
     $stmt->bindParam("mdp", $mdpHash);
     $stmt->execute();
@@ -43,7 +43,8 @@ function reafficherSaisieOption($valeurOption, $nomChamp) {
 
 function supprimerEmploye($pdo) {
     try {
-        $pdo->prepare('DELETE FROM employe WHERE id_employe =:id');
+        $pdo->prepare('DELETE FROM Employe WHERE id_employe =:id');
+
         $stmt->bindparam("id", $id);
         $stmt -> execute();
         $employe = $stmt->fetch();

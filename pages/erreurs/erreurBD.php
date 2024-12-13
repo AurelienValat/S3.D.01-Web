@@ -1,13 +1,13 @@
 <?php 
-//     require '../../bdd/connecterBD.php';
+    require '../../bdd/connecterBD.php';
     
-//     // Objet de connexion à la BD
-//     $pdo = initierConnexion();
-//     if ($pdo == TRUE) {
-//         // On détruit l'objet PDO pour ne pas surcharger si on appelle en boucle cette page
-//         $pdo = null;
-//         header("Location: ../../index.php");
-//     }
+    // Objet de connexion à la BD
+    $pdo = initierConnexion();
+    if ($pdo == TRUE) {
+        // On détruit l'objet PDO pour ne pas surcharger si on appelle en boucle cette page
+        $pdo = null;
+        header("Location: ../../index.php");
+    }
 ?>
 <!DOCTYPE HTML>
 <html lang="fr">
@@ -20,7 +20,7 @@
         crossorigin="anonymous">
     
     <meta charset="UTF-8">
-    <title>MEDILOG - Erreur</title>
+    <title>MuseoFlow - Erreur</title>
 </head>
 <body>
     <!-- Containeur principal de la page -->

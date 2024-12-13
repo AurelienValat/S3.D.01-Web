@@ -19,22 +19,26 @@ if ($pdo == FALSE) {
 $login = isset($_POST['login']) ? $_POST['login'] : '';
 $password = isset($_POST['mdp']) ? $_POST['mdp'] : '';
 
-if (!empty($login) && !empty($password)) {
-    // Authentification utilisateur
-    $user = verifLoginMDP($pdo, $login, $password);
-    if ($user) {
-        $_SESSION['id'] = $user['id_employe'];
-        $_SESSION['login'] = $user['nom_utilisateur'];
-        $_SESSION['nom'] = $user['nom'];
-        $_SESSION['prenom'] = $user['prenom'];
-        $_SESSION['est_admin'] = $user['est_admin'];
-        header('Location: pages/accueil.php');
-        exit;
+try {
+    if (!empty($login) && !empty($password)) {
+        // Authentification utilisateur
+        $user = verifLoginMDP($pdo, $login, $password);
+        if ($user) {
+            $_SESSION['id'] = $user['id_employe'];
+            $_SESSION['login'] = $user['nom_utilisateur'];
+            $_SESSION['nom'] = $user['nom'];
+            $_SESSION['prenom'] = $user['prenom'];
+            $_SESSION['est_admin'] = $user['est_admin'];
+            header('Location: pages/accueil.php');
+            exit;
+        } else {
+            $erreur = true;
+        }
     } else {
-        $erreur = true;
+        $erreur = false;
     }
-} else {
-    $erreur = false;
+} catch (PDOException) {
+    header("Location: pages/erreurs/erreurBD.php");
 }
 ?>
 
