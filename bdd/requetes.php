@@ -14,7 +14,7 @@ function afficherConferenciers($pdo){
     try {
         $conferenciers = array();
         
-        $requete = 'SELECT DISTINCT nom, prenom, est_employe_par_musee, mots_cles_specialite FROM conferencier ORDER BY nom';
+        $requete = 'SELECT nom, prenom, specialite, no_tel, est_employe_par_musee, mots_cles_specialite FROM conferencier ORDER BY nom';
         $resultats = $pdo->query($requete);
         
         while ($ligne = $resultats->fetch()) {

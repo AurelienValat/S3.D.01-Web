@@ -67,7 +67,9 @@
                                 echo '<th>Nom</th>';
                                 echo '<th>Prénom</th>';
                                 echo '<th>Type</th>';
-                                echo '<th>Spécialités</th>';
+                                echo '<th>Spécialité</th>';
+                                echo '<th>Mots clés spécialité</th>';
+                                echo '<th>Téléphone</th>';
                                 echo '<th>Actions</th>';
                             echo '</tr>';
                         echo '</thead>';
@@ -78,7 +80,9 @@
                                     echo '<td>'. htmlentities($conferencier["nom"], ENT_QUOTES) .'</td>';
                                     echo '<td>'. htmlentities($conferencier["prenom"], ENT_QUOTES) .'</td>';
                                     echo '<td>'. (htmlentities($conferencier["est_employe_par_musee"], ENT_QUOTES) == 0 ? "Externe" : "Interne"); '</td>';
+                                    echo '<td>'. htmlentities($conferencier["specialite"], ENT_QUOTES) .'</td>';
                                     echo '<td>'. htmlentities($conferencier["mots_cles_specialite"], ENT_QUOTES) .'</td>';
+                                    echo '<td>'. htmlentities($conferencier["no_tel"], ENT_QUOTES) .'</td>';
                                     echo '<td>';
                                         echo '<button class="btn-action btn-blue">Planning</button>';
                                         echo '<button class="btn-action btn-blue">Modifier</button>';
