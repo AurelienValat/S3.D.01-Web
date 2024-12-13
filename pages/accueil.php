@@ -98,7 +98,6 @@
                         hebdomadaires pour tout le personnel. 
                         Inscrivez-vous dès maintenant !</p>
                         <i class="fa fa-calendar" aria-hidden="true"></i> 7 Janvier 2025
-
                 </div>
             </div>
         </div>
