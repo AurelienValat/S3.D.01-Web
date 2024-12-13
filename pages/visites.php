@@ -1,9 +1,16 @@
 <?php 
     session_start();
     require ('../bdd/fonctions.php');
+    require ('../bdd/connecterBD.php');
+    require ('../bdd/requetes.php');
     verifSession(); // Vérifie si une session valide existe
 
     $estAdmin = isset($_SESSION['est_admin']) && $_SESSION['est_admin'] == 1;
+    
+    $pdo = initierConnexion();
+    if ($pdo == FALSE) {
+        header("Location: erreurs/erreurBD.php");
+    }
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -39,7 +46,7 @@
                 </div>
         </div>
     </nav>
-    <div class="container content">
+    <div class="container content col-12">
     <div class="container-blanc">
         <h1 class="text-center">Gestion des Visites</h1>
         <div class="d-flex justify-content-between align-items-center">
@@ -53,26 +60,47 @@
             <table class="table table-striped table-bordered">
                 <thead class="table-dark">
                     <tr>
+                        <th>Identifiant visite</th>
+                        <th>Exposition concernée</th>
+                        <th>Conférencier assurant la visite</th>
+                        <th>Pris en charge par</th>
+                        <th>Client ayant réservé</th>
+                        <th>Tél. du client</th>
                         <th>Date</th>
                         <th>Heure</th>
-                        <th>Exposition</th>
-                        <th>Conférencier</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>2024-01-20</td>
-                        <td>14:00</td>
-                        <td>Art Moderne</td>
-                        <td>Jean Dupont</td>
-                        <td>
-                            <button class="btn-action btn-blue">Modifier</button>
-                            <button class="btn-action btn-delete">Annuler</button>
-                        </td>
-                    </tr>
+                        <?php 
+                        // Récupération de la liste des employés/utilisateurs depuis la BD
+                        $visites = getVisites($pdo);
+                        $totalVisites = 0;
+                                                
+                        while($ligne = $visites->fetch()) {
+                                echo "<tr>";
+                                    echo "<td>".$ligne['id_visite']."</td>";
+                                    echo "<td>".$ligne['intitule']."</td>";
+                                    echo "<td>".$ligne['nom_conferencier']." ".$ligne['prenom_conferencier']."</td>";
+                                    echo "<td>".$ligne['nom_employe']." ".$ligne['prenom_employe']."</td>";
+                                    echo "<td>".$ligne['intitule_client']."</td>";
+                                    echo "<td>".$ligne['no_tel_client']."</td>";
+                                    echo "<td>".$ligne['date_visite']."</td>";
+                                    echo "<td>".$ligne['horaire_debut']."</td>";
+                                    echo "<td>";
+                                        echo "<button class='btn-action btn-modify btn-blue'>Modifier</button>";
+                                        echo "<button class='btn-action btn-delete'>Supprimer</button>";
+                                    echo "</td>";
+                                echo "</tr>";
+                                echo "";
+                                $totalVisites++ ;
+                            }?>
                 </tbody>
             </table>
+            <?php 
+            echo $totalVisites . " visites(s) trouvée(s)";
+            ?>
         </div>
     </div>
 </div>
