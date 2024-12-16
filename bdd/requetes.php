@@ -3,7 +3,7 @@ require_once ('fonctions.php');
 
 // Récupère la liste des utilisteurs/employés
 function getUtilisateurs($pdo) {
-    return envoyerRequete("SELECT nom_utilisateur AS identifiant, nom, prenom, no_tel, est_admin FROM Employe", $pdo);
+    return envoyerRequete("SELECT id_employe, nom_utilisateur AS identifiant, nom, prenom, no_tel, est_admin FROM Employe", $pdo);
 }
 
 // Récupèle la liste des exxpositions

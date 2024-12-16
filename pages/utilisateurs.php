@@ -17,8 +17,12 @@ if ($pdo == FALSE) {
     header("Location: pages/erreurs/erreurBD.php");
 }
 
+// Vérification si une suppression est demandée
 if (isset($_POST['supprimerEmploye'])) {
-    supprimerEmploye($pdo);
+    $userIdToDelete = intval($_POST['supprimerEmploye']); // Sécuriser la donnée
+
+    supprimerEmploye($pdo, $userIdToDelete);
+
 }
 
 
@@ -58,7 +62,7 @@ try {
 
     // Si aucun champ n'a d'erreur, procéder à l'insertion
     if (empty($errors)) {
-        $pdo = initierConnexion();
+
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
         $stmt = $pdo->prepare("INSERT INTO employe (nom_utilisateur, nom, prenom, no_tel, mot_de_passe, est_admin) 
@@ -145,7 +149,12 @@ try {
                                     echo "<td>";
                                         echo "<button class='btn-action btn-modify btn-blue'>Modifier</button>";
                                         if ($ligne['est_admin'] == 0){
-                                            echo "<button class='btn-action btn-delete'>Supprimer</button>";
+                                            ?>
+                                            <form method="POST" action="utilisateurs.php" style="display:inline;">
+                                                <input type="hidden" name="supprimerEmploye" value="<?php echo $ligne['id_employe']; ?>">
+                                                <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet employé ?');">Supprimer</button>
+                                            </form>
+                                            <?php
                                         }
                                     echo "</td>";
                                 echo "</tr>";
@@ -158,7 +167,7 @@ try {
             </table>
             <?php 
             echo $totalUtilisateurs . " utilisateur(s) trouvé(s)";
-            // Si seule compte admin par défaut existe
+            // Si seul le compte admin par défaut existe
             if (strcmp($dernierUtilisateur, "par défaut") == 0 && $totalUtilisateurs == 1) {
                 echo "<div class='text-center'>Aucun employé n'est enregistré.</div>";
             }?>

@@ -41,9 +41,9 @@ function reafficherSaisieOption($valeurOption, $nomChamp) {
     }
 }
 
-function supprimerEmploye($pdo) {
+function supprimerEmploye($pdo, $id) {
     try {
-        $pdo->prepare('DELETE FROM Employe WHERE id_employe =:id');
+        $stmt = $pdo->prepare('DELETE FROM Employe WHERE id_employe =:id');
 
         $stmt->bindparam("id", $id);
         $stmt -> execute();
