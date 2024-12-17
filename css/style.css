@@ -436,4 +436,10 @@ footer {
     flex-direction: column;
 }
 
+/* Cacher pour le bouton filtres */
+.hidden {
+    display: none;
+}
+
+
 

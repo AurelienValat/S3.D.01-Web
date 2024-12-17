@@ -44,6 +44,7 @@ function getVisites($pdo) {
                           , $pdo);
 }
 
+
 // Supprime la ligne correspondant à l'ID en paramètre
 function supprimerLigne($pdo, $id, $table) {
     try {
@@ -55,6 +56,19 @@ function supprimerLigne($pdo, $id, $table) {
         throw new PDOException($e->getMessage(), (int)$e->getCode());
     }
 }
+
+function supprimerEmploye($pdo, $id) {
+    try {
+        $stmt = $pdo->prepare('DELETE FROM Employe WHERE id_employe =:id');
+
+        $stmt->bindparam("id", $id);
+        $stmt -> execute();
+        $employe = $stmt->fetch();
+    } catch (PDOException $e) {
+        throw new PDOException($e->getMessage(), (int)$e->getCode());
+    }
+}
+
 // Vérifie qu'il n'y a pas d'identifiant, et d'homonyme lors de la création d'un employé 
 function verifierExistance($pdo, $pseudo, $nom, $prenom) {
     $stmt = $pdo->prepare("SELECT COUNT(*) 
@@ -75,3 +89,30 @@ function creerEmploye($pdo, $pseudo, $nom, $prenom, $telephone, $motDePasse) {
 
 
 }
+
+function recupExpositions($pdo){
+    return envoyerRequete("SELECT id_exposition,intitule FROM exposition", $pdo);
+}
+
+function recupConferenciers($pdo){
+    return envoyerRequete("SELECT id_conferencier, nom, prenom FROM conferencier", $pdo);
+}
+
+function creerExpositions($pdo, $idExpo,$idConf, $idEmploye, $heureDeb, $date, $nomClient, $telClient){
+    try {
+        $stmt = $pdo->prepare("INSERT INTO visite (id_exposition, id_conferencier, id_employe, horaire_debut, date_visite, intitule_client, no_tel_client)
+                                VALUES (:idExpo, :idConf, :idEmploye, :heureDeb, :date, :nomClient, :telClient)");
+        $stmt->bindparam("idExpo", $idExpo);
+        $stmt->bindparam("idConf", $idConf);
+        $stmt->bindparam("idEmploye", $idEmploye);
+        $stmt->bindparam("heureDeb", $heureDeb);
+        $stmt->bindparam("date", $date);
+        $stmt->bindparam("nomClient", $nomClient);
+        $stmt->bindparam("telClient", $telClient);
+        $stmt -> execute();
+        $employe = $stmt->fetch();
+    } catch (PDOException $e) {
+        throw new PDOException($e->getMessage(), (int)$e->getCode());
+    }
+}
+
