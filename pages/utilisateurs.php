@@ -180,15 +180,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']))
     <!-- Modale Ajouter Utilisateur -->
     <div class="modal fade <?php echo !empty($erreurs) ? 'show' : ''; ?>" 
         id="modalAjouterUtilisateur" 
-        tabindex="-1" 
-        aria-labelledby="modalAjouterUtilisateurLabel" 
-        aria-hidden="<?php echo !empty($erreurs) ? 'false' : 'true'; ?>" 
-        style="<?php echo !empty($erreurs) ? 'display: block;' : 'display: none;'; ?>"> <!-- TODO enlever le block -->
+        style="<?php echo !empty($erreurs) ? 'display: block;' : 'display: none;'; ?>">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalAjouterUtilisateurLabel">Ajouter un utilisateur</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <a href="utilisateurs.php" class="btn-close" aria-label="Close"></a>
                 </div>
                 <div class="modal-body">
                     <form id="formAjouterUtilisateur" method="POST" action="utilisateurs.php">
