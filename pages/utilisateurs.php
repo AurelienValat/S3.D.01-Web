@@ -18,7 +18,7 @@ if ($pdo == FALSE) {
 }
 
 // Vérification si une suppression est demandée
-if (isset($_POST['supprimerEmploye'])) {
+if (isset($_POST['supprimerEmploye']) && $_POST['supprimerEmploye'] != trim('')) {
     $userIdToDelete = intval($_POST['supprimerEmploye']); // Sécuriser la donnée
 
     supprimerEmploye($pdo, $userIdToDelete);
@@ -99,7 +99,7 @@ try {
             <a href="exportation.php" class="deco"><div class="menu-item">Exportation</div></a>
             <!-- Menu déroulant -->
             <div class="dropdown">
-                <div class="menu-item"><i class="fa-solid fa-user"></i> <?php echo htmlspecialchars($_SESSION['prenom']); ?> <i class="fa-solid fa-angle-down"></i></i></div>
+                <div class="menu-item"><i class="fa-solid fa-user"></i> <?php echo htmlspecialchars($_SESSION['prenom']); ?> <i class="fa-solid fa-angle-down"></i></div>
                 <div class="dropdown-menu">
                     <a href="deconnexion.php" class="btn-red">Se déconnecter</a>
                 </div>
@@ -253,6 +253,7 @@ try {
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>
 

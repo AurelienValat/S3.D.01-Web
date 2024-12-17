@@ -43,3 +43,27 @@ function getVisites($pdo) {
                            ON Employe.id_employe = Visite.id_employe;"
                           , $pdo);
 }
+
+// Supprime l'employé/utilisateur correspondant à l'ID en paramètre
+function supprimerEmploye($pdo, $id) {
+    try {
+        $stmt = $pdo->prepare('DELETE FROM Employe WHERE id_employe =:id');
+        
+        $stmt->bindparam("id", $id);
+        $stmt -> execute();
+    } catch (PDOException $e) {
+        throw new PDOException($e->getMessage(), (int)$e->getCode());
+    }
+}
+
+// Supprime la visite correspondant à l'ID en paramètre
+function supprimerVisite($pdo, $id) {
+    try {
+        $stmt = $pdo->prepare('DELETE FROM Visite WHERE id_visite =:id');
+        
+        $stmt->bindparam("id", $id);
+        $stmt -> execute();
+    } catch (PDOException $e) {
+        throw new PDOException($e->getMessage(), (int)$e->getCode());
+    }
+}

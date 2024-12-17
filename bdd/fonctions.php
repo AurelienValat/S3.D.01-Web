@@ -40,16 +40,4 @@ function reafficherSaisieOption($valeurOption, $nomChamp) {
         return '';
     }
 }
-
-function supprimerEmploye($pdo, $id) {
-    try {
-        $stmt = $pdo->prepare('DELETE FROM Employe WHERE id_employe =:id');
-
-        $stmt->bindparam("id", $id);
-        $stmt -> execute();
-        $employe = $stmt->fetch();
-    } catch (PDOException $e) {
-        throw new PDOException($e->getMessage(), (int)$e->getCode());
-    }
-}
 ?>

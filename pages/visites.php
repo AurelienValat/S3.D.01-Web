@@ -11,6 +11,15 @@
     if ($pdo == FALSE) {
         header("Location: erreurs/erreurBD.php");
     }
+    
+    // Vérification si une suppression est demandée
+    if (isset($_POST['supprimerVisite']) && $_POST['supprimerVisite'] != trim('')) {
+        $userIdToDelete = intval($_POST['supprimerVisite']); // Sécuriser la donnée
+        
+        supprimerVisite($pdo, $userIdToDelete);
+        
+    }
+    
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -39,7 +48,7 @@
             <a href="exportation.php" class="deco"><div class="menu-item">Exportation</div></a>
             <!-- Menu déroulant -->
             <div class="dropdown">
-                    <div class="menu-item"><i class="fa-solid fa-user"></i> <?php echo htmlspecialchars($_SESSION['prenom']); ?> <i class="fa-solid fa-angle-down"></i></i></div>
+                    <div class="menu-item"><i class="fa-solid fa-user"></i> <?php echo htmlspecialchars($_SESSION['prenom']); ?> <i class="fa-solid fa-angle-down"></i></div>
                     <div class="dropdown-menu">
                         <a href="deconnexion.php" class="btn-red">Se déconnecter</a>
                     </div>
@@ -90,7 +99,10 @@
                                     echo "<td>".$ligne['horaire_debut']."</td>";
                                     echo "<td>";
                                         echo "<button id='btn_modifier' class='btn-action btn-modify btn-blue'>Modifier</button>";
-                                        echo "<button id='btn_supprimer' class='btn-action btn-delete'>Supprimer</button>";
+                                        echo '<form method="POST" action= "visites.php" style="display:inline;">';
+                                        echo "<input type='hidden' name='supprimerVisite' value='" . $ligne['id_visite'] . "'>";
+                                        ?> <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet employé ?');">Supprimer</button><?php 
+                                        echo "</form>";
                                     echo "</td>";
                                 echo "</tr>";
                                 echo "";
