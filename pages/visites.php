@@ -89,8 +89,8 @@
                                     echo "<td>".$ligne['date_visite']."</td>";
                                     echo "<td>".$ligne['horaire_debut']."</td>";
                                     echo "<td>";
-                                        echo "<button class='btn-action btn-modify btn-blue'>Modifier</button>";
-                                        echo "<button class='btn-action btn-delete'>Supprimer</button>";
+                                        echo "<button id='btn_modifier' class='btn-action btn-modify btn-blue'>Modifier</button>";
+                                        echo "<button id='btn_supprimer' class='btn-action btn-delete'>Supprimer</button>";
                                     echo "</td>";
                                 echo "</tr>";
                                 echo "";
