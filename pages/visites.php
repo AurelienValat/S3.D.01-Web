@@ -1,5 +1,6 @@
 <?php 
     session_start();
+
     require ('../bdd/fonctions.php');
     require ('../bdd/connecterBD.php');
     require ('../bdd/requetes.php');
@@ -15,73 +16,14 @@
     
     // Vérification si une suppression est demandée
     if (isset($_POST['supprimerVisite']) && $_POST['supprimerVisite'] != trim('')) {
-        $userIdToDelete = intval($_POST['supprimerVisite']); // Sécuriser la donnée
+        $utilisateurASuppr = intval($_POST['supprimerVisite']); // Sécuriser la donnée
         try {
-            supprimerLigne($pdo, $userIdToDelete, "Visite");
+            supprimerLigne($pdo, $utilisateurASuppr, "Visite");
         } catch (PDOException) {
             header("Location: erreurs/erreurBD.php");
         }
     }
     
-
-    $exposRecup = recupExpositions($pdo);
-    $confsRecup = recupConferenciers($pdo);
-
-    $ToutOK = true;
-    $erreurs = [];
-
-    if (!isset($_POST['exposition']) || $_POST['exposition'] == "zero") {
-        $erreurs['exposition'] = "Veuillez sélectionner une exposition.";
-        $ToutOK = false;
-    } else {
-        $exposition = htmlspecialchars($_POST['exposition']);
-    }
-
-    // Vérification du champ "conferencier"
-    if (!isset($_POST['conferencier']) || $_POST['conferencier'] == "zero") {
-        $erreurs['conferencier'] = "Veuillez sélectionner un conférencier.";
-        $ToutOK = false;
-    } else {
-        $conferencier = htmlspecialchars($_POST['conferencier']);
-    }
-
-    // Vérification de la date
-    if (!isset($_POST['date']) || $_POST['date'] == "") {
-        $erreurs['date'] = "Veuillez entrer une date.";
-        $ToutOK = false;
-    } else {
-        $date = htmlspecialchars($_POST['date']);
-    }
-
-    // Vérification de l'heure
-    if (!isset($_POST['heure']) || $_POST['heure'] == "") {
-        $erreurs['heure'] = "Veuillez entrer une heure.";
-        $ToutOK = false;
-    } else {
-        $heure = htmlspecialchars($_POST['heure']);
-    }
-
-    // Vérification du client
-    if (!isset($_POST['client']) || trim($_POST['client']) == "") {
-        $erreurs['client'] = "Le nom du client est obligatoire.";
-        $ToutOK = false;
-    } else {
-        $client = htmlspecialchars($_POST['client']);
-    }
-
-    // Vérification du téléphone
-    if (!isset($_POST['telephone']) || !preg_match('/^0[1-9]([-. ]?[0-9]{2}){4}$/', $_POST['telephone'])) {
-        $erreurs['telephone'] = "Le numéro de téléphone n'est pas valide.";
-        $ToutOK = false;
-    } else {
-        $telephone = htmlspecialchars($_POST['telephone']);
-    }
-
-     // Si tout est OK, on insère dans la base
-    if ($ToutOK) {
-        creerExpositions($pdo, $exposition, $conferencier, $_SESSION['id'], $heure, $date, $client, $telephone);
-    } 
-
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -102,63 +44,10 @@
             <!-- Utilisation de Flexbox pour mettre sur la même ligne les boutons -->
             <div class="d-flexd-flex gap-2 mt-3">
                 <!-- Menu Ajouter/Réserver -->
-                <details id="reserverDetails">
-                    <summary class="btn btn-primary btn-sm" style="cursor: pointer;">Ajouter/Réserver une visite</summary>
-                    <form action="visites.php" method="POST" class="p-3 border rounded bg-light mt-3">
-                        <div >
-                            <label for="exposition" class="form-label">Nom de l'exposition :</label>
-                            <select name="exposition" id="exposition" required>
-                                <option value="zero">--Veuillez choisir l'exposition--</option>
-                                <?php 
-                                    // Parcourir les expositions et afficher chaque option
-                                    foreach ($exposRecup as $exposition) {
-                                        echo '<option value="' . htmlspecialchars($exposition['id_exposition']) . '">'
-                                            . htmlspecialchars($exposition['intitule']) . '</option>';
-                                    }
-                                ?>
-                            </select>
-                        </div>
-                        <div >
-                            <label for="conferencier" class="form-label">Séléctionner le conférencier :</label>
-                            <select name="conferencier" id="conferencier" required>
-                                <option value="zero">--Veuillez choisir le conférencier--</option>
-                                <?php 
-                                    // Parcourir les conférenciers et afficher chaque option
-                                    foreach ($confsRecup as $conferencier) {
-                                        echo '<option value="' . htmlspecialchars($conferencier['id_conferencier']) . '">'
-                                            . htmlspecialchars($conferencier['prenom'] ) . '</option>';
-                                    }
-                                ?>
-                            </select>          
-                        </div>
-                        <div >
-                            <label for="date" class="form-label">Date de la visite:</label>
-                            <input type="date" class="form-control" id="date" name="date" required>
-                            <div class="text-danger"><?= $erreurs['date'] ?? "" ?></div>
-                        </div>
-                        <div >
-                            <label for="heure" class="form-label">Heure de début de la visite:</label>
-                            <input type="time" class="form-control" id="heure" name="heure" required>
-                        </div>
-                        <div >
-                            <label for="client" class="form-label">Nom du client qui a réservé:</label>
-                            <input type="text" class="form-control" id="client" name="client" required>
-                        </div>
-                        <div>
-                            <label for="telephone" class="form-label">Numéro de teléphone du client:</label>
-                            <input type="tel" class="form-control" id="telephone" name="telephone" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Valider</button>
-                    </form>
-                </details>
-
+                    <button class="btn btn-primary btn-sm" style="cursor: pointer;">Ajouter/Réserver une visite</button>
+                    
                 <!-- Menu Filtres -->
-                <details id="filtreDetails">
-                    <summary class="btn btn-secondary btn-sm" style="cursor: pointer;">Filtres</summary>
-                    <div class="p-3 border rounded bg-light mt-3">
-                        
-                    </div>
-                </details>
+                    <button class="btn btn-secondary btn-sm" style="cursor: pointer;">Filtres</button>
             </div>
 
             <div class="table">

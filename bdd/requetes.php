@@ -102,15 +102,14 @@ function creerExpositions($pdo, $idExpo,$idConf, $idEmploye, $heureDeb, $date, $
     try {
         $stmt = $pdo->prepare("INSERT INTO visite (id_exposition, id_conferencier, id_employe, horaire_debut, date_visite, intitule_client, no_tel_client)
                                 VALUES (:idExpo, :idConf, :idEmploye, :heureDeb, :date, :nomClient, :telClient)");
-        $stmt->bindparam("idExpo", $idExpo);
-        $stmt->bindparam("idConf", $idConf);
-        $stmt->bindparam("idEmploye", $idEmploye);
-        $stmt->bindparam("heureDeb", $heureDeb);
-        $stmt->bindparam("date", $date);
-        $stmt->bindparam("nomClient", $nomClient);
-        $stmt->bindparam("telClient", $telClient);
+        $stmt->bindparam(":idExpo", $idExpo);
+        $stmt->bindparam(":idConf", $idConf);
+        $stmt->bindparam(":idEmploye", $idEmploye);
+        $stmt->bindparam(":heureDeb", $heureDeb);
+        $stmt->bindparam(":date", $date);
+        $stmt->bindparam(":nomClient", $nomClient);
+        $stmt->bindparam(":telClient", $telClient);
         $stmt -> execute();
-        $employe = $stmt->fetch();
     } catch (PDOException $e) {
         throw new PDOException($e->getMessage(), (int)$e->getCode());
     }
