@@ -11,6 +11,19 @@
     if ($pdo == FALSE) {
         header("Location: erreurs/erreurBD.php");
     }
+    
+    // Vérification si une suppression est demandée
+    if (isset($_POST['supprimerConferencier']) && $_POST['supprimerConferencier'] != trim('')) {
+        $userIdToDelete = intval($_POST['supprimerConferencier']); // Sécuriser la donnée
+        
+        try {
+            supprimerLigne($pdo, $userIdToDelete, "Conferencier");
+        } catch (PDOException) {
+            $_SESSION['donneeEnErreur'] = 'conférencier';
+            $_SESSION['cheminDernierePage'] = '/S3.D.01-Web/pages/conferenciers.php';
+            header("Location: ./erreurs/impossibleDeTraiterVotreDemande.php");
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -64,8 +77,12 @@
                                     echo '<td>'. htmlentities($conferencier["no_tel"], ENT_QUOTES) .'</td>';
                                     echo '<td>';
                                         echo '<button class="btn-action btn-blue">Planning</button>';
-                                        echo '<button class="btn-action btn-blue">Modifier</button>';
-                                        echo '<button class="btn-action btn-delete">Supprimer</button>';
+                                        echo '<button class="btn-action btn-blue">Modifier</button>';?>
+                                        <form method="POST" action= "conferenciers.php" style="display:inline;">
+                                        <?php echo "<input type='hidden' name='supprimerConferencier' value='" . $conferencier['id_conferencier'] . "'>";
+                                        ?> <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce conférencier ?');">Supprimer</button>
+                                        </form>
+                                        <?php 
                                     echo '</td>';
                                 echo '</tr>';
                                 $totalConferenciers++;
@@ -82,4 +99,3 @@
     </div>
 </body>
 </html>
-

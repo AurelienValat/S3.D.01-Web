@@ -16,7 +16,7 @@ function afficherConferenciers($pdo){
     try {
         $conferenciers = array();
         
-        $requete = 'SELECT nom, prenom, specialite, no_tel, est_employe_par_musee, mots_cles_specialite FROM Conferencier ORDER BY nom';
+        $requete = 'SELECT id_conferencier, nom, prenom, specialite, no_tel, est_employe_par_musee, mots_cles_specialite FROM Conferencier ORDER BY nom';
         $resultats = $pdo->query($requete);
         
         while ($ligne = $resultats->fetch()) {

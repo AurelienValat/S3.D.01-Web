@@ -15,8 +15,11 @@
     // Vérification si une suppression est demandée
     if (isset($_POST['supprimerVisite']) && $_POST['supprimerVisite'] != trim('')) {
         $userIdToDelete = intval($_POST['supprimerVisite']); // Sécuriser la donnée
-        // Pas de try catch car rien ne doit bloquer la suppression d'une visite
-        supprimerLigne($pdo, $userIdToDelete, "Visite");
+        try {
+            supprimerLigne($pdo, $userIdToDelete, "Visite");
+        } catch (PDOException) {
+            header("Location: erreurs/erreurBD.php");
+        }
     }
     
 ?>
