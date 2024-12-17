@@ -16,8 +16,7 @@
     if (isset($_POST['supprimerVisite']) && $_POST['supprimerVisite'] != trim('')) {
         $userIdToDelete = intval($_POST['supprimerVisite']); // Sécuriser la donnée
         
-        supprimerVisite($pdo, $userIdToDelete);
-        
+        supprimerLigne($pdo, $userIdToDelete, "Visite");
     }
     
 ?>
@@ -101,7 +100,7 @@
                                         echo "<button id='btn_modifier' class='btn-action btn-modify btn-blue'>Modifier</button>";
                                         echo '<form method="POST" action= "visites.php" style="display:inline;">';
                                         echo "<input type='hidden' name='supprimerVisite' value='" . $ligne['id_visite'] . "'>";
-                                        ?> <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet employé ?');">Supprimer</button><?php 
+                                        ?> <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette visite ?');">Supprimer</button><?php 
                                         echo "</form>";
                                     echo "</td>";
                                 echo "</tr>";

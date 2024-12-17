@@ -20,9 +20,8 @@ if ($pdo == FALSE) {
 // Vérification si une suppression est demandée
 if (isset($_POST['supprimerEmploye']) && $_POST['supprimerEmploye'] != trim('')) {
     $userIdToDelete = intval($_POST['supprimerEmploye']); // Sécuriser la donnée
-
-    supprimerEmploye($pdo, $userIdToDelete);
-
+    
+    supprimerLigne($pdo, $userIdToDelete, "Employe");
 }
 
 

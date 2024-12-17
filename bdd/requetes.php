@@ -8,7 +8,7 @@ function getUtilisateurs($pdo) {
 
 // Récupèle la liste des exxpositions
 function getExpositions($pdo) {
-    return envoyerRequete("SELECT intitule, periode_oeuvres, nombre_oeuvres, mots_cles, resume, date_debut, date_fin FROM Exposition", $pdo);
+    return envoyerRequete("SELECT id_exposition, intitule, periode_oeuvres, nombre_oeuvres, mots_cles, resume, date_debut, date_fin FROM Exposition", $pdo);
 }
 
 // Fonction qui affiche tous les conférenciers
@@ -44,22 +44,10 @@ function getVisites($pdo) {
                           , $pdo);
 }
 
-// Supprime l'employé/utilisateur correspondant à l'ID en paramètre
-function supprimerEmploye($pdo, $id) {
+// Supprime la ligne correspondant à l'ID en paramètre
+function supprimerLigne($pdo, $id, $table) {
     try {
-        $stmt = $pdo->prepare('DELETE FROM Employe WHERE id_employe =:id');
-        
-        $stmt->bindparam("id", $id);
-        $stmt -> execute();
-    } catch (PDOException $e) {
-        throw new PDOException($e->getMessage(), (int)$e->getCode());
-    }
-}
-
-// Supprime la visite correspondant à l'ID en paramètre
-function supprimerVisite($pdo, $id) {
-    try {
-        $stmt = $pdo->prepare('DELETE FROM Visite WHERE id_visite =:id');
+        $stmt = $pdo->prepare("DELETE FROM $table WHERE id_". strtolower($table) ." =:id");
         
         $stmt->bindparam("id", $id);
         $stmt -> execute();

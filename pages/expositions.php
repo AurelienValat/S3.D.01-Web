@@ -12,6 +12,14 @@ if ($pdo == FALSE) {
 }
 
 $estAdmin = isset($_SESSION['est_admin']) && $_SESSION['est_admin'] == 1;
+
+// Vérification si une suppression est demandée
+if (isset($_POST['supprimerExposition']) && $_POST['supprimerExposition'] != trim('')) {
+    $userIdToDelete = intval($_POST['supprimerExposition']); // Sécuriser la donnée
+    
+    supprimerLigne($pdo, $userIdToDelete, "Exposition");
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -113,9 +121,12 @@ $estAdmin = isset($_SESSION['est_admin']) && $_SESSION['est_admin'] == 1;
                          <td>
                             <button
                                 class="btn-action btn-modify btn-blue">Modifier la description</button>
-                            <button class="btn-action btn-delete">Supprimer</button>
+                            <form method="POST" action= "expositions.php" style="display:inline;">
+                            <?php echo "<input type='hidden' name='supprimerExposition' value='" . $ligne['id_exposition'] . "'>";
+                                        ?> <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette exposition ?');">Supprimer</button> 
+                            </form>
                         </td>
-                                <?php
+                        <?php
                         echo "</tr>";
                         echo "
                         ";
