@@ -7,6 +7,8 @@ require ('../bdd/requetes.php');
 
 verifSession(); // Vérifie si une session valide existe
 
+$estAdmin = isset($_SESSION['est_admin']) && $_SESSION['est_admin'] == 1;
+
 if (!isset($_SESSION['est_admin']) || $_SESSION['est_admin'] != 1) {
     // Rediriger l'utilisateur vers une autre page s'il n'est pas admin
     header('Location: accueil.php');
@@ -20,8 +22,13 @@ if ($pdo == FALSE) {
 // Vérification si une suppression est demandée
 if (isset($_POST['supprimerEmploye']) && $_POST['supprimerEmploye'] != trim('')) {
     $userIdToDelete = intval($_POST['supprimerEmploye']); // Sécuriser la donnée
-    
+    try {
     supprimerLigne($pdo, $userIdToDelete, "Employe");
+    } catch (PDOException) {
+        $_SESSION['donneeEnErreur'] = 'utilisateur';
+        $_SESSION['cheminDernierePage'] = '/S3.D.01-Web/pages/utilisateurs.php';
+        header("Location: ./erreurs/impossibleDeTraiterVotreDemande.php");
+    }
 }
 
 
@@ -91,26 +98,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']))
     <title>MUSEOFLOW - Gestion des Utilisateurs</title>
 </head>
 <body class="fond">
-    <nav class="navbar">
-        <div class="logo">
-            <a href="accueil.php"><img class="logo-img" src="../ressources/images/logo.png" alt="Logo MuseoFlow"></a>
-            Intranet du Musée
-        </div>
-        <div class="main-menu">
-            <a href="utilisateurs.php" class="deco"><div class="menu-item">Utilisateurs</div></a>
-            <a href="expositions.php" class="deco"><div class="menu-item">Expositions</div></a>
-            <a href="conferenciers.php" class="deco"><div class="menu-item">Conférenciers</div></a>
-            <a href="visites.php" class="deco"><div class="menu-item">Visites</div> </a>
-            <a href="exportation.php" class="deco"><div class="menu-item">Exportation</div></a>
-            <!-- Menu déroulant -->
-            <div class="dropdown">
-                <div class="menu-item"><i class="fa-solid fa-user"></i> <?php echo htmlspecialchars($_SESSION['prenom']); ?> <i class="fa-solid fa-angle-down"></i></div>
-                <div class="dropdown-menu">
-                    <a href="deconnexion.php" class="btn-red">Se déconnecter</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+    
+    <?php require("../ressources/navBar.php");?>
+
     <div class="container content">
     <div class="container-blanc">
         <h1 class="text-center">Gestion des Utilisateurs</h1>

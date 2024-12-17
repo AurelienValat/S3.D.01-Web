@@ -17,7 +17,13 @@ $estAdmin = isset($_SESSION['est_admin']) && $_SESSION['est_admin'] == 1;
 if (isset($_POST['supprimerExposition']) && $_POST['supprimerExposition'] != trim('')) {
     $userIdToDelete = intval($_POST['supprimerExposition']); // Sécuriser la donnée
     
-    supprimerLigne($pdo, $userIdToDelete, "Exposition");
+    try {
+        supprimerLigne($pdo, $userIdToDelete, "Exposition");
+    } catch (PDOException) {
+        $_SESSION['donneeEnErreur'] = 'exposition';
+        $_SESSION['cheminDernierePage'] = '/S3.D.01-Web/pages/expositions.php';
+        header("Location: ./erreurs/impossibleDeTraiterVotreDemande.php");
+    }
 }
 
 ?>
@@ -37,43 +43,7 @@ if (isset($_POST['supprimerExposition']) && $_POST['supprimerExposition'] != tri
 
 </head>
 <body class="fond">
-    <nav class="navbar">
-        <div class="logo">
-            <a href="accueil.php"><img class="logo-img"
-                src="../ressources/images/logo.png" alt="Logo MuseoFlow"></a>
-            Intranet du Musée
-        </div>
-        <div class="main-menu">
-               <?php
-                if ($estAdmin){
-                    echo '<a href="utilisateurs.php" class="deco"><div class="menu-item">Utilisateurs</div></a>';
-                }
-                ?>
-                <a href="expositions.php" class="deco">
-                    <div class="menu-item">Expositions</div>
-                </a> 
-                <a href="conferenciers.php" class="deco">
-                    <div class="menu-item">Conférenciers</div>
-                </a> 
-                <a href="visites.php" class="deco">
-                    <div class="menu-item">Visites</div>
-                </a> 
-                <a href="exportation.php" class="deco">
-                    <div class="menu-item">Exportation</div>
-                </a>
-            <!-- Menu déroulant -->
-            <div class="dropdown">
-                <div class="menu-item">
-                    <i class="fa-solid fa-user"></i> <?php echo htmlspecialchars($_SESSION['prenom']); ?> <i
-                        class="fa-solid fa-angle-down"></i>
-                </div>
-                <div class="dropdown-menu">
-                    <a href="deconnexion.php" class="btn-red">Se
-                        déconnecter</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <?php require("../ressources/navBar.php");?>
 
     <div class="container content">
 

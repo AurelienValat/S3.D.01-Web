@@ -16,30 +16,8 @@
     <title>MUSEOFLOW - Exportation des fichiers</title>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">
-            <a href="accueil.php"><img class="logo-img" src="../ressources/images/logo.png" alt="Logo MuseoFlow"></a>
-            Intranet du Musée
-        </div>
-        <div class="main-menu">
-            <?php
-                if ($estAdmin){
-                    echo '<a href="utilisateurs.php" class="deco"><div class="menu-item">Utilisateurs</div></a>';
-                }
-            ?>
-            <a href="expositions.php" class="deco"><div class="menu-item">Expositions</div></a>
-            <a href="conferenciers.php" class="deco"><div class="menu-item">Conférenciers</div></a>
-            <a href="visites.php" class="deco"><div class="menu-item">Visites</div> </a>
-            <a href="exportation.php" class="deco"><div class="menu-item">Exportation</div></a>
-            <!-- Menu déroulant -->
-            <div class="dropdown">
-                    <div class="menu-item"><i class="fa-solid fa-user"></i> <?php echo htmlspecialchars($_SESSION['prenom']); ?> <i class="fa-solid fa-angle-down"></i></i></div>
-                    <div class="dropdown-menu">
-                        <a href="deconnexion.php" class="btn-red">Se déconnecter</a>
-                    </div>
-                </div>
-         </div>
-    </nav>
+    
+    <?php require("../ressources/navBar.php");?>
 
         <div class="container content">
             <div class="container-blanc justify-content-center">
