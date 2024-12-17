@@ -26,52 +26,58 @@ if (isset($_POST['supprimerEmploye']) && $_POST['supprimerEmploye'] != trim(''))
 
 
 // Initialisation des erreurs
-$errors = [];
-$isUserCreated = false;
-$showModal = false;
+$erreurs = [];
 
-try {
-    // Initialisation des variables de formulaire
-    $username = isset($_POST['username']) ? trim($_POST['username']) : ""; 
-    $password = isset($_POST['password']) ? trim($_POST['password']) : "";
-    $confirmPassword = isset($_POST['confirmPassword']) ? trim($_POST['confirmPassword']) : "";
-    $prenom = isset($_POST['prenom']) ? trim($_POST['prenom']) : "";
-    $nom = isset($_POST['nom']) ? trim($_POST['nom']) : "";
-    $telephone = isset($_POST['telephone']) ? trim($_POST['telephone']) : "";
-    
-    // Validation des champs
-    if (empty($username) || strlen($username) < 5 || strlen($username) > 20) {
-        $errors['username'] = 'Nom d\'utilisateur invalide (5-20 caractères).';
-    }
-    if (empty($password) || strlen($password) > 35) {
-        $errors['password'] = 'Mot de passe trop long (max 35 caractères).';
-    }
-    if ($password !== $confirmPassword) {
-        $errors['confirmPassword'] = 'Les mots de passe ne correspondent pas.';
-    }
-    if (empty($prenom) || strlen($prenom) > 35) {
-        $errors['prenom'] = 'Le prénom est requis et ne doit pas dépasser 35 caractères.';
-    }
-    if (empty($nom) || strlen($nom) > 35) {
-        $errors['nom'] = 'Le nom est requis et ne doit pas dépasser 35 caractères.';
-    }
-    if (empty($telephone) || !preg_match("/^[0-9]{4}$/", $telephone)) {
-        $errors['telephone'] = 'Numéro de téléphone invalide. Il doit contenir 4 chiffre.';
-    }
+$utilisateurCree = false;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye'])) {
+    try {
+        // Initialisation des variables de formulaire
+        $pseudo = isset($_POST['pseudo']) ? trim($_POST['pseudo']) : ""; 
+        $motDePasse = isset($_POST['motDePasse']) ? trim($_POST['motDePasse']) : "";
+        $confirmeMotDePasse = isset($_POST['confirmeMotDePasse']) ? trim($_POST['confirmeMotDePasse']) : "";
+        $prenom = isset($_POST['prenom']) ? trim($_POST['prenom']) : "";
+        $nom = isset($_POST['nom']) ? trim($_POST['nom']) : "";
+        $telephone = isset($_POST['telephone']) ? trim($_POST['telephone']) : "";
+        
+        // Validation des champs
+        if (($pseudo == "") || strlen($pseudo) < 5 || strlen($pseudo) > 20) {
+            $erreurs['pseudo'] = 'Nom d\'utilisateur invalide (5-20 caractères).';
+        }
+        if (($motDePasse == "") || strlen($motDePasse) > 35) {
+            $erreurs['motDePasse'] = 'Mot de passe trop long (max 35 caractères).';
+        }
+        if (($motDePasse == "") || strlen($motDePasse) < 5) {
+            $erreurs['motDePasse'] = 'Mot de passe trop court (min 5 caractères).';
+        }
+        if ($motDePasse !== $confirmeMotDePasse) {
+            $erreurs['confirmeMotDePasse'] = 'Les mots de passe ne correspondent pas.';
+        }
+        if (($prenom == "") || strlen($prenom) > 35) {
+            $erreurs['prenom'] = 'Le prénom est requis et ne doit pas dépasser 35 caractères.';
+        }
+        if (($nom == "") || strlen($nom) > 35) {
+            $erreurs['nom'] = 'Le nom est requis et ne doit pas dépasser 35 caractères.';
+        }
+        if (!preg_match("/^[0-9]{4}$/", $telephone) && $telephone != "") {
+            $erreurs['telephone'] = 'Numéro de téléphone invalide. Il doit contenir 4 chiffre.';
+        }
 
-    // Si aucun champ n'a d'erreur, procéder à l'insertion
-    if (empty($errors)) {
-
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-
-        $stmt = $pdo->prepare("INSERT INTO employe (nom_utilisateur, nom, prenom, no_tel, mot_de_passe, est_admin) 
-        VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$username, $nom, $prenom, $telephone, $passwordHash, 0]);
-
-        $isUserCreated = true; // Indique qu'un utilisateur a été créé
+        // Si aucun champ n'a d'erreur, procéder à l'insertion
+        if (empty($erreurs)) {
+            if (verifierExistance($pdo, $pseudo, $nom, $prenom)) {
+                $erreurs['existance'] = 'Un utilisateur avec ce nom d\'utilisateur ou ce nom et prénom existe déjà.';
+            } else {
+                creerEmploye($pdo, $pseudo, $nom, $prenom, $telephone, $motDePasse);
+                $utilisateurCree = true; // Indique qu'un utilisateur a été créé
+            }
+        }
+        
+    } catch (Exception $e) {
+        echo "<p style='color:red;'>".$e->getMessage()."</p>";
     }
-} catch (Exception $e) {
-    echo "<p style='color:red;'>".$e->getMessage()."</p>";
+}  else {
+    // Initialiser les variables de formulaire à des valeurs vides si pas de soumission
+    $pseudo = $motDePasse = $confirmeMotDePasse = $prenom = $nom = $telephone = "";
 }
 ?>
 <!DOCTYPE html>
@@ -132,8 +138,7 @@ try {
                         // Récupération de la liste des employés/utilisateurs depuis la BD
                         $utilisateurs = getUtilisateurs($pdo);
                         $totalUtilisateurs = 0;
-                        $dernierUtilisateur = "";
-                        
+                        $dernierUtilisateur = "";                       
                         while($ligne = $utilisateurs->fetch()) {
                                 echo "<tr>";
                                     echo "<td>".$ligne['identifiant']."</td>";
@@ -173,7 +178,12 @@ try {
         </div>
     </div>
     <!-- Modale Ajouter Utilisateur -->
-    <div class="modal" id="modalAjouterUtilisateur" tabindex="-1" aria-labelledby="modalAjouterUtilisateurLabel" aria-hidden="true">
+    <div class="modal fade <?php echo !empty($erreurs) ? 'show' : ''; ?>" 
+        id="modalAjouterUtilisateur" 
+        tabindex="-1" 
+        aria-labelledby="modalAjouterUtilisateurLabel" 
+        aria-hidden="<?php echo !empty($erreurs) ? 'false' : 'true'; ?>" 
+        style="<?php echo !empty($erreurs) ? 'display: block;' : 'display: none;'; ?>"> <!-- TODO enlever le block -->
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -183,47 +193,50 @@ try {
                 <div class="modal-body">
                     <form id="formAjouterUtilisateur" method="POST" action="utilisateurs.php">
                         <div class="mb-3">
-                            <label for="username" class="form-label">Nom d'utilisateur</label>
-                            <input type="text" class="form-control <?php echo isset($errors['username']) ? 'is-invalid' : ''; ?>" id="username" name="username" value="<?php echo htmlspecialchars($username); ?>">
-                            <?php if (isset($errors['username'])): ?>
-                                <div class="invalid-feedback"><?php echo $errors['username']; ?></div>
+                            <label for="pseudo" class="form-label">Nom d'utilisateur</label>
+                            <input type="text" class="form-control <?php echo isset($erreurs['pseudo']) ? 'is-invalid' : ''; ?>" id="pseudo" name="pseudo" value="<?php echo htmlspecialchars($pseudo); ?>">
+                            <?php if (isset($erreurs['pseudo'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs['pseudo']; ?></div>
                             <?php endif; ?>
                         </div>
                         <div class="mb-3">
-                            <label for="password" class="form-label">Mot de passe</label>
-                            <input type="password" class="form-control <?php echo isset($errors['password']) ? 'is-invalid' : ''; ?>" id="password" name="password">
-                            <?php if (isset($errors['password'])): ?>
-                                <div class="invalid-feedback"><?php echo $errors['password']; ?></div>
+                            <label for="motDePasse" class="form-label">Mot de passe</label>
+                            <input type="password" class="form-control <?php echo isset($erreurs['motDePasse']) ? 'is-invalid' : ''; ?>" id="motDePasse" name="motDePasse">
+                            <?php if (isset($erreurs['motDePasse'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs['motDePasse']; ?></div>
                             <?php endif; ?>
                         </div>
                         <div class="mb-3">
-                            <label for="confirmPassword" class="form-label">Confirmation du Mot de passe</label>
-                            <input type="password" class="form-control <?php echo isset($errors['confirmPassword']) ? 'is-invalid' : ''; ?>" id="confirmPassword" name="confirmPassword">
-                            <?php if (isset($errors['confirmPassword'])): ?>
-                                <div class="invalid-feedback"><?php echo $errors['confirmPassword']; ?></div>
+                            <label for="confirmeMotDePasse" class="form-label">Confirmation du Mot de passe</label>
+                            <input type="password" class="form-control <?php echo isset($erreurs['confirmeMotDePasse']) ? 'is-invalid' : ''; ?>" id="confirmeMotDePasse" name="confirmeMotDePasse">
+                            <?php if (isset($erreurs['confirmeMotDePasse'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs['confirmeMotDePasse']; ?></div>
                             <?php endif; ?>
                         </div>
                         <div class="mb-3">
                             <label for="prenom" class="form-label">Prénom</label>
-                            <input type="text" class="form-control <?php echo isset($errors['prenom']) ? 'is-invalid' : ''; ?>" id="prenom" name="prenom" value="<?php echo htmlspecialchars($prenom); ?>">
-                            <?php if (isset($errors['prenom'])): ?>
-                                <div class="invalid-feedback"><?php echo $errors['prenom']; ?></div>
+                            <input type="text" class="form-control <?php echo isset($erreurs['prenom']) ? 'is-invalid' : ''; ?>" id="prenom" name="prenom" value="<?php echo htmlspecialchars($prenom); ?>">
+                            <?php if (isset($erreurs['prenom'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs['prenom']; ?></div>
                             <?php endif; ?>
                         </div>
                         <div class="mb-3">
                             <label for="nom" class="form-label">Nom</label>
-                            <input type="text" class="form-control <?php echo isset($errors['nom']) ? 'is-invalid' : ''; ?>" id="nom" name="nom" value="<?php echo htmlspecialchars($nom); ?>">
-                            <?php if (isset($errors['nom'])): ?>
-                                <div class="invalid-feedback"><?php echo $errors['nom']; ?></div>
+                            <input type="text" class="form-control <?php echo isset($erreurs['nom']) ? 'is-invalid' : ''; ?>" id="nom" name="nom" value="<?php echo htmlspecialchars($nom); ?>">
+                            <?php if (isset($erreurs['nom'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs['nom']; ?></div>
                             <?php endif; ?>
                         </div>
                         <div class="mb-3">
                             <label for="telephone" class="form-label">Numéro de téléphone</label>
-                            <input type="tel" class="form-control <?php echo isset($errors['telephone']) ? 'is-invalid' : ''; ?>" id="telephone" name="telephone" value="<?php echo htmlspecialchars($telephone); ?>">
-                            <?php if (isset($errors['telephone'])): ?>
-                                <div class="invalid-feedback"><?php echo $errors['telephone']; ?></div>
+                            <input type="tel" class="form-control <?php echo isset($erreurs['telephone']) ? 'is-invalid' : ''; ?>" id="telephone" name="telephone" value="<?php echo htmlspecialchars($telephone); ?>">
+                            <?php if (isset($erreurs['telephone'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs['telephone']; ?></div>
                             <?php endif; ?>
                         </div>
+                        <?php if (isset($erreurs['existance'])): ?>
+                            <div class="alert alert-danger"><?php echo $erreurs['existance']; ?></div>
+                        <?php endif; ?>
                         <button type="submit" class="btn btn-primary">Créer</button>
                     </form>
                 </div>
@@ -231,12 +244,12 @@ try {
         </div>
     </div>
     <!-- Modale de Confirmation -->
-    <div class="modal <?php echo $isUserCreated ? 'show' : ''; ?>" 
+    <div class="modal <?php echo $utilisateurCree ? 'show' : ''; ?>" 
         id="modalConfirmation" 
         tabindex="-1" 
         aria-labelledby="modalConfirmationLabel" 
-        aria-hidden="<?php echo $isUserCreated ? 'false' : 'true'; ?>" 
-        style="<?php echo $isUserCreated ? 'display: block;' : 'display: none;'; ?>">
+        aria-hidden="<?php echo $utilisateurCree ? 'false' : 'true'; ?>" 
+        style="<?php echo $utilisateurCree ? 'display: block;' : 'display: none;'; ?>">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">

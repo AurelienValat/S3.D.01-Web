@@ -61,13 +61,14 @@
 body:not(.no-bg){
   background-image: url("../ressources/images/Background.png");
   background-size: cover; /* Ajuste l'image pour couvrir tout l'écran */
-  background-repeat: no-repeat; /* Évite la répétition de l'image */
+  background-repeat: repeat; /* Évite la répétition de l'image */
   background-position: center; /* Centre l'image */
   height: 100vh; /* Définit la hauteur de l'image à la taille de l'écran */
   width: 100vw; /* Définit la largeur de l'image à la taille de l'écran */
   margin: 0; /* Supprime les marges */
   overflow: hidden; /* Empêche le débordement */
   overflow-y: auto; /* Permet le défilement vertical */
+  
 }
 
 /* Conteneur du formulaire de connexion */

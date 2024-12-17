@@ -55,3 +55,23 @@ function supprimerLigne($pdo, $id, $table) {
         throw new PDOException($e->getMessage(), (int)$e->getCode());
     }
 }
+// Vérifie qu'il n'y a pas d'identifiant, et d'homonyme lors de la création d'un employé 
+function verifierExistance($pdo, $pseudo, $nom, $prenom) {
+    $stmt = $pdo->prepare("SELECT COUNT(*) 
+    FROM employe 
+    WHERE nom_utilisateur = ? 
+    OR (nom = ? AND prenom = ?)");
+    $stmt->execute([$pseudo, $nom, $prenom]);
+    return $stmt->fetchColumn() > 0;
+}
+
+// Crée un employé 
+function creerEmploye($pdo, $pseudo, $nom, $prenom, $telephone, $motDePasse) {
+    $motDePasseHash = hash('sha256', $motDePasse);
+
+    $stmt = $pdo->prepare("INSERT INTO employe (nom_utilisateur, nom, prenom, no_tel, mot_de_passe, est_admin) 
+    VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$pseudo, $nom, $prenom, $telephone, $motDePasseHash, 0]);
+
+
+}
