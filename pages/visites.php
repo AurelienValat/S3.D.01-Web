@@ -23,7 +23,53 @@
             header("Location: erreurs/erreurBD.php");
         }
     }
-    
+
+    // Initialisation des erreurs
+    $erreurs = [];
+
+    $visiteCree = false;
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerVisite'])) {
+        try {
+            $id_exposition = isset($_POST['id_exposition']) ? (int) $_POST['id_exposition'] : 0;
+            $id_conferencier = isset($_POST['id_conferencier']) ? (int) $_POST['id_conferencier'] : 0;
+            $id_employe = isset($_POST['id_employe']) ? (int) $_POST['id_employe'] : 0;
+            $date_visite = isset($_POST['date_visite']) ? trim($_POST['date_visite']) : "";
+            $horaire_debut = isset($_POST['horaire_debut']) ? trim($_POST['horaire_debut']) : "";
+            $intitule_client = isset($_POST['intitule_client']) ? trim($_POST['intitule_client']) : "";
+            $no_tel_client = isset($_POST['no_tel_client']) ? trim($_POST['no_tel_client']) : "";
+            
+            if ($id_exposition <= 0) $erreurs['id_exposition'] = "Veuillez sélectionner une exposition.";
+            if ($id_conferencier <= 0) $erreurs['id_conferencier'] = "Veuillez sélectionner un conférencier.";
+            if ($id_employe <= 0) $erreurs['id_employe'] = "Veuillez sélectionner un employé.";
+            if (empty($date_visite) || !preg_match("/^\d{4}-\d{2}-\d{2}$/", $date_visite)) $erreurs['date_visite'] = "Date invalide.";
+            if (empty($horaire_debut) || !preg_match("/^(?:[01]\d|2[0-3]):[0-5]\d$/", $horaire_debut)) $erreurs['horaire_debut'] = "Heure invalide.";
+
+            if (empty($intitule_client) || strlen($intitule_client) > 50) {
+                $erreurs['intitule_client'] = "L’intitulé client est requis et ne doit pas dépasser 50 caractères.";
+            }
+            if (!preg_match("/^[0-9]{4}$/", $no_tel_client) && $no_tel_client != "") {
+                $erreurs['no_tel_client'] = 'Numéro de téléphone invalide. Il doit contenir 4 chiffre.';
+            }
+            if (empty($erreurs)) {
+                if (!verifierDisponibiliteConferencier($pdo, $id_conferencier, $date_visite, $horaire_debut)) {
+                    $erreurs['horaire_debut'] = "Le conférencier n’est pas disponible à cet horaire.";
+                }
+                if (!verifierEspacementVisites($pdo, $id_exposition, $date_visite, $horaire_debut)) {
+                    $erreurs['horaire_debut'] = "Les visites doivent être espacées de 10 minutes.";
+                }
+                if (empty($erreurs)) {
+                    creerVisite($pdo, $id_exposition, $id_conferencier, $id_employe, $horaire_debut, $date_visite, $intitule_client, $no_tel_client);
+                    $visiteCree = true;
+                }
+            }
+        } catch (Exception $e) {
+            echo "<p style='color:red;'>" . htmlspecialchars($e->getMessage()) . "</p>";
+        }
+    }
+
+    $expositions = getExpositions($pdo);
+    $conferenciers = getConferenciers($pdo);
+    $employes = getUtilisateurs($pdo);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -31,6 +77,7 @@
     <meta charset="utf-8">  
     <link href="../css/style.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>   
     <title>MUSEOFLOW - Gestion des Visites</title>
 </head>
@@ -41,15 +88,13 @@
     <div class="container content col-12">
         <div class="container-blanc">
             <h1 class="text-center">Gestion des Visites</h1>
-            <!-- Utilisation de Flexbox pour mettre sur la même ligne les boutons -->
-            <div class="d-flexd-flex gap-2 mt-3">
+            <div class="d-flex justify-content-between align-items-center">
                 <!-- Menu Ajouter/Réserver -->
-                    <button class="btn btn-primary btn-sm" style="cursor: pointer;">Ajouter/Réserver une visite</button>
-                    
+                <button class="btn-action btn-modify btn-blue" data-bs-toggle="modal" data-bs-target="#modalAjouterVisite" id="modalAjouterVisiteLabel">Ajouter/Réserver Visite</button>                 
                 <!-- Menu Filtres -->
-                    <button class="btn btn-secondary btn-sm" style="cursor: pointer;">Filtres</button>
+                <button class="btn btn-light d-flex align-items-center gap-2">
+                <i class="fa-solid fa-filter"></i>Filtres
             </div>
-
             <div class="table">
                 <table class="table table-striped table-bordered">
                     <thead class="table-dark">
@@ -98,23 +143,144 @@
             </div>
         </div>
     </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const reserverDetails = document.querySelector("#reserverDetails");
-        const filtreDetails = document.querySelector("#filtreDetails");
-
-        reserverDetails.addEventListener("toggle", function () {
-            if (reserverDetails.open) {
-                // Cache le bouton "Filtres" si "Ajouter/Réserver" est ouvert
-                filtreDetails.classList.add("hidden");
-            } else {
-                // Affiche le bouton "Filtres" sinon
-                filtreDetails.classList.remove("hidden");
-            }
-        });
-    });
-</script>
-
+    <!-- Modale Ajouter Visite -->
+    <div class="modal fade <?php echo !empty($erreurs) ? 'show' : ''; ?>" 
+        id="modalAjouterVisite" 
+        style="<?php echo !empty($erreurs) ? 'display: block;' : 'display: none;'; ?>">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAjouterVisiteLabel">Ajouter une Visite</h5>
+                    <a href="visites.php" class="btn-close" aria-label="Close"></a>
+                </div>
+                <div class="modal-body">
+                    <form id="formAjouterVisite" method="POST" action="visites.php">
+                        <div class="mb-3">
+                            <label for="id_exposition" class="form-label">Exposition</label>
+                            <select id="id_exposition" 
+                                    name="id_exposition" 
+                                    class="form-control <?php echo isset($erreurs['id_exposition']) ? 'is-invalid' : ''; ?>">
+                                <option value="">-- Sélectionnez une exposition --</option>
+                                <?php foreach ($expositions as $expo): ?>
+                                    <option value="<?= htmlspecialchars($expo['id_exposition']); ?>" 
+                                        <?php echo (isset($id_exposition) && $id_exposition == $expo['id_exposition']) ? 'selected' : ''; ?>>
+                                        <?= htmlspecialchars($expo['intitule']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <?php if (isset($erreurs['id_exposition'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs['id_exposition']; ?></div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_conferencier" class="form-label">Conférencier</label>
+                            <select id="id_conferencier" 
+                                    name="id_conferencier" 
+                                    class="form-control <?php echo isset($erreurs['id_conferencier']) ? 'is-invalid' : ''; ?>">
+                                <option value="">-- Sélectionnez un conférencier --</option>
+                                <?php foreach ($conferenciers as $conf): ?>
+                                    <option value="<?= htmlspecialchars($conf['id_conferencier']); ?>" 
+                                        <?php echo (isset($id_conferencier) && $id_conferencier == $conf['id_conferencier']) ? 'selected' : ''; ?>>
+                                        <?= htmlspecialchars($conf['nom'] . " " . $conf['prenom']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <?php if (isset($erreurs['id_conferencier'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs['id_conferencier']; ?></div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_employe" class="form-label">Employé</label>
+                            <select id="id_employe" 
+                                    name="id_employe" 
+                                    class="form-control <?php echo isset($erreurs['id_employe']) ? 'is-invalid' : ''; ?>">
+                                <option value="">-- Sélectionnez un employé --</option>
+                                <?php foreach ($employes as $emp): ?>
+                                    <option value="<?= htmlspecialchars($emp['id_employe']); ?>" 
+                                        <?php echo (isset($id_employe) && $id_employe == $emp['id_employe']) ? 'selected' : ''; ?>>
+                                        <?= htmlspecialchars($emp['nom'] . " " . $emp['prenom']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <?php if (isset($erreurs['id_employe'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs['id_employe']; ?></div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date_visite" class="form-label">Date</label>
+                            <input type="date" 
+                                id="date_visite" 
+                                name="date_visite" 
+                                class="form-control <?php echo isset($erreurs['date_visite']) ? 'is-invalid' : ''; ?>" 
+                                value="<?php echo htmlspecialchars($date_visite ?? ''); ?>">
+                            <?php if (isset($erreurs['date_visite'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs['date_visite']; ?></div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="mb-3">
+                            <label for="horaire_debut" class="form-label">Heure</label>
+                            <input type="time" 
+                                id="horaire_debut" 
+                                name="horaire_debut" 
+                                class="form-control <?php echo isset($erreurs['horaire_debut']) ? 'is-invalid' : ''; ?>" 
+                                value="<?php echo htmlspecialchars($horaire_debut ?? ''); ?>">
+                            <?php if (isset($erreurs['horaire_debut'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs['horaire_debut']; ?></div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="mb-3">
+                            <label for="intitule_client" class="form-label">Client</label>
+                            <input type="text" 
+                                id="intitule_client" 
+                                name="intitule_client" 
+                                class="form-control <?php echo isset($erreurs['intitule_client']) ? 'is-invalid' : ''; ?>" 
+                                value="<?php echo htmlspecialchars($intitule_client ?? ''); ?>">
+                            <?php if (isset($erreurs['intitule_client'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs['intitule_client']; ?></div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="mb-3">
+                            <label for="no_tel_client" class="form-label">Téléphone</label>
+                            <input type="text" 
+                                id="no_tel_client" 
+                                name="no_tel_client" 
+                                class="form-control <?php echo isset($erreurs['no_tel_client']) ? 'is-invalid' : ''; ?>" 
+                                value="<?php echo htmlspecialchars($no_tel_client ?? ''); ?>">
+                            <?php if (isset($erreurs['no_tel_client'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs['no_tel_client']; ?></div>
+                            <?php endif; ?>
+                        </div>
+                        <?php if (isset($erreurs['existance'])): ?>
+                            <div class="alert alert-danger"><?php echo $erreurs['existance']; ?></div>
+                        <?php endif; ?>
+                        <button type="submit" class="btn btn-primary">Créer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+        <!-- Modale de Confirmation -->
+        <div class="modal <?php echo $visiteCree ? 'show' : ''; ?>" 
+            id="modalConfirmation" 
+            tabindex="-1" 
+            aria-labelledby="modalConfirmationLabel" 
+            aria-hidden="<?php echo $visiteCree ? 'false' : 'true'; ?>" 
+            style="<?php echo $visiteCree ? 'display: block;' : 'display: none;'; ?>">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalConfirmationLabel">Succès</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Visite créé avec succès.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="visites.php" class="btn btn-secondary">Fermer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

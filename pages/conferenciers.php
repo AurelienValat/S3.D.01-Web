@@ -151,123 +151,122 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerConferencie
             </div>
         </div>
     </div>
-    <!-- Modale Ajouter Conferencier -->
+   <!-- Modale Ajouter Conferencier -->
     <div class="modal fade <?php echo !empty($erreurs) ? 'show' : ''; ?>" 
-        id="modalAjouterConferencier" 
-        style="<?php echo !empty($erreurs) ? 'display: block;' : 'display: none;'; ?>">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalAjouterConferencierLabel">Ajouter un Conférencier</h5>
-                    <a href="conferenciers.php" class="btn-close" aria-label="Close"></a>
+            id="modalAjouterConferencier" 
+            style="<?php echo !empty($erreurs) ? 'display: block;' : 'display: none;'; ?>">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalAjouterConferencierLabel">Ajouter un Conférencier</h5>
+                        <a href="conferenciers.php" class="btn-close" aria-label="Close"></a>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formAjouterConferencier" method="POST" action="conferenciers.php">
+                            <div class="mb-3">
+                                <label for="nom" class="form-label">Nom</label>
+                                <input type="text" 
+                                    class="form-control <?php echo isset($erreurs['nom']) ? 'is-invalid' : ''; ?>" 
+                                    id="nom" 
+                                    name="nom" 
+                                    value="<?php echo htmlspecialchars($nom); ?>" 
+                                    placeholder="Entrez le nom">
+                                <?php if (isset($erreurs['nom'])): ?>
+                                    <div class="invalid-feedback"><?php echo $erreurs['nom']; ?></div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="mb-3">
+                                <label for="prenom" class="form-label">Prénom</label>
+                                <input type="text" 
+                                    class="form-control <?php echo isset($erreurs['prenom']) ? 'is-invalid' : ''; ?>" 
+                                    id="prenom" 
+                                    name="prenom" 
+                                    value="<?php echo htmlspecialchars($prenom); ?>" 
+                                    placeholder="Entrez le prénom">
+                                <?php if (isset($erreurs['prenom'])): ?>
+                                    <div class="invalid-feedback"><?php echo $erreurs['prenom']; ?></div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="mb-3">
+                                <label for="type" class="form-label">Type</label>
+                                <select class="form-control <?php echo isset($erreurs['type']) ? 'is-invalid' : ''; ?>" 
+                                        id="type" 
+                                        name="type">
+                                    <option value="" <?php echo $type === "" ? "selected" : ""; ?>>-- Sélectionnez un type --</option>
+                                    <option value="1" <?php echo $type === "1" ? "selected" : ""; ?>>Interne</option>
+                                    <option value="0" <?php echo $type === "0" ? "selected" : ""; ?>>Externe</option>
+                                </select>
+                                <?php if (isset($erreurs['type'])): ?>
+                                    <div class="invalid-feedback"><?php echo $erreurs['type']; ?></div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="mb-3">
+                                <label for="specialite" class="form-label">Spécialité</label>
+                                <input type="text" 
+                                    class="form-control <?php echo isset($erreurs['specialite']) ? 'is-invalid' : ''; ?>" 
+                                    id="specialite" 
+                                    name="specialite" 
+                                    value="<?php echo htmlspecialchars($specialite); ?>" 
+                                    placeholder="Entrez la spécialité (ex : Informatique, Gestion)">
+                                <?php if (isset($erreurs['specialite'])): ?>
+                                    <div class="invalid-feedback"><?php echo $erreurs['specialite']; ?></div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="mb-3">
+                                <label for="motSpecialite" class="form-label">Mots-clés spécialités</label>
+                                <input type="text" 
+                                    class="form-control <?php echo isset($erreurs['motSpecialite']) ? 'is-invalid' : ''; ?>" 
+                                    id="motSpecialite" 
+                                    name="motSpecialite" 
+                                    value="<?php echo htmlspecialchars($motSpecialite); ?>" 
+                                    placeholder="Entrez jusqu'à 6 mots-clés séparés par des espaces">
+                                <?php if (isset($erreurs['motSpecialite'])): ?>
+                                    <div class="invalid-feedback"><?php echo $erreurs['motSpecialite']; ?></div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="mb-3">
+                                <label for="telephone" class="form-label">Numéro de téléphone</label>
+                                <input type="tel" 
+                                    class="form-control <?php echo isset($erreurs['telephone']) ? 'is-invalid' : ''; ?>" 
+                                    id="telephone" 
+                                    name="telephone" 
+                                    value="<?php echo htmlspecialchars($telephone); ?>" 
+                                    placeholder="Exemple : 1234">
+                                <?php if (isset($erreurs['telephone'])): ?>
+                                    <div class="invalid-feedback"><?php echo $erreurs['telephone']; ?></div>
+                                <?php endif; ?>
+                            </div>
+                            <?php if (isset($erreurs['existance'])): ?>
+                                <div class="alert alert-danger"><?php echo $erreurs['existance']; ?></div>
+                            <?php endif; ?>
+                            <button type="submit" class="btn btn-primary">Créer</button>
+                        </form>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <form id="formAjouterConferencier" method="POST" action="conferenciers.php">
-                        <div class="mb-3">
-                            <label for="nom" class="form-label">Nom</label>
-                            <input type="text" 
-                                class="form-control <?php echo isset($erreurs['nom']) ? 'is-invalid' : ''; ?>" 
-                                id="nom" 
-                                name="nom" 
-                                value="<?php echo htmlspecialchars($nom); ?>" 
-                                placeholder="Entrez le nom">
-                            <?php if (isset($erreurs['nom'])): ?>
-                                <div class="invalid-feedback"><?php echo $erreurs['nom']; ?></div>
-                            <?php endif; ?>
-                        </div>
-                        <div class="mb-3">
-                            <label for="prenom" class="form-label">Prénom</label>
-                            <input type="text" 
-                                class="form-control <?php echo isset($erreurs['prenom']) ? 'is-invalid' : ''; ?>" 
-                                id="prenom" 
-                                name="prenom" 
-                                value="<?php echo htmlspecialchars($prenom); ?>" 
-                                placeholder="Entrez le prénom">
-                            <?php if (isset($erreurs['prenom'])): ?>
-                                <div class="invalid-feedback"><?php echo $erreurs['prenom']; ?></div>
-                            <?php endif; ?>
-                        </div>
-                        <div class="mb-3">
-                            <label for="type" class="form-label">Type</label>
-                            <select class="form-control <?php echo isset($erreurs['type']) ? 'is-invalid' : ''; ?>" 
-                                    id="type" 
-                                    name="type">
-                                <option value="" <?php echo $type === "" ? "selected" : ""; ?>>-- Sélectionnez un type --</option>
-                                <option value="1" <?php echo $type === "1" ? "selected" : ""; ?>>Interne</option>
-                                <option value="0" <?php echo $type === "0" ? "selected" : ""; ?>>Externe</option>
-                            </select>
-                            <?php if (isset($erreurs['type'])): ?>
-                                <div class="invalid-feedback"><?php echo $erreurs['type']; ?></div>
-                            <?php endif; ?>
-                        </div>
-                        <div class="mb-3">
-                            <label for="specialite" class="form-label">Spécialité</label>
-                            <input type="text" 
-                                class="form-control <?php echo isset($erreurs['specialite']) ? 'is-invalid' : ''; ?>" 
-                                id="specialite" 
-                                name="specialite" 
-                                value="<?php echo htmlspecialchars($specialite); ?>" 
-                                placeholder="Entrez la spécialité (ex : Informatique, Gestion)">
-                            <?php if (isset($erreurs['specialite'])): ?>
-                                <div class="invalid-feedback"><?php echo $erreurs['specialite']; ?></div>
-                            <?php endif; ?>
-                        </div>
-                        <div class="mb-3">
-                            <label for="motSpecialite" class="form-label">Mots-clés spécialités</label>
-                            <input type="text" 
-                                class="form-control <?php echo isset($erreurs['motSpecialite']) ? 'is-invalid' : ''; ?>" 
-                                id="motSpecialite" 
-                                name="motSpecialite" 
-                                value="<?php echo htmlspecialchars($motSpecialite); ?>" 
-                                placeholder="Entrez jusqu'à 6 mots-clés séparés par des espaces">
-                            <?php if (isset($erreurs['motSpecialite'])): ?>
-                                <div class="invalid-feedback"><?php echo $erreurs['motSpecialite']; ?></div>
-                            <?php endif; ?>
-                        </div>
-                        <div class="mb-3">
-                            <label for="telephone" class="form-label">Numéro de téléphone</label>
-                            <input type="tel" 
-                                class="form-control <?php echo isset($erreurs['telephone']) ? 'is-invalid' : ''; ?>" 
-                                id="telephone" 
-                                name="telephone" 
-                                value="<?php echo htmlspecialchars($telephone); ?>" 
-                                placeholder="Exemple : 1234">
-                            <?php if (isset($erreurs['telephone'])): ?>
-                                <div class="invalid-feedback"><?php echo $erreurs['telephone']; ?></div>
-                            <?php endif; ?>
-                        </div>
-                        <?php if (isset($erreurs['existance'])): ?>
-                            <div class="alert alert-danger"><?php echo $erreurs['existance']; ?></div>
-                        <?php endif; ?>
-                        <button type="submit" class="btn btn-primary">Créer</button>
-                    </form>
+            </div>
+        </div>
+        <!-- Modale de Confirmation -->
+        <div class="modal <?php echo $utilisateurCree ? 'show' : ''; ?>" 
+            id="modalConfirmation" 
+            tabindex="-1" 
+            aria-labelledby="modalConfirmationLabel" 
+            aria-hidden="<?php echo $utilisateurCree ? 'false' : 'true'; ?>" 
+            style="<?php echo $utilisateurCree ? 'display: block;' : 'display: none;'; ?>">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalConfirmationLabel">Succès</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Conférencier créé avec succès.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="conferenciers.php" class="btn btn-secondary">Fermer</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Modale de Confirmation -->
-    <div class="modal <?php echo $utilisateurCree ? 'show' : ''; ?>" 
-        id="modalConfirmation" 
-        tabindex="-1" 
-        aria-labelledby="modalConfirmationLabel" 
-        aria-hidden="<?php echo $utilisateurCree ? 'false' : 'true'; ?>" 
-        style="<?php echo $utilisateurCree ? 'display: block;' : 'display: none;'; ?>">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalConfirmationLabel">Succès</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Conférencier créé avec succès.</p>
-                </div>
-                <div class="modal-footer">
-                    <a href="conferenciers.php" class="btn btn-secondary">Fermer</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 </body>
 </html>
