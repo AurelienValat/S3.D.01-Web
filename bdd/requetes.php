@@ -70,7 +70,7 @@ function supprimerEmploye($pdo, $id) {
 }
 
 // Vérifie qu'il n'y a pas d'identifiant, et d'homonyme lors de la création d'un employé 
-function verifierExistance($pdo, $pseudo, $nom, $prenom) {
+function verifierExistanceUtilisateur($pdo, $pseudo, $nom, $prenom) {
     $stmt = $pdo->prepare("SELECT COUNT(*) 
     FROM employe 
     WHERE nom_utilisateur = ? 
@@ -90,6 +90,22 @@ function creerEmploye($pdo, $pseudo, $nom, $prenom, $telephone, $motDePasse) {
 
 }
 
+// Crée un Conférencier 
+function creerConferencier($pdo, $nom, $prenom, $type, $specialite, $motSpecialite, $telephone) {
+    $stmt = $pdo->prepare("INSERT INTO conferencier (nom, prenom, specialite, mots_cles_specialite, no_tel, est_employe_par_musee) 
+    VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$nom, $prenom, $specialite, $motSpecialite, $telephone, $type]);
+}
+
+// Vérifie d'homonyme lors de la création d'un conférencier 
+function verifierExistanceConferencier($pdo, $nom, $prenom) {
+    $stmt = $pdo->prepare("SELECT COUNT(*) 
+    FROM conferencier 
+    WHERE (nom = ? AND prenom = ?)");
+    $stmt->execute([$nom, $prenom]);
+    return $stmt->fetchColumn() > 0;
+}
+
 function recupExpositions($pdo){
     return envoyerRequete("SELECT id_exposition,intitule FROM exposition", $pdo);
 }
@@ -98,20 +114,7 @@ function recupConferenciers($pdo){
     return envoyerRequete("SELECT id_conferencier, nom, prenom FROM conferencier", $pdo);
 }
 
-function creerExpositions($pdo, $idExpo,$idConf, $idEmploye, $heureDeb, $date, $nomClient, $telClient){
-    try {
-        $stmt = $pdo->prepare("INSERT INTO visite (id_exposition, id_conferencier, id_employe, horaire_debut, date_visite, intitule_client, no_tel_client)
-                                VALUES (:idExpo, :idConf, :idEmploye, :heureDeb, :date, :nomClient, :telClient)");
-        $stmt->bindparam(":idExpo", $idExpo);
-        $stmt->bindparam(":idConf", $idConf);
-        $stmt->bindparam(":idEmploye", $idEmploye);
-        $stmt->bindparam(":heureDeb", $heureDeb);
-        $stmt->bindparam(":date", $date);
-        $stmt->bindparam(":nomClient", $nomClient);
-        $stmt->bindparam(":telClient", $telClient);
-        $stmt -> execute();
-    } catch (PDOException $e) {
-        throw new PDOException($e->getMessage(), (int)$e->getCode());
-    }
-}
+
+
+
 

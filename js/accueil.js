@@ -43,7 +43,7 @@ function autoSlide() {
 }
 
 // Lance la fonction de défilement automatique toutes les 5 secondes (5000 millisecondes)
-setInterval(autoSlide, 5000);
+setInterval(autoSlide, 8000);
 
 // Démarre le défilement automatique dès le début
 autoSlide(); // Affiche le premier onglet dès que la page est chargée

@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']))
 
         // Si aucun champ n'a d'erreur, procéder à l'insertion
         if (empty($erreurs)) {
-            if (verifierExistance($pdo, $pseudo, $nom, $prenom)) {
+            if (verifierExistanceUtilisateur($pdo, $pseudo, $nom, $prenom)) {
                 $erreurs['existance'] = 'Un utilisateur avec ce nom d\'utilisateur ou ce nom et prénom existe déjà.';
             } else {
                 creerEmploye($pdo, $pseudo, $nom, $prenom, $telephone, $motDePasse);
