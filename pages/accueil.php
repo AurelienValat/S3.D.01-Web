@@ -61,7 +61,7 @@
                 </div>
                 <div class="news-title">
                     <h3>Nouvelle équipe pour la gestion des expositions temporaires</h3>
-                    <p>Bienvenue à Jean, Michael et Ftédéric qui rejoignent 
+                    <p>Bienvenue à Jean, Michael et Frédéric qui rejoignent 
                     notre équipe pour superviser les prochaines 
                     expositions.</p>
                     <i class="fa fa-calendar" aria-hidden="true"></i> 5 Janvier 2025
