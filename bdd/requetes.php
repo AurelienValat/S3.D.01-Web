@@ -169,4 +169,24 @@ function verifierEspacementVisites($pdo, $id_exposition, $date_visite, $horaire_
 }
 
 
+function updateUtilisateur($pdo, $idUtilisateur, $data) {
+    $columns = [];
+    $values = [];
+
+    // Construire dynamiquement la requête SQL
+    foreach ($data as $column => $value) {
+        $columns[] = "$column = ?";
+        $values[] = $value;
+    }
+
+    $values[] = $idUtilisateur; // Ajoutez l'ID à la fin pour le WHERE
+
+    $sql = "UPDATE employe SET " . implode(', ', $columns) . " WHERE id_employe = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($values);
+}
+
+
+
+
 

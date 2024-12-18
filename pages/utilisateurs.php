@@ -1,5 +1,6 @@
 <?php 
 session_start();
+
 require ('../bdd/fonctions.php');
 require ('../bdd/connecterBD.php');
 require ('../bdd/requetes.php');
@@ -36,7 +37,7 @@ if (isset($_POST['supprimerEmploye']) && $_POST['supprimerEmploye'] != trim(''))
 $erreurs = [];
 
 $utilisateurCree = false;
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']) && !isset($_POST['idUtilisateur'])) {
     try {
         // Initialisation des variables de formulaire
         $pseudo = isset($_POST['pseudo']) ? trim($_POST['pseudo']) : ""; 
@@ -89,6 +90,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']))
     // Initialiser les variables de formulaire à des valeurs vides si pas de soumission
     $pseudo = $motDePasse = $confirmeMotDePasse = $prenom = $nom = $telephone = "";
 }
+
+//Pour la modification
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
+    try {
+        $idUtilisateur = intval($_POST['idUtilisateur']); // Identifiant unique de l'utilisateur
+        $pseudo = isset($_POST['pseudoUtilisateur']) ? trim($_POST['pseudoUtilisateur']) : null;
+        $prenom = isset($_POST['prenomUtilisateur']) ? trim($_POST['prenomUtilisateur']) : null;
+        $nom = isset($_POST['nomUtilisateur']) ? trim($_POST['nomUtilisateur']) : null;
+        $telephone = isset($_POST['telephoneUtilisateur']) ? trim($_POST['telephoneUtilisateur']) : null;
+        $motDePasse = isset($_POST['motDePasseUtilisateur']) ? trim($_POST['motDePasseUtilisateur']) : null;
+        $confirmeMotDePasse = isset($_POST['confirmeMotDePasseUtilisateur']) ? trim($_POST['confirmeMotDePasseUtilisateur']) : null;
+
+        // Validation des champs
+        $erreursModif = [];
+        if ($pseudo === null || strlen($pseudo) < 5 || strlen($pseudo) > 20) {
+            $erreursModif['pseudo'] = 'Nom d\'utilisateur invalide (5-20 caractères).';
+        }
+        if (($prenom == "") || strlen($prenom) > 35) {
+            $erreursModif['prenom'] = 'Le prénom est requis et ne doit pas dépasser 35 caractères.';
+        }
+        if (($nom == "") || strlen($nom) > 35) {
+            $erreursModif['nom'] = 'Le nom est requis et ne doit pas dépasser 35 caractères.';
+        }
+        if (!preg_match("/^[0-9]{4}$/", $telephone) && $telephone != "") {
+            $erreursModif['telephone'] = 'Numéro de téléphone invalide. Il doit contenir 4 chiffres.';
+        }
+        if ($motDePasse != "" && strlen($motDePasse) > 35) {
+            $erreursModif['motDePasse'] = 'Mot de passe trop long (max 35 caractères).';
+        }
+        if ($motDePasse != "" && strlen($motDePasse) < 5) {
+            $erreursModif['motDePasse'] = 'Mot de passe trop court (min 5 caractères).';
+        }
+        if ($motDePasse != "" && $motDePasse !== $confirmeMotDePasse) {
+            $erreursModif['confirmeMotDePasse'] = 'Les mots de passe ne correspondent pas.';
+        }
+
+        // Si aucun champ n'a d'erreur, mettre à jour la BD
+        if (empty($erreursModif)) {
+            // Construire les données pour la mise à jour
+            $dataToUpdate = [
+                'nom_utilisateur' => $pseudo,
+                'prenom' => $prenom,
+                'nom' => $nom,
+                'no_tel' => $telephone,
+            ];
+            // Ajouter le mot de passe uniquement s'il est changé
+            if (!empty($motDePasse)) {
+                $dataToUpdate['mot_de_passe'] = hash('sha256', $motDePasse);
+            }
+
+            // Mettre à jour l'utilisateur dans la BD
+            updateUtilisateur($pdo, $idUtilisateur, $dataToUpdate);
+            echo "<script>alert('Utilisateur ajouté avec succès.')</script>";
+        }
+    } catch (Exception $e) {
+        echo "<p style='color:red;'>Une erreur est survenue : " . $e->getMessage() . "</p>";
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -144,8 +204,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']))
                                         echo "<td>". 'Employé' ."</td>";
                                     }
                                     echo "<td>";
-                                        echo "<button class='btn-action btn-modify btn-blue'>Modifier</button>";
-                                        if ($ligne['est_admin'] == 0){
+                                    echo "<button 
+                                        class='btn-action btn-modify btn-blue' 
+                                        data-bs-toggle='modal'
+                                        data-bs-target='#modalMofifierUtilisateur' 
+                                        onclick='remplirFormulaire(
+                                            " . intval($ligne['id_employe']) . ", 
+                                            \"" . addslashes($ligne['identifiant']) . "\",
+                                            \"" . addslashes($ligne['prenom']) . "\",
+                                            \"" . addslashes($ligne['nom']) . "\",
+                                            \"" . addslashes($ligne['no_tel']) . "\"
+                                        )'>
+                                        Modifier
+                                    </button>";
+                                        
+                                if ($ligne['est_admin'] == 0){
                                             ?>
                                             <form method="POST" action="utilisateurs.php" style="display:inline;">
                                                 <input type="hidden" name="supprimerEmploye" value="<?php echo $ligne['id_employe']; ?>">
@@ -170,6 +243,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']))
             }?>
         </div>
     </div>
+
     <!-- Modale Ajouter Utilisateur -->
     <div class="modal fade <?php echo !empty($erreurs) ? 'show' : ''; ?>" 
         id="modalAjouterUtilisateur" 
@@ -261,6 +335,86 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']))
             </div>
         </div>
     </div>
+
+    
+<!-- Modale Modifier Utilisateur -->
+<div class="modal fade <?php echo !empty($erreursModif) ? 'show' : ''; ?>" 
+        id="modalMofifierUtilisateur" 
+        style="<?php echo !empty($erreursModif) ? 'display: block;' : 'display: none;'; ?>">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalModifierUtilisateurLabel">Modifier un utilisateur</h5>
+                    <a href="utilisateurs.php" class="btn-close" aria-label="Close"></a>
+                </div>
+                <div class="modal-body">
+                <form id="formModifierUtilisateur" method="POST" action="utilisateurs.php">
+                    <!-- Champ pour l'ID de l'utilisateur (caché) -->
+                    <input type="hidden" id="idUtilisateur" name="idUtilisateur" value="">
+
+                    <!-- Champ pour le pseudo -->
+                    <div class="mb-3">
+                        <label for="pseudoUtilisateur" class="form-label">Nom d'utilisateur</label>
+                        <input type="text" class="form-control <?php echo isset($erreursModif['pseudo']) ? 'is-invalid' : ''; ?>" id="pseudoUtilisateur" name="pseudoUtilisateur" placeholder="Modifiez le nom d'utilisateur" value="<?php echo htmlspecialchars($pseudo); ?>">
+                        <?php if (isset($erreursModif['pseudo'])) { ?>
+                            <div class="invalid-feedback"><?php echo $erreursModif['pseudo']; ?></div>
+                        <?php } ?>
+                    </div>
+
+                    <!-- Champ pour le prénom -->
+                    <div class="mb-3">
+                        <label for="prenomUtilisateur" class="form-label">Prénom</label>
+                        <input type="text" class="form-control <?php echo isset($erreursModif['prenom']) ? 'is-invalid' : ''; ?>" id="prenomUtilisateur" name="prenomUtilisateur" placeholder="Modifiez le prénom" value="<?php echo htmlspecialchars($prenom); ?>">
+                        <?php if (isset($erreursModif['prenom'])) { ?>
+                            <div class="invalid-feedback"><?php echo $erreursModif['prenom']; ?></div>
+                        <?php } ?>
+                    </div>
+
+                    <!-- Champ pour le nom -->
+                    <div class="mb-3">
+                        <label for="nomUtilisateur" class="form-label">Nom</label>
+                        <input type="text" class="form-control <?php echo isset($erreursModif['nom']) ? 'is-invalid' : ''; ?>" id="nomUtilisateur" name="nomUtilisateur" placeholder="Modifiez le nom" value="<?php echo htmlspecialchars($nom); ?>">
+                        <?php if (isset($erreursModif['prenom'])) { ?>
+                            <div class="invalid-feedback"><?php echo $erreursModif['nom']; ?></div>
+                        <?php } ?>
+                    </div>
+
+                    <!-- Champ pour le numéro de téléphone -->
+                    <div class="mb-3">
+                        <label for="telephoneUtilisateur" class="form-label">Numéro de téléphone</label>
+                        <input type="tel" class="form-control <?php echo isset($erreursModif['telephone']) ? 'is-invalid' : ''; ?>" id="telephoneUtilisateur" name="telephoneUtilisateur" placeholder="Modifiez le numéro de téléphone" pattern="[0-9]{4}" title="Entrez un numéro de 4 chiffres" value="<?php echo htmlspecialchars($telephone);?>">
+                        <?php if (isset($erreursModif['telephone'])) { ?>
+                            <div class="invalid-feedback"><?php echo $erreursModif['telephone']; ?></div>
+                        <?php } ?>
+                    </div>
+
+                    <!-- Champ pour le nouveau mot de passe -->
+                    <div class="mb-3">
+                        <label for="motDePasseUtilisateur" class="form-label <?php echo isset($erreursModif['motDePasse']) ? 'is-invalid' : ''; ?>">Nouveau mot de passe</label>
+                        <input type="password" class="form-control" id="motDePasseUtilisateur" name="motDePasseUtilisateur" placeholder="Entrez un nouveau mot de passe">
+                        <?php if (isset($erreursModif['motDePasse'])) { ?>
+                            <div class="invalid-feedback"><?php echo $erreursModif['motDePasse']; ?></div>
+                        <?php } ?>
+                    </div>
+
+                    <!-- Champ pour confirmer le nouveau mot de passe -->
+                    <div class="mb-3">
+                        <label for="confirmeMotDePasseUtilisateur" class="form-label <?php echo isset($erreursModif['confirmeMotDePasse']) ? 'is-invalid' : ''; ?>">Confirmer le mot de passe</label>
+                        <input type="password" class="form-control" id="confirmeMotDePasseUtilisateur" name="confirmeMotDePasseUtilisateur" placeholder="Confirmez le mot de passe">
+                        <?php if (isset($erreursModif['confirmeMotDePasse'])) { ?>
+                            <div class="invalid-feedback"><?php echo $erreursModif['confirmeMotDePasse']; ?></div>
+                        <?php } ?>
+                    </div>
+
+                    <!-- Bouton pour soumettre le formulaire -->
+                    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+
     <!-- Modale de Confirmation -->
     <div class="modal <?php echo $utilisateurCree ? 'show' : ''; ?>" 
         id="modalConfirmation" 
@@ -285,6 +439,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']))
     </div>
 </div>
 </body>
+<script>
+    /**
+     * Remplit automatiquement le formulaire de modification d'utilisateur avec les données fournies.
+     * @param {number} idUtilisateur - Identifiant de l'utilisateur.
+     * @param {string} pseudo - Nom d'utilisateur.
+     * @param {string} prenom - Prénom de l'utilisateur.
+     * @param {string} nom - Nom de l'utilisateur.
+     * @param {string} telephone - Numéro de téléphone.
+     */
+    function remplirFormulaire(idUtilisateur, pseudo, prenom, nom, telephone) {
+        // Remplir les champs du formulaire
+
+        console.log("ID:", idUtilisateur);
+        document.getElementById('idUtilisateur').value = idUtilisateur;
+        document.getElementById('pseudoUtilisateur').value = pseudo;
+        document.getElementById('prenomUtilisateur').value = prenom;
+        document.getElementById('nomUtilisateur').value = nom;
+        document.getElementById('telephoneUtilisateur').value = telephone;
+    }
+</script>
+
 </html>
 
 
