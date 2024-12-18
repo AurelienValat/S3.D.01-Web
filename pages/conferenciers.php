@@ -151,6 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerConferencie
             </div>
         </div>
     </div>
+    
    <!-- Modale Ajouter Conferencier -->
     <div class="modal fade <?php echo !empty($erreurs) ? 'show' : ''; ?>" 
             id="modalAjouterConferencier" 
@@ -264,6 +265,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerConferencie
                     <div class="modal-footer">
                         <a href="conferenciers.php" class="btn btn-secondary">Fermer</a>
                     </div>
+                </div>
+            </div>
+        </div>
+        
+
+    <!-- Modale de Confirmation -->
+    <div class="modal <?php echo $utilisateurCree ? 'show' : ''; ?>" 
+        id="modalConfirmation" 
+        tabindex="-1" 
+        aria-labelledby="modalConfirmationLabel" 
+        aria-hidden="<?php echo $utilisateurCree ? 'false' : 'true'; ?>" 
+        style="<?php echo $utilisateurCree ? 'display: block;' : 'display: none;'; ?>">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalConfirmationLabel">Succès</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Conférencier créé avec succès.</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="conferenciers.php" class="btn btn-secondary">Fermer</a>
                 </div>
             </div>
         </div>

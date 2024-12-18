@@ -13,14 +13,13 @@
         <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script> 
         <title>MUSEOFLOW - Acceuil</title>
     </head>
-
-    <body class="no-bg">
+    <body>
     
        <?php require("../ressources/navBar.php");?>
        
-        <h1>Bienvenue <?php echo htmlspecialchars($_SESSION['prenom']) . ','; ?></h1><br>
+        <h1 class="blanc">Bienvenue <?php echo htmlspecialchars($_SESSION['prenom']) . ','; ?></h1><br>
         <section class="actualites-section">
-        <h2>Actualités :</h2>
+        <h2 class="blanc">Actualités</h2>
         <div class="news-widget">
             <div class="news-header">
                 <div class="nav-dots">

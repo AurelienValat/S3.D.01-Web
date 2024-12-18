@@ -16,11 +16,14 @@
     
     // Vérification si une suppression est demandée
     if (isset($_POST['supprimerVisite']) && $_POST['supprimerVisite'] != trim('')) {
-        $utilisateurASuppr = intval($_POST['supprimerVisite']); // Sécuriser la donnée
+        $userIdToDelete = intval($_POST['supprimerVisite']); // Sécuriser la donnée
+        
         try {
-            supprimerLigne($pdo, $utilisateurASuppr, "Visite");
+            supprimerLigne($pdo, $userIdToDelete, "Visite");
         } catch (PDOException) {
-            header("Location: erreurs/erreurBD.php");
+            $_SESSION['donneeEnErreur'] = 'visite';
+            $_SESSION['cheminDernierePage'] = '/S3.D.01-Web/pages/vivites.php';
+            header("Location: ./erreurs/impossibleDeTraiterVotreDemande.php");
         }
     }
 
@@ -118,8 +121,9 @@
     <meta charset="utf-8">  
     <link href="../css/style.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>   
+    <script src="../js/visites.js" type="text/javascript"></script>
     <title>MUSEOFLOW - Gestion des Visites</title>
 </head>
 <body class="fond">
@@ -135,6 +139,7 @@
                 <!-- Menu Filtres -->
                 <button class="btn btn-light d-flex align-items-center gap-2">
                 <i class="fa-solid fa-filter"></i>Filtres
+                </button>
             </div>
             <div class="table">
                 <table class="table table-striped table-bordered">
@@ -159,22 +164,26 @@
                             $totalVisites = 0;
                                                     
                             while($ligne = $visites->fetch()) {
-                                    echo "<tr>";
-                                        echo "<td>".$ligne['id_visite']."</td>";
-                                        echo "<td>".$ligne['intitule']."</td>";
-                                        echo "<td>".$ligne['nom_conferencier']." ".$ligne['prenom_conferencier']."</td>";
-                                        echo "<td>".$ligne['nom_employe']." ".$ligne['prenom_employe']."</td>";
-                                        echo "<td>".$ligne['intitule_client']."</td>";
-                                        echo "<td>".$ligne['no_tel_client']."</td>";
-                                        echo "<td>".$ligne['date_visite']."</td>";
-                                        echo "<td>".$ligne['horaire_debut']."</td>";
-                                        echo "<td>";
-                                            echo "<button class='btn-action btn-modify btn-blue'>Modifier</button>";
-                                            echo "<button class='btn-action btn-delete'>Supprimer</button>";
-                                        echo "</td>";
-                                    echo "</tr>";
-                                    echo "";
-                                    $totalVisites++ ;
+                                echo "<tr>";
+                                    echo "<td>".$ligne['id_visite']."</td>";
+                                    echo "<td>".$ligne['intitule']."</td>";
+                                    echo "<td>".$ligne['nom_conferencier']." ".$ligne['prenom_conferencier']."</td>";
+                                    echo "<td>".$ligne['nom_employe']." ".$ligne['prenom_employe']."</td>";
+                                    echo "<td>".$ligne['intitule_client']."</td>";
+                                    echo "<td>".$ligne['no_tel_client']."</td>";
+                                    echo "<td>".$ligne['date_visite']."</td>";
+                                    echo "<td>".$ligne['horaire_debut']."</td>";
+                                    echo "<td>";
+                                    echo "<button class='btn-action btn-modify btn-blue' data-bs-toggle='modal' data-bs-target='#modifModal' data-id='".$ligne['id_visite']."'>Modifier</button>";?>
+                                        <form method="POST" action= "conferenciers.php" style="display:inline;">
+                                        <?php echo "<input type='hidden' name='supprimerVisite' value='" . $ligne['id_visite'] . "'>";
+                                        ?> <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette visite ?');">Supprimer</button>
+                                        </form>
+                                        <?php 
+                                    echo "</td>";
+                                echo "</tr>";
+                                $totalVisites++ ;
+                                
                                 }?>
                     </tbody>
                 </table>
@@ -184,7 +193,9 @@
             </div>
         </div>
     </div>
-    <!-- Modale Ajouter Visite -->
+
+
+    <!-- Modal Ajouter Visite -->
     <div class="modal fade <?php echo !empty($erreurs) ? 'show' : ''; ?>" 
         id="modalAjouterVisite" 
         style="<?php echo !empty($erreurs) ? 'display: block;' : 'display: none;'; ?>">
@@ -322,6 +333,72 @@
                 </div>
             </div>
         </div>
+
+
+<!-- Modal Bootstrap pour modifier une visite -->
+<div class="modal fade" id="modifModal" tabindex="-1" role="dialog" aria-labelledby="modifModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modifModalLabel">Modifier la visite</h5>
+          <a href="visites.php" class="btn-close" aria-label="Close"></a>
+      </div>
+      <div class="modal-body">
+        <form id="formModifVisite" method="post" action="visites.php">
+          <input type="hidden" name="id_visite" value="">
+          <div class="mb-3">
+            <label for="intitule" class="form-label">Intitulé de l'exposition</label>
+            <input type="text" class="form-control" id="intitule" name="intitule" required>
+          </div>
+          <div class="mb-3">
+            <label for="id_conferencier" class="form-label">Conférencier</label>
+            <select class="form-control" id="id_conferencier" name="id_conferencier" required>
+              <option value="Sélectionner dans la liste">--- Sélectionner dans la liste ---</option>
+              <!-- Options des conférenciers remplies dynamiquement -->
+              <?php 
+              $conferenciers = afficherConferenciers($pdo);
+              if (!empty($conferenciers)) {
+                  foreach ($conferenciers as $conferencier) {
+                      echo "<option value='".htmlentities($conferencier["prenom"], ENT_QUOTES). " " .htmlentities($conferencier["nom"], ENT_QUOTES)."'>".htmlentities($conferencier["prenom"], ENT_QUOTES). " " .htmlentities($conferencier["nom"], ENT_QUOTES)."</option>";
+                  }
+              }?>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="id_employe" class="form-label">Employé</label>
+            <select class="form-control" id="id_employe" name="id_employe" required>
+              <option value="Sélectionner dans la liste">--- Sélectionner dans la liste ---</option>
+              <!-- Options des employés remplies dynamiquement -->
+              <?php 
+              $utilisateurs = getUtilisateurs($pdo);
+              if (!empty($utilisateurs)) {
+                  foreach ($utilisateurs as $utilisateur) {
+                      echo "<option value='".htmlentities($utilisateur["prenom"], ENT_QUOTES). " " .htmlentities($utilisateur["nom"], ENT_QUOTES)."'>".htmlentities($utilisateur["prenom"], ENT_QUOTES). " " .htmlentities($utilisateur["nom"], ENT_QUOTES)."</option>";
+                  }
+              }?>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="intitule_client" class="form-label">Client</label>
+            <input type="text" class="form-control" id="intitule_client" name="intitule_client" required>
+          </div>
+          <div class="mb-3">
+            <label for="no_tel_client" class="form-label">Téléphone du client</label>
+            <input type="text" class="form-control" id="no_tel_client" name="no_tel_client" required>
+          </div>
+          <div class="mb-3">
+            <label for="date_visite" class="form-label">Date de la visite</label>
+            <input type="date" class="form-control" id="date_visite" name="date_visite" required>
+          </div>
+          <div class="mb-3">
+            <label for="horaire_debut" class="form-label">Heure de début</label>
+            <input type="time" class="form-control" id="horaire_debut" name="horaire_debut" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+        </form>
+      </div>
     </div>
+  </div>
+</div>
 </body>
 </html>
