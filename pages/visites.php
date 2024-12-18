@@ -27,7 +27,10 @@
     // Initialisation des erreurs
     $erreurs = [];
 
+    // Indicateur pour savoir si une visite a été créée avec succès
     $visiteCree = false;
+
+    // Vérifie que la requête est de type POST et qu'elle n'est pas destinée à supprimer une visite
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerVisite'])) {
         try {
             $id_exposition = isset($_POST['id_exposition']) ? (int) $_POST['id_exposition'] : 0;
@@ -38,13 +41,51 @@
             $intitule_client = isset($_POST['intitule_client']) ? trim($_POST['intitule_client']) : "";
             $no_tel_client = isset($_POST['no_tel_client']) ? trim($_POST['no_tel_client']) : "";
             
-            if ($id_exposition <= 0) $erreurs['id_exposition'] = "Veuillez sélectionner une exposition.";
-            if ($id_conferencier <= 0) $erreurs['id_conferencier'] = "Veuillez sélectionner un conférencier.";
-            if ($id_employe <= 0) $erreurs['id_employe'] = "Veuillez sélectionner un employé.";
-            if (empty($date_visite) || !preg_match("/^\d{4}-\d{2}-\d{2}$/", $date_visite)) $erreurs['date_visite'] = "Date invalide.";
-            if (empty($horaire_debut) || !preg_match("/^(?:[01]\d|2[0-3]):[0-5]\d$/", $horaire_debut)) $erreurs['horaire_debut'] = "Heure invalide.";
-
-            if (empty($intitule_client) || strlen($intitule_client) > 50) {
+            // Validation des identifiants pour s'assurer qu'ils sont valides
+            if ($id_exposition <= 0) {
+            $erreurs['id_exposition'] = "Veuillez sélectionner une exposition.";
+            }
+            if ($id_conferencier <= 0) {
+            $erreurs['id_conferencier'] = "Veuillez sélectionner un conférencier.";
+            }
+            if ($id_employe <= 0) {
+            $erreurs['id_employe'] = "Veuillez sélectionner un employé.";
+            }
+            
+            // Validation de la date de visite
+            if (($date_visite == "") || !preg_match("/^\d{4}-\d{2}-\d{2}$/", $date_visite)) {
+                $erreurs['date_visite'] = "Date invalide.";
+            } else {
+                // Vérification du jour (mardi à dimanche)
+                $jour_semaine = date('N', strtotime($date_visite)); // 1 = lundi, 7 = dimanche
+                if ($jour_semaine == 1) { // 1 correspond à lundi
+                    $erreurs['date_visite'] = "Les visites ne peuvent pas avoir lieu le lundi.";
+                } else {
+                    // Vérifier si la date est entre aujourd'hui et dans 3 ans
+                    $aujourd_hui = new DateTime();
+                    $date_max = (clone $aujourd_hui)->modify('+3 years');
+                    $date_visite_obj = DateTime::createFromFormat('Y-m-d', $date_visite);
+            
+                    if (!$date_visite_obj) {
+                        $erreurs['date_visite'] = "Format de date incorrect.";
+                    } elseif ($date_visite_obj < $aujourd_hui) {
+                        $erreurs['date_visite'] = "La date doit être aujourd'hui ou dans le futur.";
+                    } elseif ($date_visite_obj > $date_max) {
+                        $erreurs['date_visite'] = "La date ne peut pas dépasser 3 ans à partir d'aujourd'hui.";
+                    }
+                }
+            }            
+            if (($horaire_debut == "") || !preg_match("/^(?:[01]\d|2[0-3]):[0-5]\d$/", $horaire_debut)) {
+                $erreurs['horaire_debut'] = "Heure invalide.";
+            } else {
+                // Vérification des horaires d'ouverture
+                $heure = (int) substr($horaire_debut, 0, 2);
+                if ($heure < 9 || $heure >= 18) {
+                    $erreurs['horaire_debut'] = "Les visites doivent avoir lieu entre 9 heures et 19 heures.";
+                }
+            }
+    
+            if (($intitule_client == "") || strlen($intitule_client) > 50) {
                 $erreurs['intitule_client'] = "L’intitulé client est requis et ne doit pas dépasser 50 caractères.";
             }
             if (!preg_match("/^[0-9]{4}$/", $no_tel_client) && $no_tel_client != "") {
@@ -218,7 +259,7 @@
                             <?php endif; ?>
                         </div>
                         <div class="mb-3">
-                            <label for="horaire_debut" class="form-label">Heure</label>
+                            <label for="horaire_debut" class="form-label">Heure de Début</label>
                             <input type="time" 
                                 id="horaire_debut" 
                                 name="horaire_debut" 
