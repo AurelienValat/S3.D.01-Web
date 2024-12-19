@@ -15,6 +15,11 @@ function getConferenciers($pdo) {
     return envoyerRequete("SELECT id_conferencier, nom, prenom, specialite, mots_cles_specialite, no_tel, est_employe_par_musee FROM Conferencier", $pdo);
 }
 
+// Récupèle la liste des conférenciers
+function getIndisponibilites($pdo) {
+    return envoyerRequete("SELECT id_indisponibilite, id_conferencier, debut, fin FROM Indisponibilite", $pdo);
+}
+
 // Fonction qui affiche tous les conférenciers
 function afficherConferenciers($pdo){
     try {

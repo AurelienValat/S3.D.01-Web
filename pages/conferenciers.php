@@ -29,54 +29,58 @@
     // Initialisation des erreurs
     $erreurs = [];
 
-$conferenciersCree = false;
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerConferencier'])) {
-    try {
-        // Initialisation des variables de formulaire
-        $type = isset($_POST['type']) ? trim($_POST['type']) : "";
-        $prenom = isset($_POST['prenom']) ? trim($_POST['prenom']) : "";
-        $nom = isset($_POST['nom']) ? trim($_POST['nom']) : "";
-        $specialite = isset($_POST['specialite']) ? trim($_POST['specialite']) : "";
-        $motSpecialite = isset($_POST['motSpecialite']) ? trim($_POST['motSpecialite']) : "";
-        $telephone = isset($_POST['telephone']) ? trim($_POST['telephone']) : "";
+    $conferenciersCree = false;
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerConferencier'])) {
+        try {
+            // Initialisation des variables de formulaire
+            $type = isset($_POST['type']) ? trim($_POST['type']) : "";
+            $prenom = isset($_POST['prenom']) ? trim($_POST['prenom']) : "";
+            $nom = isset($_POST['nom']) ? trim($_POST['nom']) : "";
+            $specialite = isset($_POST['specialite']) ? trim($_POST['specialite']) : "";
+            $motSpecialite = isset($_POST['motSpecialite']) ? trim($_POST['motSpecialite']) : "";
+            $telephone = isset($_POST['telephone']) ? trim($_POST['telephone']) : "";
+            // $indisponibilite_debut = isset($_POST['indisponibilite_debut']) ? trim($_POST['indisponibilite_debut']) : "";
+            // $indisponibilite_fin = isset($_POST['indisponibilite_fin']) ? trim($_POST['indisponibilite_fin']) : "";
 
-        // Validation des champs
-        if ($motSpecialite == "" || count(explode(" ", $motSpecialite)) > 6) {
-            $erreurs['motSpecialite'] = 'La spécialité doit contenir entre 1 et 6 mots-clés séparés par des espaces.';
-        }
-        if ($type == "") {
-            $erreurs['type'] = 'Le type est requis.';
-        }
-        if (($prenom == "") || strlen($prenom) > 50) {
-            $erreurs['prenom'] = 'Le prénom est requis et ne doit pas dépasser 50 caractères.';
-        }
-        if (($nom == "") || strlen($nom) > 50) {
-            $erreurs['nom'] = 'Le nom est requis et ne doit pas dépasser 50 caractères.';
-        }
-        if (($specialite == "") || strlen($specialite) > 50) {
-            $erreurs['specialite'] = 'La specialite est requise et ne doit pas dépasser 50 caractères.';
-        }
-        if (!preg_match("/^[0-9]{4}$/", $telephone) && $telephone != "") {
-            $erreurs['telephone'] = 'Numéro de téléphone invalide. Il doit contenir 4 chiffre.';
-        }
-
-        // Si aucun champ n'a d'erreur, procéder à l'insertion
-        if (empty($erreurs)) {
-            if (verifierExistanceConferencier($pdo, $nom, $prenom)) {
-                $erreurs['existance'] = 'Un conférencier avec ce nom et prénom existe déjà.';
-            } else {
-                creerConferencier($pdo, $nom, $prenom, $type, $specialite, $motSpecialite, $telephone);
-                $conferenciersCree = true; // Indique qu'un utilisateur a été créé
+            // Validation des champs
+            if ($motSpecialite == "" || count(explode(" ", $motSpecialite)) > 6) {
+                $erreurs['motSpecialite'] = 'La spécialité doit contenir entre 1 et 6 mots-clés séparés par des espaces.';
             }
+            if ($type == "") {
+                $erreurs['type'] = 'Le type est requis.';
+            }
+            if (($prenom == "") || strlen($prenom) > 50) {
+                $erreurs['prenom'] = 'Le prénom est requis et ne doit pas dépasser 50 caractères.';
+            }
+            if (($nom == "") || strlen($nom) > 50) {
+                $erreurs['nom'] = 'Le nom est requis et ne doit pas dépasser 50 caractères.';
+            }
+            if (($specialite == "") || strlen($specialite) > 50) {
+                $erreurs['specialite'] = 'La specialite est requise et ne doit pas dépasser 50 caractères.';
+            }
+            if (!preg_match("#^[0-9]{10}#", $telephone) or strlen($telephone)>10) {
+                $erreurs['telephone'] = 'Numéro de téléphone invalide. Il doit contenir 10 chiffre.';
+            }
+            // if (($indisponibilite_debut != "") || strlen($indisponibilite_debut) > 50) {
+            //     $erreurs['indisponibilite_debut'] = '';
+            // }
+            // Si aucun champ n'a d'erreur, procéder à l'insertion
+            if (empty($erreurs)) {
+                if (verifierExistanceConferencier($pdo, $nom, $prenom)) {
+                    $erreurs['existance'] = 'Un conférencier avec ce nom et prénom existe déjà.';
+                } else {
+                    creerConferencier($pdo, $nom, $prenom, $type, $specialite, $motSpecialite, $telephone);
+                    $conferenciersCree = true; // Indique qu'un utilisateur a été créé
+                }
+            }
+            
+        } catch (Exception $e) {
+            echo "<p style='color:red;'>".$e->getMessage()."</p>";
         }
-        
-    } catch (Exception $e) {
-        echo "<p style='color:red;'>".$e->getMessage()."</p>";
+    }  else {
+        // Initialiser les variables de formulaire à des valeurs vides si pas de soumission
+        $motSpecialite = $type = $telephone = $prenom = $nom = $specialite = "";
     }
-}  else {
-    // Initialiser les variables de formulaire à des valeurs vides si pas de soumission
-     $motSpecialite = $type = $telephone = $prenom = $nom = $specialite = "";
-}
 ?>
 
 <!DOCTYPE html>
@@ -92,7 +96,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerConferencie
 <body class="fond">
 
     <?php require("../ressources/navBar.php");?>
-    
         <div class="container content">
         <div class="container-blanc">
             <h1 class="text-center">Gestion des Conférenciers</h1>
@@ -232,11 +235,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerConferencie
                                     id="telephone" 
                                     name="telephone" 
                                     value="<?php echo htmlspecialchars($telephone); ?>" 
-                                    placeholder="Exemple : 1234">
+                                    placeholder="Exemple : 0611661388">
                                 <?php if (isset($erreurs['telephone'])): ?>
                                     <div class="invalid-feedback"><?php echo $erreurs['telephone']; ?></div>
                                 <?php endif; ?>
                             </div>
+                            <!-- <div class="mb-3">
+                                <label for="indisponibilites" class="form-label">Indisponibilités</label>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <input type="date" 
+                                            class="form-control <?php //echo isset($erreurs['indisponibilite_debut']) ? 'is-invalid' : ''; ?>" 
+                                            id="indisponibilite_debut" 
+                                            name="indisponibilite_debut" 
+                                            value="<?php //echo htmlspecialchars($indisponibilite_debut); ?>" 
+                                            placeholder="Date de début">
+                                        <?php //if (isset($erreurs['indisponibilite_debut'])): ?>
+                                            <div class="invalid-feedback"><?php //echo $erreurs['indisponibilite_debut']; ?></div>
+                                        <?php //endif; ?>
+                                    </div> -->
+                                    <!-- <div class="col-6">
+                                        <input type="date" 
+                                            class="form-control <?php //echo isset($erreurs['indisponibilite_fin']) ? 'is-invalid' : ''; ?>" 
+                                            id="indisponibilite_fin" 
+                                            name="indisponibilite_fin" 
+                                            value="<?php //echo htmlspecialchars($indisponibilite_fin); ?>" 
+                                            placeholder="Date de fin">
+                                        <?php //if (isset($erreurs['indisponibilite_fin'])): ?>
+                                            <div class="invalid-feedback"><?php// echo $erreurs['indisponibilite_fin']; ?></div>
+                                        <?php //endif; ?>
+                                    </div>
+                                </div>
+                            </div> -->
                             <?php if (isset($erreurs['existance'])): ?>
                                 <div class="alert alert-danger"><?php echo $erreurs['existance']; ?></div>
                             <?php endif; ?>
