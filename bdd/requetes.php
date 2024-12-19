@@ -78,9 +78,25 @@ function verifierExistanceUtilisateur($pdo, $pseudo, $nom, $prenom) {
     $stmt = $pdo->prepare("SELECT COUNT(*) 
     FROM employe 
     WHERE nom_utilisateur = ? 
-    OR (nom = ? AND prenom = ?)");
+    OR (nom = ? AND prenom = ?)");  
     $stmt->execute([$pseudo, $nom, $prenom]);
     return $stmt->fetchColumn() > 0;
+}
+
+// Vérifie qu'il n'y a pas d'identifiant, et d'homonyme lors de la modification d'un employé 
+function verifierExistanceUtilisateurModif($pdo, $pseudo, $nom, $prenom, $id_employe) {
+    try {
+        $stmt = $pdo->prepare("SELECT COUNT(*) 
+        FROM employe 
+        WHERE (nom_utilisateur = ? 
+        OR (nom = ? AND prenom = ?))
+        AND id_employe != ?");  
+
+        $stmt->execute([$pseudo, $nom, $prenom, $id_employe]);
+        return $stmt->fetchColumn() > 0;
+    } catch (PDOException $e) {
+        throw new Exception("Erreur lors de la vérification des doublons.");
+    }
 }
 
 // Crée un employé 
@@ -169,22 +185,31 @@ function verifierEspacementVisites($pdo, $id_exposition, $date_visite, $horaire_
 }
 
 
-function updateUtilisateur($pdo, $idUtilisateur, $data) {
-    $columns = [];
-    $values = [];
+function updateUtilisateur($pdo, $idUtilisateur, $donnee) {
+    try {
+        $setClause = [];
+        $params = [];
 
-    // Construire dynamiquement la requête SQL
-    foreach ($data as $column => $value) {
-        $columns[] = "$column = ?";
-        $values[] = $value;
+        // Construire les clauses et les valeurs dynamiquement
+        foreach ($donnee as $colonne => $value) {
+            $setClause[] = "`$colonne` = :$colonne";
+            $params[":$colonne"] = $value;
+        }
+
+        // Ajouter la condition WHERE avec un paramètre nommé
+        $params[':id'] = $idUtilisateur;
+
+        // Construire la requête SQL
+        $sql = "UPDATE employe SET " . implode(', ', $setClause) . " WHERE id_employe = :id";
+        $stmt = $pdo->prepare($sql);
+
+        // Exécuter la requête
+        return $stmt->execute($params);
+    } catch (Exception $e) {
+        throw $e; 
     }
-
-    $values[] = $idUtilisateur; // Ajoutez l'ID à la fin pour le WHERE
-
-    $sql = "UPDATE employe SET " . implode(', ', $columns) . " WHERE id_employe = ?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($values);
 }
+
 
 
 

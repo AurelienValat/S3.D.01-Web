@@ -128,21 +128,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
 
         // Si aucun champ n'a d'erreur, mettre à jour la BD
         if (empty($erreursModif)) {
-            // Construire les données pour la mise à jour
-            $dataToUpdate = [
-                'nom_utilisateur' => $pseudo,
-                'prenom' => $prenom,
-                'nom' => $nom,
-                'no_tel' => $telephone,
-            ];
-            // Ajouter le mot de passe uniquement s'il est changé
-            if (!empty($motDePasse)) {
-                $dataToUpdate['mot_de_passe'] = hash('sha256', $motDePasse);
-            }
+            if (verifierExistanceUtilisateurModif($pdo, $pseudo, $nom, $prenom, $idUtilisateur)) {
+                $erreursModif['existance'] = 'Un utilisateur avec ce nom d\'utilisateur ou ce nom et prénom existe déjà.';
+            } else {
+                // Construire les données pour la mise à jour
+                $dataToUpdate = [
+                    'nom_utilisateur' => $pseudo,
+                    'prenom' => $prenom,
+                    'nom' => $nom,
+                    'no_tel' => $telephone,
+                ];
 
-            // Mettre à jour l'utilisateur dans la BD
-            updateUtilisateur($pdo, $idUtilisateur, $dataToUpdate);
-            echo "<script>alert('Utilisateur ajouté avec succès.')</script>";
+                // Ajouter le mot de passe uniquement s'il est changé
+                if (!empty($motDePasse)) {
+                    $dataToUpdate['mot_de_passe'] = hash('sha256', $motDePasse);
+                }
+
+                // Mettre à jour l'utilisateur dans la BD
+                updateUtilisateur($pdo, $idUtilisateur, $dataToUpdate);
+
+                // Affichage du message de confirmation
+                echo "<script>alert('Utilisateur modifié avec succès.')</script>";
+            }
+            
         }
     } catch (Exception $e) {
         echo "<p style='color:red;'>Une erreur est survenue : " . $e->getMessage() . "</p>";
@@ -155,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
 <head>
     <meta charset="utf-8">
     <link href="../css/style.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" >
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>   
     <title>MUSEOFLOW - Gestion des Utilisateurs</title>
@@ -168,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
     <div class="container-blanc">
         <h1 class="text-center">Gestion des Utilisateurs</h1>
         <div class="d-flex justify-content-between align-items-center">
-        <button class="btn-action btn-modify btn-blue" data-bs-toggle="modal" data-bs-target="#modalAjouterUtilisateur" id="modalAjouterUtilisateurLabel">Ajouter un utilisateur</button>
+        <button class="btn-action btn-modify btn-blue" onclick="resetFormulaire()" data-bs-toggle="modal" data-bs-target="#modalAjouterUtilisateur" id="modalAjouterUtilisateurLabel">Ajouter un utilisateur</button>
             <button class="btn btn-light d-flex align-items-center gap-2">
             <i class="fa-solid fa-filter"></i>Filtres
             </button>
@@ -374,7 +382,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                     <div class="mb-3">
                         <label for="nomUtilisateur" class="form-label">Nom</label>
                         <input type="text" class="form-control <?php echo isset($erreursModif['nom']) ? 'is-invalid' : ''; ?>" id="nomUtilisateur" name="nomUtilisateur" placeholder="Modifiez le nom" value="<?php echo htmlspecialchars($nom); ?>">
-                        <?php if (isset($erreursModif['prenom'])) { ?>
+                        <?php if (isset($erreursModif['nom'])) { ?>
                             <div class="invalid-feedback"><?php echo $erreursModif['nom']; ?></div>
                         <?php } ?>
                     </div>
@@ -382,7 +390,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                     <!-- Champ pour le numéro de téléphone -->
                     <div class="mb-3">
                         <label for="telephoneUtilisateur" class="form-label">Numéro de téléphone</label>
-                        <input type="tel" class="form-control <?php echo isset($erreursModif['telephone']) ? 'is-invalid' : ''; ?>" id="telephoneUtilisateur" name="telephoneUtilisateur" placeholder="Modifiez le numéro de téléphone" pattern="[0-9]{4}" title="Entrez un numéro de 4 chiffres" value="<?php echo htmlspecialchars($telephone);?>">
+                        <input type="tel" class="form-control <?php echo isset($erreursModif['telephone']) ? 'is-invalid' : ''; ?>" id="telephoneUtilisateur" name="telephoneUtilisateur" placeholder="Modifiez le numéro de téléphone"  value="<?php echo htmlspecialchars($telephone);?>">
                         <?php if (isset($erreursModif['telephone'])) { ?>
                             <div class="invalid-feedback"><?php echo $erreursModif['telephone']; ?></div>
                         <?php } ?>
@@ -406,6 +414,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                         <?php } ?>
                     </div>
 
+                    <?php if (isset($erreursModif['existance'])) { ?>
+                            <div class="alert alert-danger"><?php echo $erreursModif['existance']; ?></div>
+                    <?php } ?>
                     <!-- Bouton pour soumettre le formulaire -->
                     <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
                 </form>
@@ -450,14 +461,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
      */
     function remplirFormulaire(idUtilisateur, pseudo, prenom, nom, telephone) {
         // Remplir les champs du formulaire
-
-        console.log("ID:", idUtilisateur);
         document.getElementById('idUtilisateur').value = idUtilisateur;
         document.getElementById('pseudoUtilisateur').value = pseudo;
         document.getElementById('prenomUtilisateur').value = prenom;
         document.getElementById('nomUtilisateur').value = nom;
         document.getElementById('telephoneUtilisateur').value = telephone;
     }
+
+    function resetFormulaire() {
+    document.getElementById("formAjouterUtilisateur").reset(); // Réinitialise tous les champs du formulaire
+    document.getElementById("pseudo").value = ""; // Exemple : Efface le pseudo
+    document.getElementById("prenom").value = ""; // Exemple : Efface le prénom
+    document.getElementById("nom").value = ""; // Exemple : Efface le nom
+    document.getElementById("telephone").value = ""; // Exemple : Efface le numéro de téléphone
+}
+
 </script>
 
 </html>
