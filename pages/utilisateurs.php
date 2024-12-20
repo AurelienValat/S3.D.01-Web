@@ -376,7 +376,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                         <label for="nomUtilisateur" class="form-label">Nom</label>
                         <input type="text" class="form-control <?php echo isset($erreursModif['nom']) ? 'is-invalid' : ''; ?>" id="nomUtilisateur" name="nomUtilisateur" placeholder="Modifiez le nom" value="<?php echo htmlspecialchars($nom); ?>">
                         <?php if (isset($erreursModif['prenom'])) { ?>
-                            <div class="invalid-feedback"><?php echo $erreursModif['nom']; ?></div>
+                            <div class="invalid-feedback"><?php if(isset($erreursModif['nom'])) {echo $erreursModif['nom'];} ?></div>
                         <?php } ?>
                     </div>
 

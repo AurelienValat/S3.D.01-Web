@@ -1,4 +1,5 @@
 // Pour les filtres
+/*
 document.addEventListener("DOMContentLoaded", function () {
     const reserverDetails = document.querySelector("#reserverDetails");
     const filtreDetails = document.querySelector("#filtreDetails");
@@ -13,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
-
+*/
 
 // Pour le modal de modif des visites
 document.addEventListener('DOMContentLoaded', function() {
@@ -22,12 +23,14 @@ document.addEventListener('DOMContentLoaded', function() {
         var button = event.relatedTarget; // Bouton qui a déclenché le modal
         var idVisite = button.getAttribute('data-id'); // Récupérer l'ID de la visite
 
+		console.log (JSON.stringify (idVisite));
+		
         // Utiliser l'ID de la visite pour remplir le formulaire du modal
         var modalTitle = modifModal.querySelector('.modal-title');
         modalTitle.textContent = 'Modifier la visite ' + idVisite;
 
         // Remplir un champ caché avec l'ID de la visite
-        var inputIdVisite = modifModal.querySelector('input[name="id_visite"]');
+        var inputIdVisite = modifModal.querySelector('input[name="id_visite_Modif"]');
         inputIdVisite.value = idVisite;
     });
 });

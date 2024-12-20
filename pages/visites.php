@@ -95,10 +95,8 @@
                 $erreurs_modif['id_employe'] = "Veuillez sélectionner un employé.";
             }
             
-            // TODO heure toujours invalide & date invalide si aujourd'hui
             $erreurs_modif = verifVisites($pdo, $erreurs_modif, $horaire_debut_modifie, $intitule_client_modifie, $no_tel_client_modifie, $conferencier_modifie, $date_visite_modifie, $exposition_concernee_modifie);
             
-            var_dump($erreurs_modif);
         } catch (Exception $e) {
             echo "<p style='color:red;'>" . htmlspecialchars($e->getMessage()) . "</p>";
         }
@@ -115,7 +113,7 @@
     <link href="../css/style.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <script src="../js/visites.js" type="text/javascript"></script>
     <title>MUSEOFLOW - Gestion des Visites</title>
 </head>
@@ -343,7 +341,7 @@
 
 
 <!-- Modal Bootstrap pour modifier une visite -->
-<div class="modal fade" id="modifModal" tabindex="-1" role="dialog" aria-labelledby="modifModalLabel" aria-hidden="true">
+<div class="modal fade <?php echo !empty($erreurs_modif) ? 'show' : ''; ?>" id="modifModal" tabindex="-1" role="dialog" aria-labelledby="modifModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">

@@ -28,12 +28,8 @@ function verifVisites($pdo, $erreurs, $horaire_debut, $intitule_client, $no_tel_
             }
         }
     }
-    
-    echo "l'heure :";
-    var_dump($horaire_debut);
-    
-    
-    if (($horaire_debut == "") || !preg_match("/^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/", $horaire_debut)) {
+    // On doit accepter les horaires avec ou sans secondes
+    if (($horaire_debut == "") || (!preg_match("/^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/", $horaire_debut)) && !preg_match("/^(?:[01]\d|2[0-3]):[0-5]\d$/", $horaire_debut)) {
         $erreurs['horaire_debut'] = "Heure invalide.";
     } else {
         // Vérification des horaires d'ouverture
