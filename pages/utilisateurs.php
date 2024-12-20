@@ -176,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
     <div class="container-blanc">
         <h1 class="text-center">Gestion des Utilisateurs</h1>
         <div class="d-flex justify-content-between align-items-center">
-        <button class="btn-action btn-modify btn-blue" onclick="resetFormulaire()" data-bs-toggle="modal" data-bs-target="#modalAjouterUtilisateur" id="modalAjouterUtilisateurLabel">Ajouter un utilisateur</button>
+        <button class="btn-action btn-modify btn-blue" onclick="resetFormulaire()" data-bs-toggle="modal" data-bs-target="#modalAjouterUtilisateur" id="modalAjouterUtilisateurLabel" title="Ajouter un utilisateur"><i class="fa-solid fa-user-plus"></i></button>
             <button class="btn btn-light d-flex align-items-center gap-2">
             <i class="fa-solid fa-filter"></i>Filtres
             </button>
@@ -216,6 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                                         class='btn-action btn-modify btn-blue' 
                                         data-bs-toggle='modal'
                                         data-bs-target='#modalMofifierUtilisateur' 
+                                        title='Modifier l&#39;exposition'
                                         onclick='remplirFormulaire(
                                             " . intval($ligne['id_employe']) . ", 
                                             \"" . addslashes($ligne['identifiant']) . "\",
@@ -223,15 +224,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                                             \"" . addslashes($ligne['nom']) . "\",
                                             \"" . addslashes($ligne['no_tel']) . "\"
                                         )'>
-                                        Modifier
+                                        <i class='fa-solid fa-pencil'></i>
                                     </button>";
                                         
                                 if ($ligne['est_admin'] == 0){
                                             ?>
                                             <form method="POST" action="utilisateurs.php" style="display:inline;">
                                                 <input type="hidden" name="supprimerEmploye" value="<?php echo $ligne['id_employe']; ?>">
-                                                <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet employé ?');">Supprimer</button>
-                                            </form>
+                                                <button type="submit" class="btn-action btn-delete" title="Supprimer l'exposition"onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce conférencier ?');"><i class="fa-solid fa-trash"></i></button>
+                                                </form>
                                             <?php
                                         }
                                     echo "</td>";

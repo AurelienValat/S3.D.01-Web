@@ -135,7 +135,7 @@
             <h1 class="text-center">Gestion des Visites</h1>
             <div class="d-flex justify-content-between align-items-center">
                 <!-- Menu Ajouter/Réserver -->
-                <button class="btn-action btn-modify btn-blue" data-bs-toggle="modal" data-bs-target="#modalAjouterVisite" id="modalAjouterVisiteLabel">Ajouter/Réserver Visite</button>                 
+                <button class="btn-action btn-modify btn-blue"  title="Réserver une visite" data-bs-toggle="modal" data-bs-target="#modalAjouterVisite" id="modalAjouterVisiteLabel"><i class="fa-solid fa-plus"></i></button>                 
                 <!-- Menu Filtres -->
                 <button class="btn btn-light d-flex align-items-center gap-2">
                 <i class="fa-solid fa-filter"></i>Filtres
@@ -174,10 +174,10 @@
                                     echo "<td>".$ligne['date_visite']."</td>";
                                     echo "<td>".$ligne['horaire_debut']."</td>";
                                     echo "<td>";
-                                    echo "<button class='btn-action btn-modify btn-blue' data-bs-toggle='modal' data-bs-target='#modifModal' data-id='".$ligne['id_visite']."'>Modifier</button>";?>
+                                    echo "<button class='btn-action btn-modify btn-blue' data-bs-toggle='modal' data-bs-target='#modifModal'  title='Modifier la visite' data-id='".$ligne['id_visite']."'><i class='fa-solid fa-pencil'></i></button>";?>
                                         <form method="POST" action= "conferenciers.php" style="display:inline;">
-                                        <?php echo "<input type='hidden' name='supprimerVisite' value='" . $ligne['id_visite'] . "'>";
-                                        ?> <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette visite ?');">Supprimer</button>
+                                        <?php echo "<input type='hidden' name='supprimerVisite' value='" . $ligne['id_visite'] . "'>";?> 
+                                        <button type="submit" class="btn-action btn-delete"  title="Supprimer la visite"onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce conférencier ?');"><i class="fa-solid fa-trash"></i></button>
                                         </form>
                                         <?php 
                                     echo "</td>";

@@ -51,8 +51,7 @@ if (isset($_POST['supprimerExposition']) && $_POST['supprimerExposition'] != tri
             <h1 class="text-center">Gestion des Expositions</h1>
             <div
                 class="d-flex justify-content-between align-items-center">
-                <button class="btn-action btn-blue">Ajouter une
-                    Exposition</button>
+                <button class="btn-action btn-blue" title="Ajouter une exposition"><i class="fa-solid fa-plus"></i></button>
                 <button
                     class="btn btn-light d-flex align-items-center gap-2">
                     <i class="fa-solid fa-filter"></i>Filtres
@@ -88,12 +87,11 @@ if (isset($_POST['supprimerExposition']) && $_POST['supprimerExposition'] != tri
                         echo "<td>" . $ligne['date_debut'] . "</td>";
                         echo "<td>" . $ligne['date_fin'] . "</td>";
                         ?>
-                         <td>
-                            <button
-                                class="btn-action btn-modify btn-blue">Modifier la description</button>
+                        <td>
+                            <button class="btn-action btn-modify btn-blue" title="Modifier l'exposition"><i class="fa-solid fa-pencil"></i></button>
                             <form method="POST" action= "expositions.php" style="display:inline;">
-                            <?php echo "<input type='hidden' name='supprimerExposition' value='" . $ligne['id_exposition'] . "'>";
-                                        ?> <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette exposition ?');">Supprimer</button> 
+                                <?php echo "<input type='hidden' name='supprimerExposition' value='" . $ligne['id_exposition'] . "'>";?>
+                                <button type="submit" class="btn-action btn-delete" title="Supprimer l'exposition" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce conférencier ?');"><i class="fa-solid fa-trash"></i></button>
                             </form>
                         </td>
                         <?php

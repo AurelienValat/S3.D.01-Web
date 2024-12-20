@@ -3,16 +3,16 @@ require_once ('fonctions.php');
 
 // Récupère la liste des utilisteurs/employés
 function getUtilisateurs($pdo) {
-    return envoyerRequete("SELECT id_employe, nom_utilisateur AS identifiant, nom, prenom, no_tel, est_admin FROM Employe", $pdo);
+    return envoyerRequete("SELECT id_employe, nom_utilisateur AS identifiant, nom, prenom, no_tel, est_admin FROM Employe ORDER BY nom, prenom", $pdo);
 }
 
 // Récupèle la liste des expositions
 function getExpositions($pdo) {
-    return envoyerRequete("SELECT id_exposition, intitule, periode_oeuvres, nombre_oeuvres, mots_cles, resume, date_debut, date_fin FROM Exposition", $pdo);
+    return envoyerRequete("SELECT id_exposition, intitule, periode_oeuvres, nombre_oeuvres, mots_cles, resume, date_debut, date_fin FROM Exposition ORDER BY intitule", $pdo);
 }
 // Récupèle la liste des conférenciers
 function getConferenciers($pdo) {
-    return envoyerRequete("SELECT id_conferencier, nom, prenom, specialite, mots_cles_specialite, no_tel, est_employe_par_musee FROM Conferencier", $pdo);
+    return envoyerRequete("SELECT id_conferencier, nom, prenom, specialite, mots_cles_specialite, no_tel, est_employe_par_musee FROM Conferencier ORDER BY nom, prenom", $pdo);
 }
 
 // Récupèle la liste des conférenciers
@@ -49,7 +49,9 @@ function getVisites($pdo) {
                            ON Conferencier.id_conferencier = Visite.id_conferencier
                             
                            INNER JOIN Employe
-                           ON Employe.id_employe = Visite.id_employe;"
+                           ON Employe.id_employe = Visite.id_employe
+                           
+                           ORDER BY date_visite, Exposition.intitule;"
                           , $pdo);
 }
 

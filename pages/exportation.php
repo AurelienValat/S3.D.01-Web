@@ -19,8 +19,8 @@
     
     <?php require("../ressources/navBar.php");?>
 
-        <div class="container content">
-            <div class="container-blanc justify-content-center">
+        <div class="container content ">
+            <div class="container-blanc justify-content-center col-12">
                 <p>
                     Pour éviter tout conflits dans les données nous recommandons d'exporter la totalité des données en même temps.
                 </p>
@@ -31,40 +31,19 @@
             </div>
         </div>
 
-        <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br>
 
         <footer>
 
-            <div class=”contenu-footer”>
-
-                <div class=”bloc footer-services”>
-                <h3>Nos services</h3>
-                <ul class=”liste-services”>
-                    <li><a href=”#”>Création de sites web</a></li>
-                    <li><a href=”#”>SEO</a></li>
-                    <li><a href=”#”>SEA</a></li>
-                </ul>
-                </div>
-
-            <div class=”bloc footer-informations”>
-                <h3>A propos</h3>
-                <ul class=”liste-informations”>
-                <li><a href=”#”>Actualités</a></li>
-                <li><a href=”#”>Notre histoire</a></li>
-                <li><a href=”#”>Investisseurs</a></li>
-                <li><a href=”#”>Développement durable</a></li>
-                </ul>
+            <div>
+                <h5>Contacter le support</h5>
+                <a href="tel:0123456789">01.23.45.67.89</a><br>
+                <a href="mailto:supportclient@contact.com">supportclient@contact.com</a>
+                <p>12 rue de l'invention, 12000 Rodez</p>
             </div>
 
-            <div class=”bloc footer-contact”>
-                <h3>Restons en contact</h3>
-                <p>06 06 06 06 06</p>
-                <p>supportclient@contact.com</p>
-                <p>12 rue de l'invention, Paris, 75011</p>
-            </div>
-
-            <p class="copyright">Company Name © 2022</p>
-
+            <div>
+                <p>LOUBIERE, POUPIN, SEHIL, VALAT © 2024</p>
             </div>
 
         </footer>

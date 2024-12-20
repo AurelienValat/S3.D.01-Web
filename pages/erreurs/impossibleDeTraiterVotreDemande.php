@@ -4,8 +4,6 @@ require ('../../bdd/fonctions.php');
 
 verifSession(); // Vérifie si une session valide existe
 
-$estAdmin = isset($_SESSION['est_admin']) && $_SESSION['est_admin'] == 1;
-
 if (!isset($_SESSION['cheminDernierePage']) 
     || !isset($_SESSION['donneeEnErreur']) 
     || trim($_SESSION['donneeEnErreur']) == "" 

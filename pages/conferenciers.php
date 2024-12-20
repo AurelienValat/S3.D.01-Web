@@ -100,7 +100,7 @@
         <div class="container-blanc">
             <h1 class="text-center">Gestion des Conférenciers</h1>
             <div class="d-flex justify-content-between align-items-center">
-                <button class="btn-action btn-modify btn-blue" data-bs-toggle="modal" data-bs-target="#modalAjouterConferencier" id="modalAjouterConferencierLabel">Ajouter un Conférencier</button>
+                <button class="btn-action btn-modify btn-blue" data-bs-toggle="modal" data-bs-target="#modalAjouterConferencier" id="modalAjouterConferencierLabel" title="Ajouter un conférencier"><i class="fa-solid fa-user-plus"></i></button>
                 <button class="btn btn-light d-flex align-items-center gap-2">
                 <i class="fa-solid fa-filter"></i>Filtres
                 </button>
@@ -133,11 +133,11 @@
                                     echo '<td>'. htmlentities($conferencier["mots_cles_specialite"], ENT_QUOTES) .'</td>';
                                     echo '<td>'. htmlentities($conferencier["no_tel"], ENT_QUOTES) .'</td>';
                                     echo '<td>';
-                                        echo '<button class="btn-action btn-blue">Planning</button>';
-                                        echo '<button class="btn-action btn-blue">Modifier</button>';?>
+                                        echo '<button class="btn-action btn-blue" title="Afficher le planning du conférencier"><i class="fa-solid fa-calendar"></i></button>';
+                                        echo '<button class="btn-action btn-blue" title="Modifier le conférencier"><i class="fa-solid fa-pencil"></i></button>';?>
                                         <form method="POST" action= "conferenciers.php" style="display:inline;">
-                                        <?php echo "<input type='hidden' name='supprimerConferencier' value='" . $conferencier['id_conferencier'] . "'>";
-                                        ?> <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce conférencier ?');">Supprimer</button>
+                                            <?php echo "<input type='hidden' name='supprimerConferencier' value='" . $conferencier['id_conferencier'] . "'>";?>
+                                            <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce conférencier ?');" title="Supprimer le conférencier"><i class="fa-solid fa-trash"></i></button>
                                         </form>
                                         <?php 
                                     echo '</td>';
