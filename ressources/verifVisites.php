@@ -12,19 +12,28 @@ function verifVisites($pdo, $erreurs, $horaire_debut, $intitule_client, $no_tel_
         } else {
             // Vérifier si la date est entre aujourd'hui et dans 3 ans
             $aujourd_hui = new DateTime();
+            $aujourd_hui->setTime(0, 0); // Normaliser l'heure à 00:00:00
             $date_max = (clone $aujourd_hui)->modify('+3 years');
             $date_visite_obj = DateTime::createFromFormat('Y-m-d', $date_visite);
             
             if (!$date_visite_obj) {
                 $erreurs['date_visite'] = "Format de date incorrect.";
-            } elseif ($date_visite_obj < $aujourd_hui) {
-                $erreurs['date_visite'] = "La date doit être aujourd'hui ou dans le futur.";
-            } elseif ($date_visite_obj > $date_max) {
-                $erreurs['date_visite'] = "La date ne peut pas dépasser 3 ans à partir d'aujourd'hui.";
+            } else {
+                $date_visite_obj->setTime(0, 0); // Normaliser l'heure à 00:00:00
+                if ($date_visite_obj < $aujourd_hui) {
+                    $erreurs['date_visite'] = "La date doit être aujourd'hui ou dans le futur.";
+                } elseif ($date_visite_obj > $date_max) {
+                    $erreurs['date_visite'] = "La date ne peut pas dépasser 3 ans à partir d'aujourd'hui.";
+                }
             }
         }
     }
-    if (($horaire_debut == "") || !preg_match("/^(?:[01]\d|2[0-3]):[0-5]\d$/", $horaire_debut)) {
+    
+    echo "l'heure :";
+    var_dump($horaire_debut);
+    
+    
+    if (($horaire_debut == "") || !preg_match("/^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/", $horaire_debut)) {
         $erreurs['horaire_debut'] = "Heure invalide.";
     } else {
         // Vérification des horaires d'ouverture
