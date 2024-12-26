@@ -20,22 +20,6 @@ function getIndisponibilites($pdo) {
     return envoyerRequete("SELECT id_indisponibilite, id_conferencier, debut, fin FROM Indisponibilite", $pdo);
 }
 
-// Fonction qui affiche tous les conférenciers
-function afficherConferenciers($pdo){
-    try {
-        $conferenciers = array();
-        
-        $requete = 'SELECT id_conferencier, nom, prenom, specialite, no_tel, est_employe_par_musee, mots_cles_specialite FROM Conferencier ORDER BY nom';
-        $resultats = $pdo->query($requete);
-        
-        while ($ligne = $resultats->fetch()) {
-            $conferenciers[] = $ligne; // Ajoute chaque conférencier au tableau
-        }
-        return $conferenciers; // Retourne le tableau des conférenciers
-    } catch (PDOException $e) {
-        throw new PDOException($e->getMessage(), (int)$e->getCode());
-    }
-}
 
 // Récupère la liste des visites avec des noms à la place des ID pour les clés étrangères
 function getVisites($pdo) {
@@ -90,6 +74,7 @@ function verifierExistanceUtilisateur($pdo, $pseudo, $nom, $prenom) {
     return $stmt->fetchColumn() > 0;
 }
 
+
 // Vérifie qu'il n'y a pas d'identifiant, et d'homonyme lors de la modification d'un employé 
 function verifierExistanceUtilisateurModif($pdo, $pseudo, $nom, $prenom, $id_employe) {
     try {
@@ -134,11 +119,12 @@ function creerVisite($pdo, $id_exposition, $id_conferencier, $id_employe, $horai
 }
 
 // Vérifie d'homonyme lors de la création d'un conférencier 
-function verifierExistanceConferencier($pdo, $nom, $prenom) {
+function verifierExistanceConferencier($pdo, $nom, $prenom, $idConferencier) {
     $stmt = $pdo->prepare("SELECT COUNT(*) 
     FROM conferencier 
-    WHERE (nom = ? AND prenom = ?)");
-    $stmt->execute([$nom, $prenom]);
+    WHERE (nom = ? AND prenom = ?)
+    AND id_conferencier != ?");
+    $stmt->execute([$nom, $prenom, $idConferencier]);
     return $stmt->fetchColumn() > 0;
 }
 
@@ -192,13 +178,13 @@ function verifierEspacementVisites($pdo, $id_exposition, $date_visite, $horaire_
 }
 
 
-function updateUtilisateur($pdo, $idUtilisateur, $donnee) {
+function modifUtilisateur($pdo, $idUtilisateur, $donnees) {
     try {
         $setClause = [];
         $params = [];
 
         // Construire les clauses et les valeurs dynamiquement
-        foreach ($donnee as $colonne => $value) {
+        foreach ($donnees as $colonne => $value) {
             $setClause[] = "`$colonne` = :$colonne";
             $params[":$colonne"] = $value;
         }
@@ -216,6 +202,68 @@ function updateUtilisateur($pdo, $idUtilisateur, $donnee) {
         throw $e; 
     }
 }
+
+function modifConferencier($pdo, $idConferencier, $donnees) {
+    try {
+        $setClause = [];
+        $params = [];
+
+        // Construire les clauses et les valeurs dynamiquement
+        foreach ($donnees as $colonne => $value) {
+            $setClause[] = "`$colonne` = :$colonne";
+            $params[":$colonne"] = $value;
+        }
+
+        // Ajouter la condition WHERE avec un paramètre nommé
+        $params[':id'] = $idConferencier;
+
+        // Construire la requête SQL
+        $sql = "UPDATE conferencier SET " . implode(', ', $setClause) . " WHERE id_conferencier = :id";
+        $stmt = $pdo->prepare($sql);
+
+        // Exécuter la requête
+        return $stmt->execute($params);
+    } catch (Exception $e) {
+        throw $e; 
+    }
+}
+
+function modifExposition($pdo, $idExposition, $description) {
+    try {
+        $stmt = $pdo -> prepare("UPDATE exposition SET resume = :description WHERE id_exposition = :id");
+        $stmt ->bindParam("description", $description);
+        $stmt ->bindParam("id", $idExposition);
+        $stmt->execute();
+    }catch (Exception $e) {
+        throw $e; 
+    }
+}
+
+function recupIndisponibilite($pdo, $idConferencier) {
+    try {
+        $sql = "SELECT id_indisponibilite, debut, fin FROM indisponibilite WHERE id_conferencier = :idConferencier";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam('idConferencier', $idConferencier);  // Bind paramètre de manière sécurisée
+        $stmt->execute();
+        return $stmt;
+    } catch (Exception $e) {
+        throw $e;
+    }
+}
+
+// Exemple de vérification si une expo a une visite
+function verifierVisitePourExpo($pdo, $idExposition) {
+    $sql = "SELECT COUNT(*) FROM visite WHERE id_exposition = :idExposition ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam('idExposition', $idExposition);
+    $stmt->execute();
+    
+    $count = $stmt->fetchColumn();
+    return $count > 0;  // Retourne true si il y a au moins une visite sur l'expo
+}
+
+
+
 
 
 

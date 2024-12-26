@@ -95,16 +95,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']) 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
     try {
         $idUtilisateur = intval($_POST['idUtilisateur']); // Identifiant unique de l'utilisateur
-        $pseudo = isset($_POST['pseudoUtilisateur']) ? trim($_POST['pseudoUtilisateur']) : null;
-        $prenom = isset($_POST['prenomUtilisateur']) ? trim($_POST['prenomUtilisateur']) : null;
-        $nom = isset($_POST['nomUtilisateur']) ? trim($_POST['nomUtilisateur']) : null;
-        $telephone = isset($_POST['telephoneUtilisateur']) ? trim($_POST['telephoneUtilisateur']) : null;
-        $motDePasse = isset($_POST['motDePasseUtilisateur']) ? trim($_POST['motDePasseUtilisateur']) : null;
-        $confirmeMotDePasse = isset($_POST['confirmeMotDePasseUtilisateur']) ? trim($_POST['confirmeMotDePasseUtilisateur']) : null;
+        $pseudo = isset($_POST['pseudoUtilisateur']) ? trim($_POST['pseudoUtilisateur']) : "";
+        $prenom = isset($_POST['prenomUtilisateur']) ? trim($_POST['prenomUtilisateur']) : "";
+        $nom = isset($_POST['nomUtilisateur']) ? trim($_POST['nomUtilisateur']) : "";
+        $telephone = isset($_POST['telephoneUtilisateur']) ? trim($_POST['telephoneUtilisateur']) : "";
+        $motDePasse = isset($_POST['motDePasseUtilisateur']) ? trim($_POST['motDePasseUtilisateur']) : "";
+        $confirmeMotDePasse = isset($_POST['confirmeMotDePasseUtilisateur']) ? trim($_POST['confirmeMotDePasseUtilisateur']) : "";
 
         // Validation des champs
         $erreursModif = [];
-        if ($pseudo === null || strlen($pseudo) < 5 || strlen($pseudo) > 20) {
+        if ($pseudo === "" || strlen($pseudo) < 5 || strlen($pseudo) > 20) {
             $erreursModif['pseudo'] = 'Nom d\'utilisateur invalide (5-20 caractères).';
         }
         if (($prenom == "") || strlen($prenom) > 35) {
@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                 $erreursModif['existance'] = 'Un utilisateur avec ce nom d\'utilisateur ou ce nom et prénom existe déjà.';
             } else {
                 // Construire les données pour la mise à jour
-                $dataToUpdate = [
+                $donneesAModif = [
                     'nom_utilisateur' => $pseudo,
                     'prenom' => $prenom,
                     'nom' => $nom,
@@ -141,11 +141,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
 
                 // Ajouter le mot de passe uniquement s'il est changé
                 if (!empty($motDePasse)) {
-                    $dataToUpdate['mot_de_passe'] = hash('sha256', $motDePasse);
+                    $donneesAModif['mot_de_passe'] = hash('sha256', $motDePasse);
                 }
 
                 // Mettre à jour l'utilisateur dans la BD
-                updateUtilisateur($pdo, $idUtilisateur, $dataToUpdate);
+                modifUtilisateur($pdo, $idUtilisateur, $donneesAModif);
 
                 // Affichage du message de confirmation
                 echo "<script>alert('Utilisateur modifié avec succès.')</script>";
@@ -216,7 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                                         class='btn-action btn-modify btn-blue' 
                                         data-bs-toggle='modal'
                                         data-bs-target='#modalMofifierUtilisateur' 
-                                        title='Modifier l&#39;exposition'
+                                        title='Modifier l&#39;utilisateur'
                                         onclick='remplirFormulaire(
                                             " . intval($ligne['id_employe']) . ", 
                                             \"" . addslashes($ligne['identifiant']) . "\",
@@ -346,8 +346,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
     </div>
 
     
-<!-- Modale Modifier Utilisateur -->
-<div class="modal fade <?php echo !empty($erreursModif) ? 'show' : ''; ?>" 
+    <!-- Modale Modifier Utilisateur -->
+    <div class="modal fade <?php echo !empty($erreursModif) ? 'show' : ''; ?>" 
         id="modalMofifierUtilisateur" 
         style="<?php echo !empty($erreursModif) ? 'display: block;' : 'display: none;'; ?>">
         <div class="modal-dialog">
@@ -475,7 +475,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
     document.getElementById("prenom").value = ""; // Exemple : Efface le prénom
     document.getElementById("nom").value = ""; // Exemple : Efface le nom
     document.getElementById("telephone").value = ""; // Exemple : Efface le numéro de téléphone
-}
+    }
 
 </script>
 
