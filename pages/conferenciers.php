@@ -84,74 +84,59 @@
 
     //Pour la modification
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idConferencier'])) {
-        try {
-            $idConferencier = intval($_POST['idConferencier']);
-            $prenomModif = isset($_POST['prenomConferencier']) ? trim($_POST['prenomConferencier']) : "";
-            $nomModif = isset($_POST['nomConferencier']) ? trim($_POST['nomConferencier']) : "";
-            $telephoneModif = isset($_POST['telephoneConferencier']) ? trim($_POST['telephoneConferencier']) : "";
-            $motSpecialiteModif = isset($_POST['motsCleSpe']) ? trim($_POST['motsCleSpe']) : "";
+        // Si c'est une modification du conférencier
+        if (isset($_POST['action'])) {
+            try {
+                $idConferencier = intval($_POST['idConferencier']);
+                $prenomModif = isset($_POST['prenomConferencier']) ? trim($_POST['prenomConferencier']) : "";
+                $nomModif = isset($_POST['nomConferencier']) ? trim($_POST['nomConferencier']) : "";
+                $telephoneModif = isset($_POST['telephoneConferencier']) ? trim($_POST['telephoneConferencier']) : "";
+                $motSpecialiteModif = isset($_POST['motsCleSpe']) ? trim($_POST['motsCleSpe']) : "";
 
-            // Initialisation des variables
-            // $indisponibilites = [];
-            // if ($idConferencier) {
-            //     try {
-            //         $stmt = recupIndisponibilite($pdo, $idConferencier);
-
-            //         // Stocker les indisponibilités dans un tableau
-            //         while ($row = $stmt->fetch()) {
-            //             $indisponibilites[] = [
-            //                 'id' => $row['id_indisponibilite'],
-            //                 'debut' => $row['debut'],
-            //                 'fin' => $row['fin'],
-            //             ];
-            //         }
-            //     } catch (Exception $e) {
-            //         $indisponibilitesError = "Erreur : " . htmlspecialchars($e->getMessage());
-            //     }
-            // } else {
-            //     $indisponibilitesError = "Aucun conférencier spécifié.";
-            // }
-            // Validation des champs
-            $erreursModif = [];
-            if (($prenomModif == "") || strlen($prenomModif) > 35) {
-                $erreursModif['prenom'] = 'Le prénom est requis et ne doit pas dépasser 35 caractères.';
-            }
-            if (($nomModif == "") || strlen($nomModif) > 35) {
-                $erreursModif['nom'] = 'Le nom est requis et ne doit pas dépasser 35 caractères.';
-            }
-            if (!preg_match("/^[0-9]{10}$/", $telephoneModif)) {
-                $erreursModif['telephone'] = 'Numéro de téléphone invalide. Il doit contenir 10 chiffres.';
-            }
-             if (($motSpecialiteModif == "") || count(explode(" ", $motSpecialiteModif)) > 6){
-                 $erreursModif['motsCleSpecialite'] = 'La spécialité doit contenir entre 1 et 6 mots-clés séparés par des espaces.';
-             }
-
-            // Si aucun champ n'a d'erreur, mettre à jour la BD
-            if (empty($erreursModif)) {
-                if (verifierExistanceConferencier($pdo, $nomModif, $prenomModif, $idConferencier)) {
-                    $erreursModif['existance'] = 'Un conférencier avec ce nom et prénom existe déjà.';
-                } else {
-                    // Construire les données pour la mise à jour
-                    $donneesAModif = [
-                        'prenom' => $prenomModif,
-                        'nom' => $nomModif,
-                        'no_tel' => $telephoneModif,
-                        'mots_cles_specialite' => $motSpecialiteModif,
-                    ];
-
-                    // Mettre à jour l'utilisateur dans la BD
-                    modifConferencier($pdo, $idConferencier, $donneesAModif);
-
-                    // Affichage du message de confirmation
-                    echo "<script>alert('Conférencier modifié avec succès.')</script>";
+                // Validation des champs
+                $erreursModif = [];
+                if (($prenomModif == "") || strlen($prenomModif) > 35) {
+                    $erreursModif['prenom'] = 'Le prénom est requis et ne doit pas dépasser 35 caractères.';
                 }
-            
+                if (($nomModif == "") || strlen($nomModif) > 35) {
+                    $erreursModif['nom'] = 'Le nom est requis et ne doit pas dépasser 35 caractères.';
+                }
+                if (!preg_match("/^[0-9]{10}$/", $telephoneModif)) {
+                    $erreursModif['telephone'] = 'Numéro de téléphone invalide. Il doit contenir 10 chiffres.';
+                }
+                if (($motSpecialiteModif == "") || count(explode(" ", $motSpecialiteModif)) > 6){
+                    $erreursModif['motsCleSpecialite'] = 'La spécialité doit contenir entre 1 et 6 mots-clés séparés par des espaces.';
+                }
+
+                // Si aucune erreur, mise à jour
+                if (empty($erreursModif) && $_POST['action'] === 'modifierConferencier') {
+                    if (verifierExistanceConferencier($pdo, $nomModif, $prenomModif, $idConferencier)) {
+                        $erreursModif['existance'] = 'Un conférencier avec ce nom et prénom existe déjà.';
+                    } else {
+                        // Mise à jour du conférencier dans la base
+                        modifConferencier($pdo, $idConferencier, [
+                            'prenom' => $prenomModif,
+                            'nom' => $nomModif,
+                            'no_tel' => $telephoneModif,
+                            'mots_cles_specialite' => $motSpecialiteModif,
+                        ]);
+
+                        // Affichage du message de succès
+                        echo "<script>alert('Conférencier modifié avec succès.');</script>";
+                    }
+                }
+            } catch (Exception $e) {
+                echo "<p style='color:red;'>Une erreur est survenue : " . $e->getMessage() . "</p>";
             }
-        } catch (Exception $e) {
-            echo "<p style='color:red;'>Une erreur est survenue : " . $e->getMessage() . "</p>";
         }
+        
+        
+        
     }
 
+
+    
+    
 
 ?>
 
@@ -372,19 +357,19 @@
 
 
     <!-- Modale Modifier Conferencier -->
-    <div class="modal fade <?php echo !empty($erreursModif) ? 'show' : ''; ?>" 
-        id="modalMofifierConferencier" 
-        style="<?php echo !empty($erreursModif) ? 'display: block;' : 'display: none;'; ?>">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalModifierConferencierLabel">Modifier un conférencier</h5>
-                    <a href="conferenciers.php" class="btn-close" aria-label="Close"></a>
-                </div>
-                <div class="modal-body">
+<div class="modal fade <?php echo !empty($erreursModif) ? 'show' : ''; ?>" 
+     id="modalMofifierConferencier" 
+     style="<?php echo !empty($erreursModif) ? 'display: block;' : 'display: none;'; ?>">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalModifierConferencierLabel">Modifier un conférencier</h5>
+                <a href="conferenciers.php" class="btn-close" aria-label="Close"></a>
+            </div>
+            <div class="modal-body">
                 <form id="formModifierConferencier" method="POST" action="conferenciers.php">
-                    <!-- Champ pour l'ID du conferencier (caché) -->
-                    <input type="hidden" id="idConferencier" name="idConferencier" value="<?php htmlspecialchars($idConferencier) ?>">
+                    <!-- Champ pour l'ID du conférencier (caché) -->
+                    <input type="hidden" id="idConferencier" name="idConferencier" value="<?php echo htmlspecialchars($idConferencier) ?>">
 
                     <!-- Champ pour le prénom -->
                     <div class="mb-3">
@@ -422,40 +407,48 @@
                         <?php } ?>
                     </div>
 
-                    <!-- Champ pour les indisponibilités
-                    <div class="container mt-5">
-                        <h1>Indisponibilités du conférencier</h1>
+                    <!-- Affichage des indisponibilités -->
+                    <?php
+                        if (isset($_POST['action']) && $_POST['action'] === 'voirIndisponibilites' && !empty($_POST['idConferencier'])) {
+                            $idConferencier = intval($_POST['idConferencier']); 
 
-                        <?php if (!empty($indisponibilitesError)): ?>
-                            <div class="alert alert-danger"><?php echo $indisponibilitesError; ?></div>
-                        <?php elseif (!empty($indisponibilites)): ?>
-                            <ul class="list-group">
-                                <?php foreach ($indisponibilites as $indispo): ?>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        Du <?php echo htmlspecialchars($indispo['debut']); ?> au <?php echo htmlspecialchars($indispo['fin']); ?>
-                                        <form method="POST" action="supprimerIndisponibilite.php" style="display:inline;">
-                                            <input type="hidden" name="idIndisponibilite" value="<?php echo htmlspecialchars($indispo['id']); ?>">
-                                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
-                                        </form>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                        <?php else: ?>
-                            <p>Aucune indisponibilité trouvée pour ce conférencier.</p>
-                        <?php endif; ?>
-                    </div> -->
+                            // Récupérer les indisponibilités depuis la base de données
+                            $stmt = recupIndisponibilite($pdo, $idConferencier);
+                            echo "<h5>Indisponibilités du conférencier sélectionné :</h5>";
+                            if ($stmt->rowCount() > 0) {
+                                echo "<table class='table table-striped'>";
+                                echo "<thead><tr><th>Date de début</th><th>Date de fin</th></tr></thead>";
+                                echo "<tbody>";
+                                while ($row = $stmt->fetch()) {
+                                    echo "<tr>";
+                                    echo "<td>" . htmlspecialchars($row['debut']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['fin']) . "</td>";
+                                    echo "<td><button type='button' class='btn btn-danger'>Supprimer</button></td>"; 
+                                    echo "</tr>";
+                                }
+                                echo "</tbody>";
+                                echo "</table>";
+                            } else {
+                                echo "<p>Aucune indisponibilité trouvée pour ce conférencier.</p>";
+                            }
+                        }
+                    ?>
 
+                    <!-- Bouton pour voir les indisponibilités -->
+                    <button type="submit" name="action" value="voirIndisponibilites" class="btn btn-primary mt-2">Voir indisponibilités</button>
 
                     <?php if (isset($erreursModif['existance'])) { ?>
                             <div class="alert alert-danger"><?php echo $erreursModif['existance']; ?></div>
                     <?php } ?>
                     <!-- Bouton pour soumettre le formulaire -->
-                    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                    <button type="submit" name="action" value="modifierConferencier" class="btn btn-primary">Enregistrer les modifications</button>
                 </form>
-                </div>
             </div>
         </div>
     </div>
+</div>
+
+
         
 
     <!-- Modale de Confirmation -->
@@ -498,6 +491,14 @@
         document.getElementById('telephoneConferencier').value = telephone;
         document.getElementById('motsCleSpe').value = motsCles;
     }
+
+    //Pour que la modale se re-ouvre automatiquement après clic sur le bouton voirIndisponibilites
+    <?php if (isset($_POST['action']) && $_POST['action'] === 'voirIndisponibilites') { ?>
+        document.addEventListener('DOMContentLoaded', function() {
+            var modal = new bootstrap.Modal(document.getElementById('modalMofifierConferencier'));
+            modal.show();
+        });
+    <?php } ?>
 
     // function resetFormulaire() {
     // document.getElementById("formAjouterConferencier").reset(); // Réinitialise tous les champs du formulaire

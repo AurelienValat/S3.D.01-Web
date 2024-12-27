@@ -243,7 +243,7 @@ function recupIndisponibilite($pdo, $idConferencier) {
     try {
         $sql = "SELECT id_indisponibilite, debut, fin FROM indisponibilite WHERE id_conferencier = :idConferencier";
         $stmt = $pdo->prepare($sql);
-        $stmt->bindParam('idConferencier', $idConferencier);  // Bind paramètre de manière sécurisée
+        $stmt->bindParam('idConferencier', $idConferencier);  
         $stmt->execute();
         return $stmt;
     } catch (Exception $e) {
