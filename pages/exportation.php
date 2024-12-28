@@ -1,9 +1,44 @@
 <?php 
     session_start();
     require ('../bdd/fonctions.php');
+    require ('../bdd/connecterBD.php');
     verifSession(); // Vérifie si une session valide existe
 
     $estAdmin = isset($_SESSION['est_admin']) && $_SESSION['est_admin'] == 1;
+
+    $pdo = initierConnexion();
+    if ($pdo == FALSE) {
+        header("Location: pages/erreurs/erreurBD.php");
+    }
+
+    //Pour l'exportation
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $table = $_POST['table']; // Table sélectionnée
+        $tablesValides = ['employe', 'exposition', 'visite', 'conferencier']; 
+    
+        //Si la table n'est pas valide
+        if (!in_array($table, $tablesValides)) {
+            die('Table non valide.');
+        }
+    
+        $nomFichier = "{$table}s.csv";
+        $stmt = $pdo->query("SELECT * FROM {$table}");
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $nomFichier . '"');
+    
+        $output = fopen('php://output', 'w');
+        if ($rows) {
+            fputcsv($output, array_keys($rows[0]));
+            foreach ($rows as $row) {
+                fputcsv($output, $row);
+            }
+        }
+        fclose($output);
+        exit;
+    }
+    
 ?>
 
 <!DOCTYPE html>
@@ -27,7 +62,20 @@
                 <p>
                     Attention, nous vous conseillons de mettre vos fichiers une fois exportés dans un dossier prévu à cet effet.
                 </p>
-                <button class="btn-blue btn-action">Exporter les données</button>
+                <form action="exportation.php" method="POST">
+                    <button type="submit" name="table" value="employe" class="btn-blue btn-action">Exporter employe</button>
+                </form>
+                <form action="exportation.php" method="POST">
+                    <button type="submit" name="table" value="exposition" class="btn-blue btn-action">Exporter exposition</button>
+                </form>
+                <form action="exportation.php" method="POST">
+                    <button type="submit" name="table" value="visite" class="btn-blue btn-action">Exporter visite</button>
+                </form>
+                <form action="exportation.php" method="POST">
+                    <button type="submit" name="table" value="conferencier" class="btn-blue btn-action">Exporter conferencier</button>
+                </form>
+
+
             </div>
         </div>
 
