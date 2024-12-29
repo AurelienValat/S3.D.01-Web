@@ -101,7 +101,7 @@ function creerConferencier($pdo, $nom, $prenom, $type, $specialite, $motSpeciali
     $stmt->execute([$nom, $prenom, $specialite, $motSpecialite, $telephone, $type]);
 }
 
-// Crée Visite
+// Crée une Visite
 function creerVisite($pdo, $id_exposition, $id_conferencier, $id_employe, $horaire_debut, $date_visite, $intitule_client, $no_tel_client) {
     $stmt = $pdo->prepare("
         INSERT INTO Visite (id_exposition, id_conferencier, id_employe, horaire_debut, date_visite, intitule_client, no_tel_client) 
@@ -185,8 +185,3 @@ function updateUtilisateur($pdo, $idUtilisateur, $data) {
     $stmt = $pdo->prepare($sql);
     $stmt->execute($values);
 }
-
-
-
-
-

@@ -119,7 +119,7 @@
 </head>
 <body class="fond">
    
-    <?php require("../ressources/navBar.php");  var_dump($_POST);?>
+    <?php require("../ressources/navBar.php"); echo "POST : ". var_dump($_POST);?>
 
     <div class="container content col-12">
         <div class="container-blanc">
@@ -178,7 +178,7 @@
                                                   )'>
                                                   Modifier
                                           </button>";?>
-                                        <form method="POST" action= "conferenciers.php" style="display:inline;">
+                                        <form method="POST" action= "visites.php" style="display:inline;">
                                         <?php echo "<input type='hidden' name='supprimerVisite' value='" . $ligne['id_visite'] . "'>";
                                         ?> <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette visite ?');">Supprimer</button>
                                         </form>
@@ -327,7 +327,9 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="modalConfirmationLabel">Succès</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <a href="visites.php">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </a>
                     </div>
                     <div class="modal-body">
                         <p>Visite créé avec succès.</p>
@@ -339,10 +341,11 @@
             </div>
         </div>
 
+<?php echo "erreurs modif : ".var_dump($erreurs_modif)?>
 
 <!-- Modal Bootstrap pour modifier une visite -->
-<div class="modal fade <?php echo !empty($erreurs_modif) ? 'show' : ''; ?>" id="modifModal" tabindex="-1" role="dialog" aria-labelledby="modifModalLabel">
-  <div class="modal-dialog" role="document">
+<div class="modal fade <?php echo !empty($erreurs_modif) ? 'show' : ''; ?>" id="modifModal" aria-labelledby="modifModalLabel" style="<?php echo !empty($erreurs_modif) ? 'display: block;' : 'display: none;'; ?>">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modifModalLabel">Modifier la visite</h5>
@@ -355,7 +358,7 @@
           <input type="hidden" id="type_formulaire" name="type_formulaire" value="modif">
           <div class="mb-3">
             <label for="intitule" class="form-label">Exposition concernée</label>
-              <select class="form-control" id="intitule_Modif" name="intitule_Modif" required>
+              <select class="form-control <?php echo isset($erreurs_modif['id_exposition']) ? 'is-invalid' : ''; ?>" id="intitule_Modif" name="intitule_Modif" required>
               <option value="Sélectionner dans la liste">--- Sélectionner dans la liste ---</option>
               <!-- Options des conférenciers remplies dynamiquement -->
               <?php 
@@ -366,10 +369,13 @@
                   }
               }?>
             </select>
+            <?php if (isset($erreurs_modif['id_exposition'])): ?>
+                <div class="invalid-feedback"><?php echo $erreurs_modif['id_exposition']; ?></div>
+            <?php endif; ?>
           </div>
           <div class="mb-3">
             <label for="id_conferencier" class="form-label">Conférencier assurant la visite</label>
-            <select class="form-control" id="id_conferencier_Modif" name="id_conferencier_Modif" required>
+            <select class="form-control <?php echo isset($erreurs_modif['id_conferencier']) ? 'is-invalid' : ''; ?>" id="id_conferencier_Modif" name="id_conferencier_Modif" required>
               <option value="Sélectionner dans la liste">--- Sélectionner dans la liste ---</option>
               <!-- Options des conférenciers remplies dynamiquement -->
               <?php 
@@ -380,10 +386,13 @@
                   }
               }?>
             </select>
+            <?php if (isset($erreurs_modif['id_conferencier'])): ?>
+                <div class="invalid-feedback"><?php echo $erreurs_modif['id_conferencier']; ?></div>
+            <?php endif; ?>
           </div>
           <div class="mb-3">
             <label for="id_employe" class="form-label">Employé</label>
-            <select class="form-control" id="id_employe_Modif" name="id_employe_Modif" required>
+            <select class="form-control <?php echo isset($erreurs_modif['id_employe']) ? 'is-invalid' : ''; ?>" id="id_employe_Modif" name="id_employe_Modif" required>
               <option value="Sélectionner dans la liste">--- Sélectionner dans la liste ---</option>
               <!-- Options des employés remplies dynamiquement -->
               <?php 
@@ -394,22 +403,37 @@
                   }
               }?>
             </select>
+            <?php if (isset($erreurs_modif['id_employe'])): ?>
+                <div class="invalid-feedback"><?php echo $erreurs_modif['id_employe']; ?></div>
+            <?php endif; ?>
           </div>
           <div class="mb-3">
             <label for="intitule_client" class="form-label">Client ayant réservé</label>
-            <input type="text" class="form-control" id="intitule_client_Modif" name="intitule_client_Modif" value="" required>
+            <input type="text" class="form-control <?php echo isset($erreurs_modif['intitule_client']) ? 'is-invalid' : ''; ?>" id="intitule_client_Modif" name="intitule_client_Modif" value="" required>
+            <?php if (isset($erreurs_modif['intitule_client'])): ?>
+                <div class="invalid-feedback"><?php echo $erreurs_modif['intitule_client']; ?></div>
+            <?php endif; ?>
           </div>
           <div class="mb-3">
             <label for="no_tel_client" class="form-label">Téléphone du client</label>
-            <input type="text" class="form-control" id="no_tel_client_Modif" name="no_tel_client_Modif" value="" required>
+            <input type="text" class="form-control <?php echo isset($erreurs_modif['no_tel_client']) ? 'is-invalid' : ''; ?>" id="no_tel_client_Modif" name="no_tel_client_Modif" value="" required>
+            <?php if (isset($erreurs_modif['no_tel_client'])): ?>
+                <div class="invalid-feedback"><?php echo $erreurs_modif['no_tel_client']; ?></div>
+            <?php endif; ?>
           </div>
           <div class="mb-3">
             <label for="date_visite" class="form-label">Date de la visite</label>
-            <input type="date" class="form-control" id="date_visite_Modif" name="date_visite_Modif" value="" required>
+            <input type="date" class="form-control <?php echo isset($erreurs_modif['date_visite']) ? 'is-invalid' : ''; ?>" id="date_visite_Modif" name="date_visite_Modif" value="" required>
+            <?php if (isset($erreurs_modif['date_visite'])): ?>
+                <div class="invalid-feedback"><?php echo $erreurs_modif['date_visite']; ?></div>
+            <?php endif; ?>
           </div>
           <div class="mb-3">
             <label for="horaire_debut" class="form-label">Heure de début</label>
-            <input type="time" class="form-control" id="horaire_debut_Modif" name="horaire_debut_Modif" value="" required>
+            <input type="time" class="form-control <?php echo isset($erreurs_modif['horaire_debut']) ? 'is-invalid' : ''; ?>" id="horaire_debut_Modif" name="horaire_debut_Modif" value="" required>
+            <?php if (isset($erreurs_modif['horaire_debut'])): ?>
+                <div class="invalid-feedback"><?php echo $erreurs_modif['horaire_debut']; ?></div>
+            <?php endif; ?>
           </div>
           <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
         </form>

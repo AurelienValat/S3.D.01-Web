@@ -1,5 +1,4 @@
 <?php
-// TODO tester si ajout pas cassé
 function verifVisites($pdo, $erreurs, $horaire_debut, $intitule_client, $no_tel_client, $id_conferencier, $date_visite, $id_exposition) {    
     // Validation de la date de visite
     if (($date_visite == "") || !preg_match("/^\d{4}-\d{2}-\d{2}$/", $date_visite)) {
@@ -34,7 +33,7 @@ function verifVisites($pdo, $erreurs, $horaire_debut, $intitule_client, $no_tel_
     } else {
         // Vérification des horaires d'ouverture
         $heure = (int) substr($horaire_debut, 0, 2);
-        if ($heure < 9 || $heure >= 18) {
+        if ($heure < 9 || $heure >= 19) {
             $erreurs['horaire_debut'] = "Les visites doivent avoir lieu entre 9 heures et 19 heures.";
         }
     }
