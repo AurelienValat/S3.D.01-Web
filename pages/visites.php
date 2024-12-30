@@ -341,7 +341,7 @@
             </div>
         </div>
 
-<?php echo "erreurs modif : ".var_dump($erreurs_modif)?>
+<?php echo "erreurs modif : ".var_dump($erreurs_modif) // TODO réafficher tout les select & faire l'action via requette sql?>
 
 <!-- Modal Bootstrap pour modifier une visite -->
 <div class="modal fade <?php echo !empty($erreurs_modif) ? 'show' : ''; ?>" id="modifModal" aria-labelledby="modifModalLabel" style="<?php echo !empty($erreurs_modif) ? 'display: block;' : 'display: none;'; ?>">
@@ -382,7 +382,12 @@
               $conferenciers = afficherConferenciers($pdo);
               if (!empty($conferenciers)) {
                   foreach ($conferenciers as $conferencier) {
-                      echo "<option value='".htmlentities($conferencier["prenom"], ENT_QUOTES). " " .htmlentities($conferencier["nom"], ENT_QUOTES)."'>".htmlentities($conferencier["prenom"], ENT_QUOTES). " " .htmlentities($conferencier["nom"], ENT_QUOTES)."</option>";
+                      $nom_prenom = htmlentities($conferencier["nom"], ENT_QUOTES)." ".htmlentities($conferencier["prenom"]);
+                      echo "<option value='".$nom_prenom."' ";
+                      if($_POST['id_conferencier_Modif'] === $nom_prenom) {
+                          echo 'selected';
+                      }
+                      echo ">".$nom_prenom." "."</option>";
                   }
               }?>
             </select>
@@ -441,5 +446,16 @@
     </div>
   </div>
 </div>
+<?php 
+// On ré-affiche les valeurs précédentes en cas de saisie incorrecte
+if (!empty($erreurs_modif)) {
+    // On appelle le script de ré-affichage de la saisie
+    echo "<script>remplirModalModif(\"".$_POST['id_visite_Modif']
+                                    ."\",\"". $_POST['intitule_client_Modif']
+                                    ."\",\"". $_POST['no_tel_client_Modif']
+                                    ."\",\"". $_POST['date_visite_Modif']
+                                    ."\",\"". $_POST['horaire_debut_Modif']
+                                    ."\");</script>\n";
+}?>
 </body>
 </html>
