@@ -119,7 +119,16 @@ function creerVisite($pdo, $id_exposition, $id_conferencier, $id_employe, $horai
 }
 
 // Vérifie d'homonyme lors de la création d'un conférencier 
-function verifierExistanceConferencier($pdo, $nom, $prenom, $idConferencier) {
+function verifierExistanceConferencier($pdo, $nom, $prenom) {
+    $stmt = $pdo->prepare("SELECT COUNT(*) 
+    FROM conferencier 
+    WHERE nom = ? AND prenom = ?");
+    $stmt->execute([$nom, $prenom]);
+    return $stmt->fetchColumn() > 0;
+}
+
+// Vérifie d'homonyme lors de la modification d'un conférencier 
+function verifierExistanceConferencierModif($pdo, $nom, $prenom, $idConferencier) {
     $stmt = $pdo->prepare("SELECT COUNT(*) 
     FROM conferencier 
     WHERE (nom = ? AND prenom = ?)

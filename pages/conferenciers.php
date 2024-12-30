@@ -110,7 +110,7 @@
 
                 // Si aucune erreur, mise à jour
                 if (empty($erreursModif) && $_POST['action'] === 'modifierConferencier') {
-                    if (verifierExistanceConferencier($pdo, $nomModif, $prenomModif, $idConferencier)) {
+                    if (verifierExistanceConferencierModif($pdo, $nomModif, $prenomModif, $idConferencier)) {
                         $erreursModif['existance'] = 'Un conférencier avec ce nom et prénom existe déjà.';
                     } else {
                         // Mise à jour du conférencier dans la base
