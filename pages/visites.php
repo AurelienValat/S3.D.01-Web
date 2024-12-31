@@ -97,6 +97,11 @@
             
             $erreurs_modif = verifVisites($pdo, $erreurs_modif, $horaire_debut_modifie, $intitule_client_modifie, $no_tel_client_modifie, $conferencier_modifie, $date_visite_modifie, $exposition_concernee_modifie);
             
+            // S'il n'y a pas d'erreurs
+            if (empty($erreurs_modif)) {
+                modifierVisite($pdo, $exposition_concernee_modifie, $conferencier_modifie, $id_employe_modifie, $intitule_client_modifie, $no_tel_client_modifie, $date_visite_modifie, $horaire_debut_modifie, $_POST['id_visite_Modif']);
+            }
+            
         } catch (Exception $e) {
             echo "<p style='color:red;'>" . htmlspecialchars($e->getMessage()) . "</p>";
         }
@@ -119,7 +124,7 @@
 </head>
 <body class="fond">
    
-    <?php require("../ressources/navBar.php"); echo "POST : ". var_dump($_POST);?>
+    <?php require("../ressources/navBar.php");?>
 
     <div class="container content col-12">
         <div class="container-blanc">
@@ -341,8 +346,6 @@
             </div>
         </div>
 
-<?php echo "erreurs modif : ".var_dump($erreurs_modif) // TODO réafficher tout les select & faire l'action via requette sql?>
-
 <!-- Modal Bootstrap pour modifier une visite -->
 <div class="modal fade <?php echo !empty($erreurs_modif) ? 'show' : ''; ?>" id="modifModal" aria-labelledby="modifModalLabel" style="<?php echo !empty($erreurs_modif) ? 'display: block;' : 'display: none;'; ?>">
   <div class="modal-dialog">
@@ -367,7 +370,7 @@
                   foreach ($expositions as $exposition) {
                       echo "<option value='".htmlentities($exposition["intitule"], ENT_QUOTES)."'";
                       // Trim car un espace se balade ???????
-                      if(trim($_POST['intitule_Modif']) === $exposition["intitule"]) {
+                      if(isset($_POST['intitule_Modif']) && trim($_POST['intitule_Modif']) === $exposition["intitule"]) {
                           echo ' selected';
                       }
                       echo ">".htmlentities($exposition["intitule"], ENT_QUOTES)."</option>";
@@ -389,7 +392,8 @@
                   foreach ($conferenciers as $conferencier) {
                       $nom_prenom = htmlentities($conferencier["nom"], ENT_QUOTES)." ".htmlentities($conferencier["prenom"]);
                       echo "<option value='".$nom_prenom."' ";
-                      if($_POST['id_conferencier_Modif'] === $nom_prenom) {
+                      // On ne réutilise pas $nom_prenom car ils peuvent contenir des caractères convertis en html entities qui faussent la comparaison
+                      if(isset($_POST['id_conferencier_Modif']) && $_POST['id_conferencier_Modif'] === $conferencier["nom"].' '.$conferencier["prenom"]) {
                           echo 'selected';
                       }
                       echo ">".$nom_prenom." "."</option>";
@@ -411,10 +415,12 @@
                   foreach ($utilisateurs as $utilisateur) {
                       $nom_prenom = htmlentities($utilisateur["prenom"], ENT_QUOTES). " " .htmlentities($utilisateur["nom"], ENT_QUOTES);
                       echo "<option value='".$nom_prenom."'";
-                      if($_POST['id_employe_Modif'] === $nom_prenom) {
+                      // On ne réutilise pas $nom_prenom car ils peuvent contenir des caractères convertis en html entities qui faussent la comparaison
+                      if(isset($_POST['id_employe_Modif']) && $_POST['id_employe_Modif'] === $utilisateur["prenom"].' '.$utilisateur["nom"]) {
                           echo ' selected';
                       }
-                      echo ">".$nom_prenom."</option>";
+                      echo ">".$nom_prenom."</option>
+              ";
                   }
               }?>
             </select>
