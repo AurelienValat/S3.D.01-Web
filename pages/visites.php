@@ -365,7 +365,12 @@
               $expositions = getExpositions($pdo);
               if (!empty($expositions)) {
                   foreach ($expositions as $exposition) {
-                      echo "<option value='".htmlentities($exposition["intitule"], ENT_QUOTES)."'>".htmlentities($exposition["intitule"], ENT_QUOTES)."</option>";
+                      echo "<option value='".htmlentities($exposition["intitule"], ENT_QUOTES)."'";
+                      // Trim car un espace se balade ???????
+                      if(trim($_POST['intitule_Modif']) === $exposition["intitule"]) {
+                          echo ' selected';
+                      }
+                      echo ">".htmlentities($exposition["intitule"], ENT_QUOTES)."</option>";
                   }
               }?>
             </select>
@@ -404,7 +409,12 @@
               $utilisateurs = getUtilisateurs($pdo);
               if (!empty($utilisateurs)) {
                   foreach ($utilisateurs as $utilisateur) {
-                      echo "<option value='".htmlentities($utilisateur["prenom"], ENT_QUOTES). " " .htmlentities($utilisateur["nom"], ENT_QUOTES)."'>".htmlentities($utilisateur["prenom"], ENT_QUOTES). " " .htmlentities($utilisateur["nom"], ENT_QUOTES)."</option>";
+                      $nom_prenom = htmlentities($utilisateur["prenom"], ENT_QUOTES). " " .htmlentities($utilisateur["nom"], ENT_QUOTES);
+                      echo "<option value='".$nom_prenom."'";
+                      if($_POST['id_employe_Modif'] === $nom_prenom) {
+                          echo ' selected';
+                      }
+                      echo ">".$nom_prenom."</option>";
                   }
               }?>
             </select>
