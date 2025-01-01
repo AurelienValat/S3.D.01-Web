@@ -165,7 +165,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
     <link href="../css/style.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" >
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>   
+    <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>
+    <script src="../js/utilisateurs.js" type="text/javascript"></script>
     <title>MUSEOFLOW - Gestion des Utilisateurs</title>
 </head>
 <body class="fond">
@@ -451,34 +452,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
     </div>
 </div>
 </body>
-<script>
-    /**
-     * Remplit automatiquement le formulaire de modification d'utilisateur avec les données fournies.
-     * @param {number} idUtilisateur - Identifiant de l'utilisateur.
-     * @param {string} pseudo - Nom d'utilisateur.
-     * @param {string} prenom - Prénom de l'utilisateur.
-     * @param {string} nom - Nom de l'utilisateur.
-     * @param {string} telephone - Numéro de téléphone.
-     */
-    function remplirFormulaire(idUtilisateur, pseudo, prenom, nom, telephone) {
-        // Remplir les champs du formulaire
-        document.getElementById('idUtilisateur').value = idUtilisateur;
-        document.getElementById('pseudoUtilisateur').value = pseudo;
-        document.getElementById('prenomUtilisateur').value = prenom;
-        document.getElementById('nomUtilisateur').value = nom;
-        document.getElementById('telephoneUtilisateur').value = telephone;
-    }
-
-    function resetFormulaire() {
-    document.getElementById("formAjouterUtilisateur").reset(); // Réinitialise tous les champs du formulaire
-    document.getElementById("pseudo").value = ""; // Exemple : Efface le pseudo
-    document.getElementById("prenom").value = ""; // Exemple : Efface le prénom
-    document.getElementById("nom").value = ""; // Exemple : Efface le nom
-    document.getElementById("telephone").value = ""; // Exemple : Efface le numéro de téléphone
-    }
-
-</script>
-
 </html>
-
-

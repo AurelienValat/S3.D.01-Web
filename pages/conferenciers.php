@@ -128,18 +128,9 @@
             } catch (Exception $e) {
                 echo "<p style='color:red;'>Une erreur est survenue : " . $e->getMessage() . "</p>";
             }
-        }
-        
-        
-        
+        }   
     }
-
-
-    
-    
-
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -147,18 +138,19 @@
     <link href="../css/style.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>  
+    <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>
+    <script src="../js/conferenciers.js" type="text/javascript"></script>
     <title>MUSEOFLOW - Gestion des Conférenciers</title>
 </head>
 <body class="fond">
 
-    <?php require("../ressources/navBar.php");
-    ?>
+    <?php require("../ressources/navBar.php");?>
+    
         <div class="container content">
         <div class="container-blanc">
             <h1 class="text-center">Gestion des Conférenciers</h1>
             <div class="d-flex justify-content-between align-items-center">
-                <button class="btn-action btn-modify btn-blue" data-bs-toggle="modal" onclick="resetFormulaire()" data-bs-target="#modalAjouterConferencier" id="modalAjouterConferencierLabel" title="Ajouter un conférencier"><i class="fa-solid fa-user-plus"></i></button>
+                <button class="btn-action btn-modify btn-blue" data-bs-toggle="modal" data-bs-target="#modalAjouterConferencier" id="modalAjouterConferencierLabel" title="Ajouter un conférencier"><i class="fa-solid fa-user-plus"></i></button>
                 <button class="btn btn-light d-flex align-items-center gap-2">
                 <i class="fa-solid fa-filter"></i>Filtres
                 </button>
@@ -448,9 +440,6 @@
     </div>
 </div>
 
-
-        
-
     <!-- Modale de Confirmation -->
     <div class="modal <?php echo $conferenciersCree ? 'show' : ''; ?>" 
         id="modalConfirmation" 
@@ -473,25 +462,8 @@
             </div>
         </div>
     </div>
-    
 </body>
 <script>
-    /**
-     * Remplit automatiquement le formulaire de modification des conférenciers avec les données fournies.
-     * @param {number} idUtilisateur - Identifiant du conférencier.
-     * @param {string} prenom - Prénom du conférencier.
-     * @param {string} nom - Nom du conférencier.
-     * @param {string} telephone - Numéro de téléphone.
-     */
-    function remplirFormulaire(idConferencier, prenom, nom, telephone, motsCles) {
-        // Remplir les champs du formulaire
-        document.getElementById('idConferencier').value = idConferencier;   
-        document.getElementById('prenomConferencier').value = prenom;
-        document.getElementById('nomConferencier').value = nom;
-        document.getElementById('telephoneConferencier').value = telephone;
-        document.getElementById('motsCleSpe').value = motsCles;
-    }
-
     //Pour que la modale se re-ouvre automatiquement après clic sur le bouton voirIndisponibilites
     <?php if (isset($_POST['action']) && $_POST['action'] === 'voirIndisponibilites') { ?>
         document.addEventListener('DOMContentLoaded', function() {
@@ -499,13 +471,5 @@
             modal.show();
         });
     <?php } ?>
-
-    // function resetFormulaire() {
-    // document.getElementById("formAjouterConferencier").reset(); // Réinitialise tous les champs du formulaire
-    // document.getElementById("prenom").value = ""; // Exemple : Efface le prénom
-    // document.getElementById("nom").value = ""; // Exemple : Efface le nom
-    // document.getElementById("telephone").value = ""; // Exemple : Efface le numéro de téléphone
-    // }
-
 </script>
 </html>
