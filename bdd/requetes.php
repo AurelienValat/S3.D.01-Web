@@ -118,6 +118,25 @@ function creerVisite($pdo, $id_exposition, $id_conferencier, $id_employe, $horai
     $stmt->execute([$id_exposition, $id_conferencier, $id_employe, $horaire_debut, $date_visite, $intitule_client, $no_tel_client]);
 }
 
+// Crée Exposition
+function creerExposition($pdo, $intitule, $periode_oeuvres, $nombre_oeuvres, $mots_cles, $resume, $date_debut, $date_fin) {
+    if (empty($date_fin)) {
+        $date_fin = NULL;
+    }
+    $stmt = $pdo->prepare("
+    INSERT INTO Exposition (intitule, periode_oeuvres, nombre_oeuvres, mots_cles, resume, date_debut, date_fin) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+");
+$stmt->execute([$intitule, $periode_oeuvres, $nombre_oeuvres, $mots_cles, $resume, $date_debut, $date_fin]);
+}
+
+// Fonction pour vérifier si l'exposition existe déjà
+function expositionExiste($pdo, $intitule) {
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM Exposition WHERE intitule = :intitule");
+    $stmt->execute(['intitule' => $intitule]);
+    return $stmt->fetchColumn() > 0;
+}
+
 // Vérifie d'homonyme lors de la création d'un conférencier 
 function verifierExistanceConferencier($pdo, $nom, $prenom) {
     $stmt = $pdo->prepare("SELECT COUNT(*) 
@@ -185,7 +204,6 @@ function verifierEspacementVisites($pdo, $id_exposition, $date_visite, $horaire_
     ]);
     return $stmt->fetchColumn() == 0;
 }
-
 
 function modifUtilisateur($pdo, $idUtilisateur, $donnees) {
     try {

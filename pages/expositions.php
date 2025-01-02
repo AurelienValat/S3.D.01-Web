@@ -25,7 +25,116 @@ if (isset($_POST['supprimerExposition']) && $_POST['supprimerExposition'] != tri
         header("Location: ./erreurs/impossibleDeTraiterVotreDemande.php");
     }
 }
+// Initialisation des erreurs
+$erreurs = [];
 
+// Indicateur pour savoir si une visite a été créée avec succès
+$expositionCree = false;
+
+// Vérifie que la requête est de type POST et qu'elle n'est pas destinée à supprimer une visite
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerExposition'])) {
+    try {
+        $intitule = isset($_POST['intitule']) ? trim($_POST['intitule']) : "";
+        $periode_oeuvres  = isset($_POST['periode_oeuvres']) ? $_POST['periode_oeuvres'] : "";
+        $nombre_oeuvres  = isset($_POST['nombre_oeuvres']) ? $_POST['nombre_oeuvres'] : "";
+        $date_debut  = isset($_POST['date_debut']) ? $_POST['date_debut'] : "";
+        $date_fin  = isset($_POST['date_fin']) ? $_POST['date_fin'] : "";
+        $mots_cles  = isset($_POST['mots_cles']) ? $_POST['mots_cles'] : "";
+        $resume  = isset($_POST['resume']) ? $_POST['resume'] : "";
+        $annee_debut_oeuvres = isset($_POST['annee_debut_oeuvres']) ? trim($_POST['annee_debut_oeuvres']) : "";
+        $annee_fin_oeuvres = isset($_POST['annee_fin_oeuvres']) ? trim($_POST['annee_fin_oeuvres']) : "";
+
+        // Validation des champs supplémentaires
+        // TODO vérifier les vérifs car sa sert à rien de vérifier le format si on 
+        // L'impose lors du formulaire
+        // Validation des champs de la période
+        if ($annee_debut_oeuvres == "" || $annee_fin_oeuvres == "") {
+            $erreurs['periode_oeuvres'] = "Veuillez entrer une période complète (année de début et de fin).";
+        } else {
+            // Vérification que les années sont des nombres
+            if (!is_numeric($annee_debut_oeuvres) || !is_numeric($annee_fin_oeuvres)) {
+                $erreurs['periode_oeuvres'] = "Les années doivent être des valeurs numériques.";
+            } else {
+                // Vérifier que l'année de début est inférieure ou égale à l'année de fin
+                if ((int)$annee_debut_oeuvres > (int)$annee_fin_oeuvres) {
+                    $erreurs['periode_oeuvres'] = "L'année de début doit être inférieure ou égale à l'année de fin.";
+                } else {
+                    // Fusionner les années dans le format souhaité
+                    $periode_oeuvres = $annee_debut_oeuvres . ' - ' . $annee_fin_oeuvres;
+                }
+            }
+        }
+
+        // Validation du nombre d'œuvres
+        if (empty($nombre_oeuvres) || $nombre_oeuvres <= 0) {
+            $erreurs['nombre_oeuvres'] = "Veuillez entrer un nombre d'œuvres positif.";
+        }
+
+
+        if ($mots_cles == "" || count(explode(" ", $mots_cles)) > 10) {
+            $erreurs['mots_cles'] = 'Veuillez entrer jusqu'."à 10 mots-clés maximum, séparés par des espaces.";
+        }
+
+        if ($resume == "" || strlen($resume) < 10 || strlen($resume) > 500) {
+            $erreurs['resume'] = "Le résumé doit contenir entre 10 et 500 caractères.";
+        }
+       // Validation de la date de début de l'exposition
+        if (empty($date_debut) || !preg_match("/^\d{4}-\d{2}-\d{2}$/", $date_debut)) {
+            $erreurs['date_debut'] = "Date de début invalide ou non renseignée.";
+        } else {
+            // Vérification du jour (mardi à dimanche)
+            $jour_semaine = date('N', strtotime($date_debut)); // 1 = lundi, 7 = dimanche
+            if ($jour_semaine == 1) { // Lundi interdit
+                $erreurs['date_debut'] = "Les expositions ne peuvent pas commencer un lundi.";
+            } else {
+                // Vérifier si la date est entre aujourd'hui et dans 3 ans
+                $aujourd_hui = new DateTime();
+                $date_max = (clone $aujourd_hui)->modify('+3 years');
+                $date_debut_obj = DateTime::createFromFormat('Y-m-d', $date_debut);
+
+                if (!$date_debut_obj) {
+                    $erreurs['date_debut'] = "Format de date de début incorrect.";
+                } elseif ($date_debut_obj < $aujourd_hui) {
+                    $erreurs['date_debut'] = "La date de début doit être aujourd'hui ou dans le futur.";
+                } elseif ($date_debut_obj > $date_max) {
+                    $erreurs['date_debut'] = "La date de début ne peut pas dépasser 3 ans à partir d'aujourd'hui.";
+                }
+            }
+        }
+
+        // Validation de la date de fin de l'exposition (uniquement pour les expositions temporaires)
+        if (!($date_fin == "")) {
+            if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $date_fin)) {
+                $erreurs['date_fin'] = "Format de date de fin incorrect.";
+            } else {
+                $date_fin_obj = DateTime::createFromFormat('Y-m-d', $date_fin);
+                $date_debut_obj = isset($date_debut_obj) ? $date_debut_obj : null;
+
+                if (!$date_fin_obj) {
+                    $erreurs['date_fin'] = "La date de fin est invalide.";
+                } elseif (isset($date_debut_obj) && $date_fin_obj < $date_debut_obj) {
+                    $erreurs['date_fin'] = "La date de fin doit être postérieure à la date de début.";
+                }
+            }
+        }
+
+        // Gestion des erreurs pour l'intitulé unique
+        if ($intitule == "") {
+            $erreurs['intitule'] = "L'intitulé est obligatoire.";
+        } elseif (expositionExiste($pdo, $intitule)) { // Fonction pour vérifier l'unicité
+            $erreurs['intitule'] = "Une exposition avec cet intitulé existe déjà.";
+        }           
+        
+        // Si aucune erreur, créer l'exposition
+        if (empty($erreurs)) {
+            creerExposition($pdo, $intitule, $periode_oeuvres, $nombre_oeuvres, $mots_cles, $resume, $date_debut, $date_fin
+            );
+            $expositionCree = true;
+        }
+    } catch (Exception $e) {
+        echo "<p style='color:red;'>" . htmlspecialchars($e->getMessage()) . "</p>";
+    }
+}
 //Pour la modification
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
     try {
@@ -102,7 +211,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
             <h1 class="text-center">Gestion des Expositions</h1>
             <div
                 class="d-flex justify-content-between align-items-center">
-                <button class="btn-action btn-blue" title="Ajouter une exposition"><i class="fa-solid fa-plus"></i></button>
+                <button class="btn-action btn-modify btn-blue" data-bs-toggle="modal" data-bs-target="#modalAjouterExposition" id="modalAjouterExpositionLabel" title="Ajouter une exposition"><i class="fa-solid fa-plus"></i></button>
                 <button
                     class="btn btn-light d-flex align-items-center gap-2">
                     <i class="fa-solid fa-filter"></i>Filtres
@@ -171,7 +280,144 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
             ?>
             </div>
         </div>
+        <!-- Modal Ajouter Exposition -->
+        <div class="modal fade <?php echo !empty($erreurs) ? 'show' : ''; ?>" 
+            id="modalAjouterExposition" 
+            style="<?php echo !empty($erreurs) ? 'display: block;' : 'display: none;'; ?>">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalAjouterExpositionLabel">Ajouter une Exposition</h5>
+                        <a href="expositions.php" class="btn-close" aria-label="Close"></a>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formAjouterExposition" method="POST" action="expositions.php">
+                            <div class="mb-3">
+                                <label for="intitule" class="form-label">Intitulé de l'exposition</label>
+                                <input type="text" 
+                                    id="intitule" 
+                                    name="intitule" 
+                                    class="form-control <?php echo isset($erreurs['intitule']) ? 'is-invalid' : ''; ?>" 
+                                    value="<?php echo htmlspecialchars($intitule ?? ''); ?>"
+                                    placeholder="Exposition de peinture moderne">
+                                <?php if (isset($erreurs['intitule'])): ?>
+                                    <div class="invalid-feedback"><?php echo $erreurs['intitule']; ?></div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="mb-3">
+                                <label for="periode_oeuvres" class="form-label">Période des Œuvres</label>
+                                <div class="d-flex">
+                                    <input type="number" 
+                                        id="annee_debut_oeuvres" 
+                                        name="annee_debut_oeuvres" 
+                                        class="form-control <?php echo isset($erreurs['periode_oeuvres']) ? 'is-invalid' : ''; ?>" 
+                                        value="<?php echo htmlspecialchars($annee_debut_oeuvres ?? ''); ?>"
+                                        placeholder="Année de début">
+                                    <span class="mx-2">à</span>
+                                    <input type="number" 
+                                        id="annee_fin_oeuvres" 
+                                        name="annee_fin_oeuvres" 
+                                        class="form-control <?php echo isset($erreurs['periode_oeuvres']) ? 'is-invalid' : ''; ?>" 
+                                        value="<?php echo htmlspecialchars($annee_fin_oeuvres ?? ''); ?>"
+                                        placeholder="Année de fin">
+                                </div>
+                                <?php if (isset($erreurs['periode_oeuvres'])): ?>
+                                    <div class="invalid-feedback d-block">
+                                        <?php echo $erreurs['periode_oeuvres']; ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="mb-3">
+                                <label for="nombre_oeuvres" class="form-label">Nombre d'Œuvres</label>
+                                <input type="number" 
+                                    id="nombre_oeuvres" 
+                                    name="nombre_oeuvres" 
+                                    class="form-control <?php echo isset($erreurs['nombre_oeuvres']) ? 'is-invalid' : ''; ?>" 
+                                    value="<?php echo htmlspecialchars($nombre_oeuvres ?? ''); ?>"
+                                    placeholder="Ex. 10">
+                                <?php if (isset($erreurs['nombre_oeuvres'])): ?>
+                                    <div class="invalid-feedback"><?php echo $erreurs['nombre_oeuvres']; ?></div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="mb-3">
+                                <label for="date_debut" class="form-label">Date de début</label>
+                                <input type="date" 
+                                    id="date_debut" 
+                                    name="date_debut" 
+                                    class="form-control <?php echo isset($erreurs['date_debut']) ? 'is-invalid' : ''; ?>" 
+                                    value="<?php echo htmlspecialchars($date_debut ?? ''); ?>"
+                                    placeholder="YYYY-MM-DD">
+                                <?php if (isset($erreurs['date_debut'])): ?>
+                                    <div class="invalid-feedback"><?php echo $erreurs['date_debut']; ?></div>
+                                <?php endif; ?>
+                            </div>
+                            <!-- Faire en sorte de pouvoir supprimer la date de fin si l'utilisateur c'est trompé et ne veut pas la mettre -->
+                            <div class="mb-3">
+                                <label for="date_fin" class="form-label">Date de fin (optionnelle)</label>
+                                <input type="date" 
+                                    id="date_fin" 
+                                    name="date_fin" 
+                                    class="form-control <?php echo isset($erreurs['date_fin']) ? 'is-invalid' : ''; ?>" 
+                                    value="<?php echo htmlspecialchars($date_fin ?? ''); ?>"
+                                    placeholder="YYYY-MM-DD (optionnelle)">
+                                <?php if (isset($erreurs['date_fin'])): ?>
+                                    <div class="invalid-feedback"><?php echo $erreurs['date_fin']; ?></div>
+                                <?php endif; ?>
+                            </div>
 
+                            <div class="mb-3">
+                                <label for="mots_cles" class="form-label">Mots-clés</label>
+                                <input type="text" 
+                                    id="mots_cles" 
+                                    name="mots_cles" 
+                                    class="form-control <?php echo isset($erreurs['mots_cles']) ? 'is-invalid' : ''; ?>" 
+                                    value="<?php echo htmlspecialchars($mots_cles ?? ''); ?>"
+                                    placeholder="Ex. Art, Peinture, Contemporain">
+                                <?php if (isset($erreurs['mots_cles'])): ?>
+                                    <div class="invalid-feedback"><?php echo $erreurs['mots_cles']; ?></div>
+                                <?php endif; ?>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="resume" class="form-label">Résumé de l'exposition</label>
+                                <textarea id="resume" 
+                                        name="resume" 
+                                        class="form-control <?php echo isset($erreurs['resume']) ? 'is-invalid' : ''; ?>"
+                                        rows="3"
+                                        placeholder="Description de l'exposition"><?php echo htmlspecialchars($resume ?? ''); ?></textarea>
+                                <?php if (isset($erreurs['resume'])): ?>
+                                    <div class="invalid-feedback"><?php echo $erreurs['resume']; ?></div>
+                                <?php endif; ?>
+                            </div>
+                                    <button type="submit" class="btn btn-primary">Créer</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modale de Confirmation -->
+                <div class="modal <?php echo $expositionCree ? 'show' : ''; ?>" 
+                    id="modalConfirmation" 
+                    tabindex="-1" 
+                    aria-labelledby="modalConfirmationLabel" 
+                    aria-hidden="<?php echo $expositionCree ? 'false' : 'true'; ?>" 
+                    style="<?php echo $expositionCree ? 'display: block;' : 'display: none;'; ?>">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalConfirmationLabel">Succès</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Visite créé avec succès.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <a href="expositions.php" class="btn btn-secondary">Fermer</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         <!-- Modale Modifier Exposition -->
         <div class="modal fade <?php echo !empty($erreursModif) ? 'show' : ''; ?>" 
             id="modalMofifierExposition" 
