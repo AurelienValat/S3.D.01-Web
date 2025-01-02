@@ -25,12 +25,15 @@
             header("Location: ./erreurs/impossibleDeTraiterVotreDemande.php");
         }
     }
+    
+    // TODO traitements si un filtrage est demandé
 
     // Initialisation des erreurs
     $erreurs = [];
 
     $conferenciersCree = false;
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerConferencier']) && !isset($_POST['idConferencier'])) {
+    // On vérifie que l'on est pas en train de réaliser un autre traitement
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerConferencier']) && !isset($_POST['idConferencier']) && !isset($_POST['demandeFiltrage'])) {
         try {
             // Initialisation des variables de formulaire
             $type = isset($_POST['type']) ? trim($_POST['type']) : "";
@@ -144,15 +147,22 @@
 </head>
 <body class="fond">
 
-    <?php require("../ressources/navBar.php");?>
+    <?php 
+    require("../ressources/navBar.php");
+    require("../ressources/filtres.php");
+    // Pour afficher les options de filtrages spécifiques aux conférenciers
+    $_SESSION['filtreAApliquer'] = 'conférenciers';
+    ?>
     
         <div class="container content">
         <div class="container-blanc">
             <h1 class="text-center">Gestion des Conférenciers</h1>
             <div class="d-flex justify-content-between align-items-center">
                 <button class="btn-action btn-modify btn-blue" data-bs-toggle="modal" data-bs-target="#modalAjouterConferencier" id="modalAjouterConferencierLabel" title="Ajouter un conférencier"><i class="fa-solid fa-user-plus"></i></button>
-                <button class="btn btn-light d-flex align-items-center gap-2">
-                <i class="fa-solid fa-filter"></i>Filtres
+                <button
+                    class="btn btn-light d-flex align-items-center gap-2"
+                    data-bs-toggle="modal" data-bs-target="#modalFiltrage" >
+                    <i class="fa-solid fa-filter" ></i>Filtres
                 </button>
             </div>
             <div class="table">
@@ -462,6 +472,9 @@
             </div>
         </div>
     </div>
+    
+    <?php var_dump($_POST);?>
+    
 </body>
 <script>
     //Pour que la modale se re-ouvre automatiquement après clic sur le bouton voirIndisponibilites

@@ -171,15 +171,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
 </head>
 <body class="fond">
     
-    <?php require("../ressources/navBar.php");?>
+    <?php 
+    require("../ressources/navBar.php");
+    require("../ressources/filtres.php");
+    // Pour afficher les options de filtrages spécifiques aux conférenciers
+    $_SESSION['filtreAApliquer'] = 'utilisateurs';
+    ?>
 
     <div class="container content">
     <div class="container-blanc">
         <h1 class="text-center">Gestion des Utilisateurs</h1>
         <div class="d-flex justify-content-between align-items-center">
         <button class="btn-action btn-modify btn-blue" onclick="resetFormulaire()" data-bs-toggle="modal" data-bs-target="#modalAjouterUtilisateur" id="modalAjouterUtilisateurLabel" title="Ajouter un utilisateur"><i class="fa-solid fa-user-plus"></i></button>
-            <button class="btn btn-light d-flex align-items-center gap-2">
-            <i class="fa-solid fa-filter"></i>Filtres
+            <button
+                class="btn btn-light d-flex align-items-center gap-2"
+                data-bs-toggle="modal" data-bs-target="#modalFiltrage" >
+                <i class="fa-solid fa-filter" ></i>Filtres
             </button>
         </div>
         <div class="table">

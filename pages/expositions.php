@@ -203,7 +203,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
     <title>MUSEOFLOW - Gestion des Expositions</title>
 </head>
 <body class="fond">
-    <?php require("../ressources/navBar.php");?>
+
+    <?php 
+    require("../ressources/navBar.php");
+    require("../ressources/filtres.php");
+    // Pour afficher les options de filtrages spécifiques aux conférenciers
+    $_SESSION['filtreAApliquer'] = 'expositions';
+    ?>
 
     <div class="container content">
 
@@ -213,8 +219,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
                 class="d-flex justify-content-between align-items-center">
                 <button class="btn-action btn-modify btn-blue" data-bs-toggle="modal" data-bs-target="#modalAjouterExposition" id="modalAjouterExpositionLabel" title="Ajouter une exposition"><i class="fa-solid fa-plus"></i></button>
                 <button
-                    class="btn btn-light d-flex align-items-center gap-2">
-                    <i class="fa-solid fa-filter"></i>Filtres
+                    class="btn btn-light d-flex align-items-center gap-2"
+                    data-bs-toggle="modal" data-bs-target="#modalFiltrage" >
+                    <i class="fa-solid fa-filter" ></i>Filtres
                 </button>
             </div>
             <div class="table">

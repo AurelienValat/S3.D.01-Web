@@ -128,7 +128,12 @@
 </head>
 <body class="fond">
    
-    <?php require("../ressources/navBar.php");?>
+    <?php 
+    require("../ressources/navBar.php");
+    require("../ressources/filtres.php");
+    // Pour afficher les options de filtrages spécifiques aux conférenciers
+    $_SESSION['filtreAApliquer'] = 'visites';
+    ?>
 
     <div class="container content col-12">
         <div class="container-blanc">
@@ -137,8 +142,10 @@
                 <!-- Menu Ajouter/Réserver -->
                 <button class="btn-action btn-modify btn-blue"  title="Réserver une visite" data-bs-toggle="modal" data-bs-target="#modalAjouterVisite" id="modalAjouterVisiteLabel"><i class="fa-solid fa-plus"></i></button>                 
                 <!-- Menu Filtres -->
-                <button class="btn btn-light d-flex align-items-center gap-2">
-                <i class="fa-solid fa-filter"></i>Filtres
+                <button
+                    class="btn btn-light d-flex align-items-center gap-2"
+                    data-bs-toggle="modal" data-bs-target="#modalFiltrage" >
+                    <i class="fa-solid fa-filter" ></i>Filtres
                 </button>
             </div>
             <div class="table">
