@@ -37,7 +37,7 @@ if (isset($_POST['supprimerEmploye']) && $_POST['supprimerEmploye'] != trim(''))
 $erreurs = [];
 
 $utilisateurCree = false;
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']) && !isset($_POST['idUtilisateur'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']) && !isset($_POST['idUtilisateur']) && !isset($_POST['demandeFiltrage'])) {
     try {
         // Initialisation des variables de formulaire
         $pseudo = isset($_POST['pseudo']) ? trim($_POST['pseudo']) : ""; 

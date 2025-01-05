@@ -26,8 +26,6 @@
         }
     }
     
-    // TODO traitements si un filtrage est demandé
-
     // Initialisation des erreurs
     $erreurs = [];
 
@@ -148,10 +146,10 @@
 <body class="fond">
 
     <?php 
-    require("../ressources/navBar.php");
-    require("../ressources/filtres.php");
     // Pour afficher les options de filtrages spécifiques aux conférenciers
     $_SESSION['filtreAApliquer'] = 'conférenciers';
+    require("../ressources/navBar.php");
+    require("../ressources/filtres.php");
     ?>
     
         <div class="container content">
@@ -168,7 +166,16 @@
             <div class="table">
                 <table class="table table-striped table-bordered">
                 <?php   
-                    $conferenciers = getConferenciers($pdo);
+                    // Traitements si un filtrage est demandé
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['demandeFiltrage']) && $_POST['demandeFiltrage'] === '1') {
+                        $conferenciers = rechercheSpecialiteConferenciers($pdo, $_POST['rechercheSpecialite']);
+                        echo '<a href="conferenciers.php"><button class="btn-action btn-modify btn-blue"><span class="fa fa-refresh"></span> Effacer les filtres</button></a><br>';
+                        echo "Recherche par spécialité et mots clés correpondant à '" . $_POST['rechercheSpecialite'] . "' :";
+                        
+                    } else {
+                        $conferenciers = getConferenciers($pdo);
+                    }
+                    
                     $totalConferenciers = 0;
 
                     echo '<thead class="table-dark">';
@@ -472,9 +479,6 @@
             </div>
         </div>
     </div>
-    
-    <?php var_dump($_POST);?>
-    
 </body>
 <script>
     //Pour que la modale se re-ouvre automatiquement après clic sur le bouton voirIndisponibilites

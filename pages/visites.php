@@ -34,7 +34,7 @@
     $visiteCree = false;
 
     // Vérifie que la requête est de type POST et qu'elle n'est pas destinée à supprimer une visite
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerVisite'])) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerVisite']) && !isset($_POST['demandeFiltrage'])) {
         try {
             $id_exposition = isset($_POST['id_exposition']) ? (int) $_POST['id_exposition'] : 0;
             $id_conferencier = isset($_POST['id_conferencier']) ? (int) $_POST['id_conferencier'] : 0;

@@ -10,9 +10,32 @@ function getUtilisateurs($pdo) {
 function getExpositions($pdo) {
     return envoyerRequete("SELECT id_exposition, intitule, periode_oeuvres, nombre_oeuvres, mots_cles, resume, date_debut, date_fin FROM Exposition ORDER BY intitule", $pdo);
 }
-// Récupèle la liste des conférenciers
+// Récupèle la liste de tout les conférenciers
 function getConferenciers($pdo) {
     return envoyerRequete("SELECT id_conferencier, nom, prenom, specialite, mots_cles_specialite, no_tel, est_employe_par_musee FROM Conferencier ORDER BY nom, prenom", $pdo);
+}
+
+function rechercheSpecialiteConferenciers($pdo, $specialiteRecherche) {
+    try {
+        $specialiteRecherche = '%' . $specialiteRecherche . '%';
+        $stmt = $pdo->prepare("SELECT id_conferencier,
+                                      nom,
+                                      prenom,
+                                      specialite,
+                                      mots_cles_specialite,
+                                      no_tel,
+                                      est_employe_par_musee
+                               FROM Conferencier
+                               WHERE mots_cles_specialite LIKE :specialiteRecherche1
+                               OR specialite LIKE :specialiteRecherche2
+                               ORDER BY nom, prenom");
+        $stmt->bindValue(":specialiteRecherche1", $specialiteRecherche, PDO::PARAM_STR);
+        $stmt->bindValue(":specialiteRecherche2", $specialiteRecherche, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt;
+    } catch (Exception $e) {
+        throw $e;
+    }
 }
 
 // Récupèle la liste des conférenciers

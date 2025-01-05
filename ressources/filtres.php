@@ -17,7 +17,7 @@
                     <?php if ($_SESSION['filtreAApliquer'] === 'conférenciers') {?>
                     <p>
                         <label for='rechercheSpecialite'>Spécialité :</label>
-                        <input type='text' name='rechercheSpecialite' id='rechercheSpecialite' placeholder='Ex. Temps modernes'>
+                        <input type='text' name='rechercheSpecialite' id='rechercheSpecialite' placeholder='Ex. Temps modernes' value='<?php if (isset($_POST['rechercheSpecialite'])) {echo trim($_POST['rechercheSpecialite']);}?>'>
                     </p>
                     <?php }?>
                     <hr>
