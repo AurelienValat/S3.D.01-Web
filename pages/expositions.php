@@ -144,8 +144,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
 
         // Validation des champs
         $erreursModif = [];
-        if ($description == "") {
-            $erreursModif['description'] = 'La description ne peut pas être vide.';
+        if ($description == "" || strlen($description) < 10 || strlen($description) > 500) {
+            $erreursModif['description'] = 'La description ne peut pas être vide et doit contenir entre 10 et 500 caractères.';
         }
 
         // Vérifier si l'exposition est en cours de visite
