@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
     <?php 
     require("../ressources/navBar.php");
     require("../ressources/filtres.php");
-    // Pour afficher les options de filtrages spécifiques aux conférenciers
+    // Pour afficher les options de filtrages spécifiques aux employés
     $_SESSION['filtreAApliquer'] = 'utilisateurs';
     ?>
 
@@ -239,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                                             ?>
                                             <form method="POST" action="utilisateurs.php" style="display:inline;">
                                                 <input type="hidden" name="supprimerEmploye" value="<?php echo $ligne['id_employe']; ?>">
-                                                <button type="submit" class="btn-action btn-delete" title="Supprimer l'exposition"onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce conférencier ?');"><i class="fa-solid fa-trash"></i></button>
+                                                <button type="submit" class="btn-action btn-delete" title="Supprimer l'exposition"onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');"><i class="fa-solid fa-trash"></i></button>
                                                 </form>
                                             <?php
                                         }

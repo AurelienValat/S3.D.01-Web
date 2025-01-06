@@ -32,7 +32,7 @@ $erreurs = [];
 $expositionCree = false;
 
 // Vérifie que la requête est de type POST et qu'elle n'est pas destinée à supprimer une visite
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerExposition']) && !isset($_POST['demandeFiltrage'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerExposition']) && !isset($_POST['demandeFiltrage']) && !isset($_POST['description'])) {
     try {
         $intitule = isset($_POST['intitule']) ? trim($_POST['intitule']) : "";
         $periode_oeuvres  = isset($_POST['periode_oeuvres']) ? $_POST['periode_oeuvres'] : "";
@@ -207,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
     <?php 
     require("../ressources/navBar.php");
     require("../ressources/filtres.php");
-    // Pour afficher les options de filtrages spécifiques aux conférenciers
+    // Pour afficher les options de filtrages spécifiques aux expositions
     $_SESSION['filtreAApliquer'] = 'expositions';
     ?>
 

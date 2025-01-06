@@ -131,7 +131,7 @@
     <?php 
     require("../ressources/navBar.php");
     require("../ressources/filtres.php");
-    // Pour afficher les options de filtrages spécifiques aux conférenciers
+    // Pour afficher les options de filtrages spécifiques aux visites
     $_SESSION['filtreAApliquer'] = 'visites';
     ?>
 
