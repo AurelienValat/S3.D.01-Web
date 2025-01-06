@@ -458,5 +458,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
         </div>
     </div>
 </div>
+<?php require("../ressources/footer.php");?>
 </body>
 </html>

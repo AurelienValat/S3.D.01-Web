@@ -131,6 +131,32 @@
             }
         }   
     }
+
+                
+    // if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idConferencier']) && !isset($_POST['demandeFiltrage'])) {
+
+    //     $idConferencier = intval($_POST['idConferencier']); 
+
+    //     // Récupérer les indisponibilités depuis la base de données
+    //     $stmt = recupIndisponibilite($pdo, $idConferencier);
+    //     echo "<h5>Indisponibilités du conférencier sélectionné :</h5>";
+    //     if ($stmt->rowCount() > 0) {
+    //         echo "<table class='table table-striped'>";
+    //         echo "<thead><tr><th>Date de début</th><th>Date de fin</th></tr></thead>";
+    //         echo "<tbody>";
+    //         while ($row = $stmt->fetch()) {
+    //             echo "<tr>";
+    //             echo "<td>" . htmlspecialchars($row['debut']) . "</td>";
+    //             echo "<td>" . htmlspecialchars($row['fin']) . "</td>";
+    //             echo "<td><button type='button' class='btn btn-danger'>Supprimer</button></td>"; 
+    //             echo "</tr>";
+    //         }
+    //         echo "</tbody>";
+    //         echo "</table>";
+    //     } else {
+    //         echo "<p>Aucune indisponibilité trouvée pour ce conférencier.</p>";
+   // }
+    
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -200,9 +226,18 @@
                                 echo '<td>' . htmlspecialchars($ligne["mots_cles_specialite"], ENT_QUOTES) . '</td>';
                                 echo '<td>' . htmlspecialchars($ligne["no_tel"], ENT_QUOTES) . '</td>';
                                 echo '<td>';
-                                    echo '<button class="btn-action btn-blue" title="Afficher le planning du conférencier">
-                                            <i class="fa-solid fa-calendar"></i>
-                                        </button>';
+
+                                    ?>
+                                    <form method="post" action="planning.php">
+                                        <input type="hidden" name="idConferencier" value="<?php echo $ligne["id_conferencier"]; ?>">
+                                        <button type="submit" class="btn-action btn-blue" title="Afficher le planning du conférencier">
+                                        <i class="fa-solid fa-calendar"></i>
+                                        </button>
+                                    </form>
+
+                                    <?php
+
+
                                     
                                     echo '<button class="btn-action btn-modify btn-blue" 
                                             data-bs-toggle="modal" 
@@ -327,33 +362,6 @@
                                 <div class="invalid-feedback"><?php echo $erreurs['telephone']; ?></div>
                             <?php endif; ?>
                         </div>
-                        <!-- <div class="mb-3">
-                            <label for="indisponibilites" class="form-label">Indisponibilités</label>
-                            <div class="row">
-                                <div class="col-6">
-                                    <input type="date" 
-                                        class="form-control <?php //echo isset($erreurs['indisponibilite_debut']) ? 'is-invalid' : ''; ?>" 
-                                        id="indisponibilite_debut" 
-                                        name="indisponibilite_debut" 
-                                        value="<?php //echo htmlspecialchars($indisponibilite_debut); ?>" 
-                                        placeholder="Date de début">
-                                    <?php //if (isset($erreurs['indisponibilite_debut'])): ?>
-                                        <div class="invalid-feedback"><?php //echo $erreurs['indisponibilite_debut']; ?></div>
-                                    <?php //endif; ?>
-                                </div> -->
-                                <!-- <div class="col-6">
-                                    <input type="date" 
-                                        class="form-control <?php //echo isset($erreurs['indisponibilite_fin']) ? 'is-invalid' : ''; ?>" 
-                                        id="indisponibilite_fin" 
-                                        name="indisponibilite_fin" 
-                                        value="<?php //echo htmlspecialchars($indisponibilite_fin); ?>" 
-                                        placeholder="Date de fin">
-                                    <?php //if (isset($erreurs['indisponibilite_fin'])): ?>
-                                        <div class="invalid-feedback"><?php// echo $erreurs['indisponibilite_fin']; ?></div>
-                                    <?php //endif; ?>
-                                </div>
-                            </div>
-                        </div> -->
                         <?php if (isset($erreurs['existance'])): ?>
                             <div class="alert alert-danger"><?php echo $erreurs['existance']; ?></div>
                         <?php endif; ?>
@@ -366,96 +374,66 @@
 
 
     <!-- Modale Modifier Conferencier -->
-<div class="modal fade <?php echo !empty($erreursModif) ? 'show' : ''; ?>" 
-     id="modalMofifierConferencier" 
-     style="<?php echo !empty($erreursModif) ? 'display: block;' : 'display: none;'; ?>">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalModifierConferencierLabel">Modifier un conférencier</h5>
-                <a href="conferenciers.php" class="btn-close" aria-label="Close"></a>
-            </div>
-            <div class="modal-body">
-                <form id="formModifierConferencier" method="POST" action="conferenciers.php">
-                    <!-- Champ pour l'ID du conférencier (caché) -->
-                    <input type="hidden" id="idConferencier" name="idConferencier" value="<?php echo htmlspecialchars($idConferencier) ?>">
+    <div class="modal fade <?php echo !empty($erreursModif) ? 'show' : ''; ?>" 
+        id="modalMofifierConferencier" 
+        style="<?php echo !empty($erreursModif) ? 'display: block;' : 'display: none;'; ?>">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalModifierConferencierLabel">Modifier un conférencier</h5>
+                    <a href="conferenciers.php" class="btn-close" aria-label="Close"></a>
+                </div>
+                <div class="modal-body">
+                    <form id="formModifierConferencier" method="POST" action="conferenciers.php">
+                        <!-- Champ pour l'ID du conférencier (caché) -->
+                        <input type="hidden" id="idConferencier" name="idConferencier" value="<?php echo htmlspecialchars($idConferencier) ?>">
 
-                    <!-- Champ pour le prénom -->
-                    <div class="mb-3">
-                        <label for="prenomConferencier" class="form-label">Prénom</label>
-                        <input type="text" class="form-control <?php echo isset($erreursModif['prenom']) ? 'is-invalid' : ''; ?>" id="prenomConferencier" name="prenomConferencier" placeholder="Modifiez le prénom" value="<?php echo htmlspecialchars($prenomModif); ?>">
-                        <?php if (isset($erreursModif['prenom'])) { ?>
-                            <div class="invalid-feedback"><?php echo $erreursModif['prenom']; ?></div>
+                        <!-- Champ pour le prénom -->
+                        <div class="mb-3">
+                            <label for="prenomConferencier" class="form-label">Prénom</label>
+                            <input type="text" class="form-control <?php echo isset($erreursModif['prenom']) ? 'is-invalid' : ''; ?>" id="prenomConferencier" name="prenomConferencier" placeholder="Modifiez le prénom" value="<?php echo htmlspecialchars($prenomModif); ?>">
+                            <?php if (isset($erreursModif['prenom'])) { ?>
+                                <div class="invalid-feedback"><?php echo $erreursModif['prenom']; ?></div>
+                            <?php } ?>
+                        </div>
+
+                        <!-- Champ pour le nom -->
+                        <div class="mb-3">
+                            <label for="nomConferencier" class="form-label">Nom</label>
+                            <input type="text" class="form-control <?php echo isset($erreursModif['nom']) ? 'is-invalid' : ''; ?>" id="nomConferencier" name="nomConferencier" placeholder="Modifiez le nom" value="<?php echo htmlspecialchars($nomModif); ?>">
+                            <?php if (isset($erreursModif['nom'])) { ?>
+                                <div class="invalid-feedback"><?php echo $erreursModif['nom']; ?></div>
+                            <?php } ?>
+                        </div>
+
+                        <!-- Champ pour le numéro de téléphone -->
+                        <div class="mb-3">
+                            <label for="telephoneConferencier" class="form-label">Numéro de téléphone</label>
+                            <input type="tel" class="form-control <?php echo isset($erreursModif['telephone']) ? 'is-invalid' : ''; ?>" id="telephoneConferencier" name="telephoneConferencier" placeholder="Modifiez le numéro de téléphone"  value="<?php echo htmlspecialchars($telephoneModif);?>">
+                            <?php if (isset($erreursModif['telephone'])) { ?>
+                                <div class="invalid-feedback"><?php echo $erreursModif['telephone']; ?></div>
+                            <?php } ?>
+                        </div>
+
+                        <!-- Champ pour les mots clés spécialité-->
+                        <div class="mb-3">
+                            <label for="motsCleSpe" class="form-label">Spécialité</label>
+                            <input type="text" class="form-control <?php echo isset($erreursModif['motsCleSpecialite']) ? 'is-invalid' : ''; ?>" id="motsCleSpe" name="motsCleSpe" placeholder="Modifiez les mots-clés de la spécialité du conférencier"  value="<?php echo htmlspecialchars($motSpecialiteModif);?>">
+                            <?php if (isset($erreursModif['motsCleSpecialite'])) { ?>
+                                <div class="invalid-feedback"><?php echo $erreursModif['motsCleSpecialite']; ?></div>
+                            <?php } ?>
+                        </div>
+
+                        <?php if (isset($erreursModif['existance'])) { ?>
+                                <div class="alert alert-danger"><?php echo $erreursModif['existance']; ?></div>
                         <?php } ?>
-                    </div>
-
-                    <!-- Champ pour le nom -->
-                    <div class="mb-3">
-                        <label for="nomConferencier" class="form-label">Nom</label>
-                        <input type="text" class="form-control <?php echo isset($erreursModif['nom']) ? 'is-invalid' : ''; ?>" id="nomConferencier" name="nomConferencier" placeholder="Modifiez le nom" value="<?php echo htmlspecialchars($nomModif); ?>">
-                        <?php if (isset($erreursModif['nom'])) { ?>
-                            <div class="invalid-feedback"><?php echo $erreursModif['nom']; ?></div>
-                        <?php } ?>
-                    </div>
-
-                    <!-- Champ pour le numéro de téléphone -->
-                    <div class="mb-3">
-                        <label for="telephoneConferencier" class="form-label">Numéro de téléphone</label>
-                        <input type="tel" class="form-control <?php echo isset($erreursModif['telephone']) ? 'is-invalid' : ''; ?>" id="telephoneConferencier" name="telephoneConferencier" placeholder="Modifiez le numéro de téléphone"  value="<?php echo htmlspecialchars($telephoneModif);?>">
-                        <?php if (isset($erreursModif['telephone'])) { ?>
-                            <div class="invalid-feedback"><?php echo $erreursModif['telephone']; ?></div>
-                        <?php } ?>
-                    </div>
-
-                    <!-- Champ pour les mots clés spécialité-->
-                    <div class="mb-3">
-                        <label for="motsCleSpe" class="form-label">Spécialité</label>
-                        <input type="text" class="form-control <?php echo isset($erreursModif['motsCleSpecialite']) ? 'is-invalid' : ''; ?>" id="motsCleSpe" name="motsCleSpe" placeholder="Modifiez les mots-clés de la spécialité du conférencier"  value="<?php echo htmlspecialchars($motSpecialiteModif);?>">
-                        <?php if (isset($erreursModif['motsCleSpecialite'])) { ?>
-                            <div class="invalid-feedback"><?php echo $erreursModif['motsCleSpecialite']; ?></div>
-                        <?php } ?>
-                    </div>
-
-                    <!-- Affichage des indisponibilités -->
-                    <?php
-                        if (isset($_POST['action']) && $_POST['action'] === 'voirIndisponibilites' && !empty($_POST['idConferencier'])) {
-                            $idConferencier = intval($_POST['idConferencier']); 
-
-                            // Récupérer les indisponibilités depuis la base de données
-                            $stmt = recupIndisponibilite($pdo, $idConferencier);
-                            echo "<h5>Indisponibilités du conférencier sélectionné :</h5>";
-                            if ($stmt->rowCount() > 0) {
-                                echo "<table class='table table-striped'>";
-                                echo "<thead><tr><th>Date de début</th><th>Date de fin</th></tr></thead>";
-                                echo "<tbody>";
-                                while ($row = $stmt->fetch()) {
-                                    echo "<tr>";
-                                    echo "<td>" . htmlspecialchars($row['debut']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($row['fin']) . "</td>";
-                                    echo "<td><button type='button' class='btn btn-danger'>Supprimer</button></td>"; 
-                                    echo "</tr>";
-                                }
-                                echo "</tbody>";
-                                echo "</table>";
-                            } else {
-                                echo "<p>Aucune indisponibilité trouvée pour ce conférencier.</p>";
-                            }
-                        }
-                    ?>
-
-                    <!-- Bouton pour voir les indisponibilités -->
-                    <button type="submit" name="action" value="voirIndisponibilites" class="btn btn-primary mt-2">Voir indisponibilités</button>
-
-                    <?php if (isset($erreursModif['existance'])) { ?>
-                            <div class="alert alert-danger"><?php echo $erreursModif['existance']; ?></div>
-                    <?php } ?>
-                    <!-- Bouton pour soumettre le formulaire -->
-                    <button type="submit" name="action" value="modifierConferencier" class="btn btn-primary">Enregistrer les modifications</button>
-                </form>
+                        <!-- Bouton pour soumettre le formulaire -->
+                        <button type="submit" name="action" value="modifierConferencier" class="btn btn-primary">Enregistrer les modifications</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <!-- Modale de Confirmation -->
     <div class="modal <?php echo $conferenciersCree ? 'show' : ''; ?>" 
@@ -479,14 +457,17 @@
             </div>
         </div>
     </div>
-</body>
-<script>
-    //Pour que la modale se re-ouvre automatiquement après clic sur le bouton voirIndisponibilites
-    <?php if (isset($_POST['action']) && $_POST['action'] === 'voirIndisponibilites') { ?>
-        document.addEventListener('DOMContentLoaded', function() {
-            var modal = new bootstrap.Modal(document.getElementById('modalMofifierConferencier'));
-            modal.show();
+    <?php require("../ressources/footer.php");?>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".open-modal").forEach(button => {
+                button.addEventListener("click", function () {
+                    let idConferencier = this.getAttribute("data-id");
+                    document.getElementById("idConferencier").value = idConferencier;
+                });
+            });
         });
-    <?php } ?>
 </script>
+
+</body>
 </html>

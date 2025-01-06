@@ -81,5 +81,6 @@
         </div>
     </section>
     <script src="../js/accueil.js"></script>
+    <?php require("../ressources/footer.php");?>
 </body>
 </html>

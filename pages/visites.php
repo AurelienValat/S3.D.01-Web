@@ -407,5 +407,6 @@
     </div>
   </div>
 </div>
+<?php require("../ressources/footer.php");?>
 </body>
 </html>

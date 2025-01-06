@@ -13,24 +13,32 @@
 
     //Pour l'exportation
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $table = $_POST['table']; // Table sélectionnée
+        $table = $_POST['table']; // Table sélectionnée dans le formulaire
         $tablesValides = ['employe', 'exposition', 'visite', 'conferencier']; 
     
-        //Si la table n'est pas valide
-        if (!in_array($table, $tablesValides)) {
-            die('Table non valide.');
+        // Déterminer les colonnes à sélectionner en fonction de la table
+        if ($table === 'employe') {
+            $colonnes = 'nom, prenom, no_tel';
+        } else {
+            $colonnes = '*'; // Sélectionne tout pour les autres tables
         }
+
+        $nomFichier = "{$table}s.csv"; //Créer le nom du fichier
+        //Requete pour selectionner les données à exporter
+        $stmt = $pdo->query("SELECT {$colonnes} FROM {$table}"); 
+        $rows = $stmt->fetchAll();
     
-        $nomFichier = "{$table}s.csv";
-        $stmt = $pdo->query("SELECT * FROM {$table}");
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+        // Indique que le contenu renvoyé est un fichier CSV
         header('Content-Type: text/csv');
+
+        // Force le téléchargement du fichier avec le nom défini dans $nomFichier
         header('Content-Disposition: attachment; filename="' . $nomFichier . '"');
     
         $output = fopen('php://output', 'w');
         if ($rows) {
-            fputcsv($output, array_keys($rows[0]));
+            fputcsv($output, array_keys($rows[0])); // Écrit les en-têtes des colonnes
+
+            // Parcourt chaque ligne et l'écrit dans le fichier CSV
             foreach ($rows as $row) {
                 fputcsv($output, $row);
             }
@@ -64,14 +72,11 @@
                 </p>
                 <form action="exportation.php" method="POST">
                     <button type="submit" name="table" value="employe" class="btn-blue btn-action">Exporter employe</button>
-                </form>
-                <form action="exportation.php" method="POST">
+                
                     <button type="submit" name="table" value="exposition" class="btn-blue btn-action">Exporter exposition</button>
-                </form>
-                <form action="exportation.php" method="POST">
+               
                     <button type="submit" name="table" value="visite" class="btn-blue btn-action">Exporter visite</button>
-                </form>
-                <form action="exportation.php" method="POST">
+               
                     <button type="submit" name="table" value="conferencier" class="btn-blue btn-action">Exporter conferencier</button>
                 </form>
 
@@ -81,20 +86,7 @@
 
         <br><br><br><br><br><br>
 
-        <footer>
-
-            <div>
-                <h5>Contacter le support</h5>
-                <a href="tel:0123456789">01.23.45.67.89</a><br>
-                <a href="mailto:supportclient@contact.com">supportclient@contact.com</a>
-                <p>12 rue de l'invention, 12000 Rodez</p>
-            </div>
-
-            <div>
-                <p>LOUBIERE, POUPIN, SEHIL, VALAT © 2024</p>
-            </div>
-
-        </footer>
+        <?php require("../ressources/footer.php");?>
     </body>
 </html>
 

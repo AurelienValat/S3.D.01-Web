@@ -5,26 +5,26 @@
             Intranet du Musée
         </div>
         <div class="main-menu">
-               <?php
+            <?php
                $page_courante = basename($_SERVER['PHP_SELF']); // Récupère le nom du fichier actuel
                 if ($estAdmin){?>
                     <a href="/S3.D.01-Web/pages/utilisateurs.php" class="deco" title="Gérer les utilisateurs">
                         <div class="menu-item <?php echo ($page_courante == "utilisateurs.php") ? "active" : ""; ?>">Utilisateurs</div>
                     </a>
-                <?php }
-                ?>
-                <a href="/S3.D.01-Web/pages/expositions.php" class="deco" title="Gérer les expositions">
-                    <div class="menu-item <?php echo ($page_courante == 'expositions.php') ? 'active' : ''; ?>">Expositions</div>
-                </a> 
-                <a href="/S3.D.01-Web/pages/conferenciers.php" class="deco" title="Gérer les conférenciers">
-                    <div class="menu-item <?php echo ($page_courante == 'conferenciers.php') ? 'active' : ''; ?>">Conférenciers</div>
-                </a> 
-                <a href="/S3.D.01-Web/pages/visites.php" class="deco" title="Gérer les vivistes">
-                    <div class="menu-item <?php echo ($page_courante == 'visites.php') ? 'active' : ''; ?>">Visites</div>
-                </a> 
-                <a href="/S3.D.01-Web/pages/exportation.php" class="deco" title="Exporter des fichiers CSV">
-                    <div class="menu-item <?php echo ($page_courante == 'exportation.php') ? 'active' : ''; ?>">Exportation</div>
-                </a>
+            <?php }
+            ?>
+            <a href="/S3.D.01-Web/pages/expositions.php" class="deco" title="Gérer les expositions">
+                <div class="menu-item <?php echo ($page_courante == 'expositions.php') ? 'active' : ''; ?>">Expositions</div>
+            </a> 
+            <a href="/S3.D.01-Web/pages/conferenciers.php" class="deco" title="Gérer les conférenciers">
+                <div class="menu-item <?php echo ($page_courante == 'conferenciers.php') ? 'active' : ''; ?>">Conférenciers</div>
+            </a> 
+            <a href="/S3.D.01-Web/pages/visites.php" class="deco" title="Gérer les vivistes">
+                <div class="menu-item <?php echo ($page_courante == 'visites.php') ? 'active' : ''; ?>">Visites</div>
+            </a> 
+            <a href="/S3.D.01-Web/pages/exportation.php" class="deco" title="Exporter des fichiers CSV">
+                <div class="menu-item <?php echo ($page_courante == 'exportation.php') ? 'active' : ''; ?>">Exportation</div>
+            </a>
 
             <!-- Menu déroulant -->
             <div class="dropdown">
