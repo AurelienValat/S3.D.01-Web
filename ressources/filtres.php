@@ -1,4 +1,3 @@
-
 <!-- Modal de filtrage dynamique en fonction de la page appelante -->
 <div class="modal fade" 
      id="modalFiltrage" 
@@ -13,11 +12,21 @@
             <form method="POST" action=""> <!-- action= vide pour se rapeller soi même, peu importe la page appelante -->
                 <div class="modal-body">
                     <h6>Recherche textuelle :</h6>
-                    <!-- Filtres destinés à la vue desconférenciers -->
+                    <!-- Filtres destinés à la vue des conférenciers -->
                     <?php if ($_SESSION['filtreAApliquer'] === 'conférenciers') {?>
                     <p>
                         <label for='rechercheSpecialite'>Spécialité :</label>
                         <input type='text' name='rechercheSpecialite' id='rechercheSpecialite' placeholder='Ex. Temps modernes' value='<?php if (isset($_POST['rechercheSpecialite'])) {echo trim($_POST['rechercheSpecialite']);}?>'>
+                    </p>
+                    <?php }?>
+                    <!-- Filtres destinés à la vue des utilisateurs -->
+                    <?php if ($_SESSION['filtreAApliquer'] === 'utilisateurs') {?>
+                    <p>
+                        <!-- TODO mettre une taille max pour le nom et prénom parce que faut pas abuser -->
+                        <label for='rechercheNom'>Nom :</label>
+                        <input type='text' name='rechercheNom' id='rechercheNom' placeholder='Entrez un nom' value='<?php if (isset($_POST['rechercheNom'])) {echo trim($_POST['rechercheNom']);}?>'> <br >
+                        <label for='recherchePrenom'>Prénom :</label> 
+                        <input type='text' name='recherchePrenom' id='recherchePrenom' placeholder='Entrez un prénom' value='<?php if (isset($_POST['recherchePrenom'])) {echo trim($_POST['recherchePrenom']);}?>'>  
                     </p>
                     <?php }?>
                     <hr>

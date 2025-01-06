@@ -37,6 +37,29 @@ function rechercheSpecialiteConferenciers($pdo, $specialiteRecherche) {
         throw $e;
     }
 }
+function rechercheUtilisateurs($pdo, $nomRecherche, $prenomRecherche) {
+    try {
+        $nomRecherche = '%' . $nomRecherche . '%';
+        $prenomRecherche = '%' . $prenomRecherche . '%';
+        $stmt = $pdo->prepare("SELECT id_employe, 
+                                      nom_utilisateur AS identifiant, 
+                                      nom, 
+                                      prenom, 
+                                      no_tel, 
+                                      est_admin
+                               FROM Employe
+                               WHERE nom LIKE :nomRecherche
+                               AND prenom LIKE :prenomRecherche
+                               ORDER BY nom, prenom");
+        $stmt->bindValue(":nomRecherche", $nomRecherche, PDO::PARAM_STR);
+        $stmt->bindValue(":prenomRecherche", $prenomRecherche, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt;
+    } catch (Exception $e) {
+        throw $e;
+    }
+}
+
 
 // Récupèle la liste des conférenciers
 function getIndisponibilites($pdo) {

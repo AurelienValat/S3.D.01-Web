@@ -172,10 +172,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
 <body class="fond">
     
     <?php 
-    require("../ressources/navBar.php");
-    require("../ressources/filtres.php");
     // Pour afficher les options de filtrages spécifiques aux employés
     $_SESSION['filtreAApliquer'] = 'utilisateurs';
+    require("../ressources/navBar.php");
+    require("../ressources/filtres.php");
+
     ?>
 
     <div class="container content">
@@ -204,8 +205,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                 <tbody>
                     <tr>
                     <?php 
+                     // Traitements si un filtrage est demandé
+                     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['demandeFiltrage']) && $_POST['demandeFiltrage'] === '1') {
+                        $nomRecherche = isset($_POST['rechercheNom']) ? trim($_POST['rechercheNom']) : '';
+                        $prenomRecherche = isset($_POST['recherchePrenom']) ? trim($_POST['recherchePrenom']) : '';
+                    
+                        // Correction : Passez les deux paramètres à la fonction
+                        $utilisateurs = rechercheUtilisateurs($pdo, $nomRecherche, $prenomRecherche);
+
+                        echo '<a href="utilisateurs.php"><button class="btn-action btn-modify btn-blue"><span class="fa fa-refresh"></span> Effacer les filtres</button></a><br>';
+                        if (!empty($_POST['rechercheNom'])) {
+                            echo "Recherche par Nom correspondant à '" . htmlspecialchars($_POST['rechercheNom']) . "' :<br>";
+                        }
+                        
+                        if (!empty($_POST['recherchePrenom'])) {
+                            echo "Recherche par Prénom correspondant à '" . htmlspecialchars($_POST['recherchePrenom']) . "' :<br>";
+                        }
+
+                        
+                    } else {
                         // Récupération de la liste des employés/utilisateurs depuis la BD
                         $utilisateurs = getUtilisateurs($pdo);
+                    }
                         $totalUtilisateurs = 0;
                         $dernierUtilisateur = "";                       
                         while($ligne = $utilisateurs->fetch()) {
