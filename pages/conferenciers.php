@@ -238,6 +238,7 @@
                                     ?>
                                     <form method="post" action="planning.php">
                                         <input type="hidden" name="idConferencier" value="<?php echo $ligne["id_conferencier"]; ?>">
+                                        <?php $_SESSION['idConferencier'] = $ligne["id_conferencier"];?>
                                         <button type="submit" class="btn-action btn-blue" title="Afficher le planning du conférencier">
                                         <i class="fa-solid fa-calendar"></i>
                                         </button>

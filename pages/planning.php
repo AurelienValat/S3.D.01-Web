@@ -6,18 +6,37 @@ require ('../bdd/connecterBD.php');
 require ('../bdd/requetes.php');
 verifSession(); // Vérifie si une session valide existe
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    var_dump($_POST); // TEMPORAIRE : pour voir ce qui est reçu
+}
+
+
 $pdo = initierConnexion();
     if ($pdo == FALSE) {
         header("Location: erreurs/erreurBD.php");
     }
-// Vérifier si le formulaire a été soumis avec l'ID du conférencier
-if (isset($_POST['idConferencier'])) {
-    $idConferencier = intval($_POST['idConferencier']); // Sécurisation de l'entrée
+
+    // Vérifier si le formulaire a été soumis avec l'ID du conférencier
+if (isset($_POST['idConferencier']) || isset($_SESSION['idConferencier'])) {
+    $idConferencier = intval($_SESSION['idConferencier']); // Sécurisation de l'entrée
 } else {
     die("Aucun conférencier sélectionné.");
 }
 
 $indisponibilites = recupIndisponibilite($pdo, $idConferencier);
+$visites = recupVisites($pdo, $idConferencier);
+
+// Vérification si une suppression est demandée
+if (!empty($_POST['supprimerIndisponibilite'])) {
+    $indispoASuppr = intval($_POST['supprimerIndisponibilite']); // Sécuriser la donnée    
+    try {
+        supprimerLigne($pdo, $indispoASuppr, "Indisponibilite");
+    } catch (PDOException) {
+        $_SESSION['donneeEnErreur'] = 'indisponibilite';
+        $_SESSION['cheminDernierePage'] = '/S3.D.01-Web/pages/planning.php';
+        header("Location: ./erreurs/impossibleDeTraiterVotreDemande.php");
+    }
+}
 
 ?>
 <!DOCTYPE html>
@@ -35,8 +54,8 @@ $indisponibilites = recupIndisponibilite($pdo, $idConferencier);
 <body>
 
 <div class="container ">
+    
     <h2>Planning du Conférencier (ID: <?php echo htmlspecialchars($idConferencier) ?>)</h2>
-
     <!-- Tableau des indisponibilités -->
     <?php if (count($indisponibilites) > 0){ ?>
         <table class='table table-striped'>
@@ -64,7 +83,7 @@ $indisponibilites = recupIndisponibilite($pdo, $idConferencier);
         <p>Aucune indisponibilité enregistrée.</p>
     <?php } ?>
 
-    <a href="<?php echo $_SERVER['HTTP_REFERER'] ?? 'index.php'; ?>" class="btn btn-secondary mt-3">Retour</a>
+    <a href="conferenciers.php" class="btn btn-secondary mt-3">Retour</a>
 
     <!-- Conteneur du calendrier -->
     <div id="calendar"></div>
@@ -76,17 +95,38 @@ $indisponibilites = recupIndisponibilite($pdo, $idConferencier);
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="actionModalLabel">Actions sur l'indisponibilité</h5>
+        <h5 class="modal-title" id="actionModalLabel">Modifier l'indisponibilité</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <p id="indispoDetails"></p>
-        <button type="button" class="btn btn-primary" id="modifyBtn">Modifier</button>
-        <button type="button" class="btn btn-danger" id="deleteBtn">Supprimer</button>
+        
+          <div class="mb-3">
+            <label for="debutIndispo" class="form-label">Début</label>
+            <input type="date" id="debutIndispo" name="debut" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="finIndispo" class="form-label">Fin</label>
+            <input type="date" id="finIndispo" name="fin" class="form-control">
+          </div>
+          <div class="modal-footer">
+        <form id="deleteForm" method="POST" action="planning.php">
+          <input type="hidden" name="supprimerIndisponibilite" id="hiddenDeleteInput">
+                <button type="submit" class="btn-action btn-delete" 
+                    id="deleteBtn"
+                    onclick="return confirm(\'Êtes-vous sûr de vouloir supprimer ce conférencier ?\');" 
+                    title="Supprimer l'indisponibilité">
+                    Supprimer
+                </button>
+        </form>
+            <button type="submit" class="btn btn-primary">Modifier</button>
+          </div>
+        
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- FullCalendar JS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -100,46 +140,57 @@ document.addEventListener('DOMContentLoaded', function() {
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth', // Vue du mois
         events: [
-            <?php foreach ($indisponibilites as $indispo) { ?>
+            <?php 
+            foreach ($indisponibilites as $indispo) {
+                ?>
                 {
                     title: 'Indisponible',
-                    start: '<?= $indispo['debut']; ?>', // Format: 'YYYY-MM-DD'
-                    end: '<?= $indispo['fin']; ?>', // Format: 'YYYY-MM-DD'
+                    start: '<?php echo $indispo['debut']; ?>',
+                    end: '<?php echo $indispo['fin']; ?>', 
                     color: 'red', // Couleur de l'événement
-                    id_indispo: '<?= $indispo['id_indisponibilite']; ?>', // ID de l'indisponibilité
-                    debut: '<?= $indispo['debut']; ?>', // Début
-                    fin: '<?= $indispo['fin']; ?>' // Fin
+                    id_indispo: '<?php echo $indispo['id_indisponibilite']; ?>', // ID de l'indisponibilité
+                    debut: '<?php echo $indispo['debut']; ?>', // Début
+                    fin: '<?php echo $indispo['fin']; ?>' // Fin
                 },
-            <?php } ?>
+                <?php 
+            } ?>
+            <?php foreach ($visites as $visite) { ?>
+                {
+                    title: 'Visite',
+                    start: '<?php echo $visite['date_visite']; ?>', 
+                    end: '<?php echo $visite['date_visite']; ?>', 
+                    color: 'blue', // Couleur de l'événement
+                }
+                <?php } ?>
         ],
         eventClick: function(info) {
-            // Lors du clic sur un événement
-            var idIndispo = info.event.extendedProps.id_indispo;
-            var debut = info.event.extendedProps.debut;
-            var fin = info.event.extendedProps.fin;
-            
-            // Mettre à jour le contenu de la modale avec les détails de l'indisponibilité
-            document.getElementById('indispoDetails').innerHTML = "Indisponibilité du " + debut + " au " + fin;
-            
-            // Afficher la modale
-            $('#actionModal').modal('show');
+            if (info.event.extendedProps.id_indispo) {
+                var idIndispo = info.event.extendedProps.id_indispo;
+                var debut = info.event.extendedProps.debut;
+                var fin = info.event.extendedProps.fin;
 
-            // Action pour Modifier
-            document.getElementById('modifyBtn').onclick = function() {
-             };
+                // Remplissage des champs
+                document.getElementById('indispoDetails').innerHTML = "Indisponibilité du " + debut + " au " + fin;
+                document.getElementById('debutIndispo').value = debut;
+                document.getElementById('finIndispo').value = fin;
 
-            // Action pour Supprimer
-            document.getElementById('deleteBtn').onclick = function() {
-                if (confirm('Êtes-vous sûr de vouloir supprimer cette indisponibilité ?')) {
-                    window.location.href = 'supprimer_indispo.php?id=' + idIndispo; // Supprimer l'indisponibilité
-                }
-            };
+                // Ajout de l'ID dans le champ caché pour suppression
+                document.querySelector('input[name="supprimerIndisponibilite"]').value = idIndispo;
+
+                console.log("ID indispo : " + idIndispo);
+                console.log("Début : " + debut);
+                console.log("Fin : " + fin);
+
+                // Afficher la modale
+                $('#actionModal').modal('show');
+            }
         }
     });
 
     calendar.render(); // Rendu du calendrier
 });
 </script>
+
 
 </body>
 </html>

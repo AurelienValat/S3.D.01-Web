@@ -23,7 +23,9 @@
             $colonnes = '*'; // Sélectionne tout pour les autres tables
         }
 
-        $nomFichier = "{$table}s.csv"; //Créer le nom du fichier
+        $dateDuJour = date('d_m_y');
+
+        $nomFichier = "{$table}s {$dateDuJour}.csv"; //Créer le nom du fichier
         //Requete pour selectionner les données à exporter
         $stmt = $pdo->query("SELECT {$colonnes} FROM {$table}"); 
         $rows = $stmt->fetchAll();
@@ -65,19 +67,16 @@
         <div class="container content ">
             <div class="container-blanc justify-content-center col-12">
                 <p>
-                    Pour éviter tout conflits dans les données nous recommandons d'exporter la totalité des données en même temps.
-                </p>
-                <p>
-                    Attention, nous vous conseillons de mettre vos fichiers une fois exportés dans un dossier prévu à cet effet.
+                    Nous vous conseillons de sauvegarder vos fichiers une fois dans un même dossier prévu à cet effet.
                 </p>
                 <form action="exportation.php" method="POST">
-                    <button type="submit" name="table" value="employe" class="btn-blue btn-action">Exporter employe</button>
+                    <button type="submit" name="table" value="employe" class="btn-blue btn-action">Exporter employés</button>
                 
-                    <button type="submit" name="table" value="exposition" class="btn-blue btn-action">Exporter exposition</button>
+                    <button type="submit" name="table" value="exposition" class="btn-blue btn-action">Exporter expositions</button>
                
-                    <button type="submit" name="table" value="visite" class="btn-blue btn-action">Exporter visite</button>
+                    <button type="submit" name="table" value="visite" class="btn-blue btn-action">Exporter visites</button>
                
-                    <button type="submit" name="table" value="conferencier" class="btn-blue btn-action">Exporter conferencier</button>
+                    <button type="submit" name="table" value="conferencier" class="btn-blue btn-action">Exporter conferenciers</button>
                 </form>
 
 

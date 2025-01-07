@@ -332,7 +332,7 @@ function recupIndisponibilite($pdo, $idConferencier) {
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':idConferencier', $idConferencier);  
         $stmt->execute();
-        return $stmt ->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt ->fetchAll();
     } catch (Exception $e) {
         throw $e;
     }
@@ -349,6 +349,23 @@ function verifierVisitePourExpo($pdo, $idExposition) {
     return $count > 0;  // Retourne true si il y a au moins une visite sur l'expo
 }
 
+function recupVisites($pdo, $idConferencier){
+    try {
+        $sql = "SELECT id_visite, date_visite 
+                FROM Visite 
+                JOIN Conferencier 
+                ON Visite.id_conferencier = Conferencier.id_conferencier
+                WHERE Conferencier.id_conferencier = :idConferencier";
+            
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam('idConferencier', $idConferencier);
+        $stmt->execute();
+        return $stmt ->fetchAll();
+    } catch (Exception $e) {
+        throw $e;
+    }
+
+}
 
 
 
