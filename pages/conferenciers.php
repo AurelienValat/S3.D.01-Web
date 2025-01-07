@@ -131,31 +131,6 @@
             }
         }   
     }
-
-                
-    // if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idConferencier']) && !isset($_POST['demandeFiltrage'])) {
-
-    //     $idConferencier = intval($_POST['idConferencier']); 
-
-    //     // Récupérer les indisponibilités depuis la base de données
-    //     $stmt = recupIndisponibilite($pdo, $idConferencier);
-    //     echo "<h5>Indisponibilités du conférencier sélectionné :</h5>";
-    //     if ($stmt->rowCount() > 0) {
-    //         echo "<table class='table table-striped'>";
-    //         echo "<thead><tr><th>Date de début</th><th>Date de fin</th></tr></thead>";
-    //         echo "<tbody>";
-    //         while ($row = $stmt->fetch()) {
-    //             echo "<tr>";
-    //             echo "<td>" . htmlspecialchars($row['debut']) . "</td>";
-    //             echo "<td>" . htmlspecialchars($row['fin']) . "</td>";
-    //             echo "<td><button type='button' class='btn btn-danger'>Supprimer</button></td>"; 
-    //             echo "</tr>";
-    //         }
-    //         echo "</tbody>";
-    //         echo "</table>";
-    //     } else {
-    //         echo "<p>Aucune indisponibilité trouvée pour ce conférencier.</p>";
-   // }
     
 ?>
 <!DOCTYPE html>
