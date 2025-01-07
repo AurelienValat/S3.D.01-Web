@@ -18,7 +18,7 @@
     
         // Déterminer les colonnes à sélectionner en fonction de la table
         if ($table === 'employe') {
-            $colonnes = 'nom, prenom, no_tel';
+            $colonnes = 'id_employe, nom, prenom, no_tel';
         } else {
             $colonnes = '*'; // Sélectionne tout pour les autres tables
         }

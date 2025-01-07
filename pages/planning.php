@@ -152,45 +152,45 @@ document.addEventListener('DOMContentLoaded', function() {
                     debut: '<?php echo $indispo['debut']; ?>', // Début
                     fin: '<?php echo $indispo['fin']; ?>' // Fin
                 },
-                <?php 
-            } ?>
+            <?php } ?>
             <?php foreach ($visites as $visite) { ?>
                 {
                     title: 'Visite',
                     start: '<?php echo $visite['date_visite']; ?>', 
                     end: '<?php echo $visite['date_visite']; ?>', 
                     color: 'blue', // Couleur de l'événement
-                }
-                <?php } ?>
+                },
+            <?php } ?>
         ],
         eventClick: function(info) {
-            if (info.event.extendedProps.id_indispo) {
-                var idIndispo = info.event.extendedProps.id_indispo;
-                var debut = info.event.extendedProps.debut;
-                var fin = info.event.extendedProps.fin;
+    if (info.event.extendedProps.id_indispo) {
+        var idIndispo = info.event.extendedProps.id_indispo;
+        var debut = info.event.extendedProps.debut;
+        var fin = info.event.extendedProps.fin;
 
-                // Remplissage des champs
-                document.getElementById('indispoDetails').innerHTML = "Indisponibilité du " + debut + " au " + fin;
-                document.getElementById('debutIndispo').value = debut;
-                document.getElementById('finIndispo').value = fin;
+        // Remplissage des champs
+        document.getElementById('indispoDetails').innerHTML = "Indisponibilité du " + debut + " au " + fin;
+        document.getElementById('debutIndispo').value = debut;
+        document.getElementById('finIndispo').value = fin;
 
-                // Ajout de l'ID dans le champ caché pour suppression
-                document.querySelector('input[name="supprimerIndisponibilite"]').value = idIndispo;
+        // Ajout de l'ID dans le champ caché pour suppression
+        document.querySelector('input[name="supprimerIndisponibilite"]').value = idIndispo;
 
-                console.log("ID indispo : " + idIndispo);
-                console.log("Début : " + debut);
-                console.log("Fin : " + fin);
+        console.log("ID indispo : " + idIndispo);
+        console.log("Début : " + debut);
+        console.log("Fin : " + fin);
 
-                // Afficher la modale
-                $('#actionModal').modal('show');
-            }
-        }
+        // Afficher la modale
+        $('#actionModal').modal('show');
+    }
+}
+
+
     });
 
     calendar.render(); // Rendu du calendrier
 });
 </script>
-
 
 </body>
 </html>
