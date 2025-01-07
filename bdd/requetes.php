@@ -15,9 +15,14 @@ function getConferenciers($pdo) {
     return envoyerRequete("SELECT id_conferencier, nom, prenom, specialite, mots_cles_specialite, no_tel, est_employe_par_musee FROM Conferencier ORDER BY nom, prenom", $pdo);
 }
 
-function rechercheSpecialiteConferenciers($pdo, $specialiteRecherche) {
+function rechercheConferenciers($pdo, $nomRecherche, $prenomRecherche, $typeRecherche, $specialiteRecherche, $motsClesRecherche) {
     try {
+        $nomRecherche = '%' . $nomRecherche . '%';
+        $prenomRecherche = '%' . $prenomRecherche . '%';
+        $typeRecherche = '%' . $typeRecherche . '%';
         $specialiteRecherche = '%' . $specialiteRecherche . '%';
+        $motsClesRecherche = '%' . $motsClesRecherche . '%';
+
         $stmt = $pdo->prepare("SELECT id_conferencier,
                                       nom,
                                       prenom,
@@ -26,17 +31,26 @@ function rechercheSpecialiteConferenciers($pdo, $specialiteRecherche) {
                                       no_tel,
                                       est_employe_par_musee
                                FROM Conferencier
-                               WHERE mots_cles_specialite LIKE :specialiteRecherche1
-                               OR specialite LIKE :specialiteRecherche2
+                               WHERE nom LIKE :conferencierRecherche1
+                               AND prenom LIKE :conferencierRecherche2
+                               AND est_employe_par_musee LIKE :conferencierRecherche3
+                               AND specialite LIKE :specialiteRecherche
+                               AND mots_cles_specialite LIKE :motsClesRecherche
                                ORDER BY nom, prenom");
-        $stmt->bindValue(":specialiteRecherche1", $specialiteRecherche, PDO::PARAM_STR);
-        $stmt->bindValue(":specialiteRecherche2", $specialiteRecherche, PDO::PARAM_STR);
+
+        $stmt->bindValue(":conferencierRecherche1", $nomRecherche, PDO::PARAM_STR);
+        $stmt->bindValue(":conferencierRecherche2", $prenomRecherche, PDO::PARAM_STR);
+        $stmt->bindValue(":conferencierRecherche3", $typeRecherche, PDO::PARAM_STR);
+        $stmt->bindValue(":specialiteRecherche", $specialiteRecherche, PDO::PARAM_STR);
+        $stmt->bindValue(":motsClesRecherche", $motsClesRecherche, PDO::PARAM_STR);
+
         $stmt->execute();
         return $stmt;
     } catch (Exception $e) {
         throw $e;
     }
 }
+
 function rechercheUtilisateurs($pdo, $nomRecherche, $prenomRecherche) {
     try {
         $nomRecherche = '%' . $nomRecherche . '%';

@@ -192,11 +192,19 @@
             <div class="table">
                 <table class="table table-striped table-bordered">
                 <?php   
-                    // Traitements si un filtrage est demandé
-                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['demandeFiltrage']) && $_POST['demandeFiltrage'] === '1') {
-                        $conferenciers = rechercheSpecialiteConferenciers($pdo, $_POST['rechercheSpecialite']);
+                    
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['demandeFiltrage'])) {
+                        $nomRecherche = $_POST['rechercheNom'] ?? '';
+                        $prenomRecherche = $_POST['recherchePrenom'] ?? '';
+                        $typeRecherche = $_POST['rechercheType'] ?? '';
+                        $specialiteRecherche = $_POST['rechercheSpecialite'] ?? '';
+                        $motsClesRecherche = $_POST['rechercheMotsCles'] ?? '';
+
+                        $conferenciers = rechercheConferenciers($pdo, $nomRecherche, $prenomRecherche, $typeRecherche, $specialiteRecherche, $motsClesRecherche);
+
+                       
                         echo '<a href="conferenciers.php"><button class="btn-action btn-modify btn-blue"><span class="fa fa-refresh"></span> Effacer les filtres</button></a><br>';
-                        echo "Recherche par spécialité et mots clés correpondant à '" . $_POST['rechercheSpecialite'] . "' :";
+                        //echo "Recherche par spécialité et mots clés correpondant à '" . $_POST['rechercheSpecialite'] . "' :";
                         
                     } else {
                         $conferenciers = getConferenciers($pdo);

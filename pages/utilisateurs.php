@@ -210,7 +210,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                         $nomRecherche = isset($_POST['rechercheNom']) ? trim($_POST['rechercheNom']) : '';
                         $prenomRecherche = isset($_POST['recherchePrenom']) ? trim($_POST['recherchePrenom']) : '';
                     
-                        // Correction : Passez les deux paramètres à la fonction
                         $utilisateurs = rechercheUtilisateurs($pdo, $nomRecherche, $prenomRecherche);
 
                         echo '<a href="utilisateurs.php"><button class="btn-action btn-modify btn-blue"><span class="fa fa-refresh"></span> Effacer les filtres</button></a><br>';
