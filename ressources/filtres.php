@@ -38,9 +38,9 @@
                                 <option value="0" <?php echo isset($_POST['rechercheType']) && $_POST['rechercheType'] === "0" ? "selected" : ""; ?>>Externe</option>
                             </select>
                         </p>
-                    <?php }?>
+                        
                     <!-- Filtres destinés à la vue des utilisateurs -->
-                    <?php if ($_SESSION['filtreAApliquer'] === 'utilisateurs') {?>
+                    <?php } else if ($_SESSION['filtreAApliquer'] === 'utilisateurs') {?>
                     <p>
                         <!-- TODO mettre une taille max pour le nom et prénom parce que faut pas abuser -->
                         <label for='rechercheNom'>Nom :</label>
@@ -48,10 +48,9 @@
                         <label for='recherchePrenom'>Prénom :</label> 
                         <input type='text' name='recherchePrenom' id='recherchePrenom' placeholder='Entrez un prénom' value='<?php if (isset($_POST['recherchePrenom'])) {echo trim($_POST['recherchePrenom']);}?>'>  
                     </p>
+                    <?php } else {?>
+                        <h6>Aucun filtre disponible pour la vue actuelle.</h6>
                     <?php }?>
-                    <hr>
-                    <h6>//Autres recherches//</h6>
-                    <p>autres champs</p>
                 </div>
                 <div class="modal-footer">
                         <button id='btn_retour' class='btn-action btn-modify btn-blue'><span class='fa-solid fa-magnifying-glass'></span> Rechercher</button>

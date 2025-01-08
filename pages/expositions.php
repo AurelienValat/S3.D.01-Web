@@ -209,10 +209,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
 <body>
 
     <?php 
-    require("../ressources/navBar.php");
-    require("../ressources/filtres.php");
     // Pour afficher les options de filtrages spécifiques aux expositions
     $_SESSION['filtreAApliquer'] = 'expositions';
+    require("../ressources/navBar.php");
+    require("../ressources/filtres.php");
     ?>
 
     <div class="container content">

@@ -127,10 +127,10 @@
 <body class="fond">
    
     <?php 
-    require("../ressources/navBar.php");
-    require("../ressources/filtres.php");
     // Pour afficher les options de filtrages spécifiques aux visites
     $_SESSION['filtreAApliquer'] = 'visites';
+    require("../ressources/navBar.php");
+    require("../ressources/filtres.php");
     ?>
 
     <div class="container content col-12">

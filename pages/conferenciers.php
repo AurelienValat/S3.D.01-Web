@@ -165,7 +165,7 @@
                 <table class="table table-striped table-bordered">
                 <?php   
                     
-                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['demandeFiltrage'])) {
+                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['demandeFiltrage']) && $_POST['demandeFiltrage'] === '1') {
                         $nomRecherche = $_POST['rechercheNom'] ?? '';
                         $prenomRecherche = $_POST['recherchePrenom'] ?? '';
                         $typeRecherche = $_POST['rechercheType'] ?? '';
@@ -173,10 +173,32 @@
                         $motsClesRecherche = $_POST['rechercheMotsCles'] ?? '';
 
                         $conferenciers = rechercheConferenciers($pdo, $nomRecherche, $prenomRecherche, $typeRecherche, $specialiteRecherche, $motsClesRecherche);
-
                        
                         echo '<a href="conferenciers.php"><button class="btn-action btn-modify btn-blue"><span class="fa fa-refresh"></span> Effacer les filtres</button></a><br>';
-                        //echo "Recherche par spécialité et mots clés correpondant à '" . $_POST['rechercheSpecialite'] . "' :";
+                        echo '<h5>Filtres appliqués :</h5>';
+                        
+                        // Affichage des filtres appliqués
+                        if (!empty($_POST['rechercheNom'])) {
+                            echo "Nom : '" . htmlspecialchars($_POST['rechercheNom']) . "' :<br>";
+                        }
+                        if (!empty($_POST['recherchePrenom'])) {
+                            echo "Prénom : '" . htmlspecialchars($_POST['recherchePrenom']) . "' :<br>";
+                        }
+                        // Pas de empty car valeur 0 possible
+                        if (isset($_POST['rechercheType']) && $_POST['rechercheType'] != '') {
+                            if ($_POST['rechercheType'] == 0) {
+                                echo 'Type : Externe <br>';
+                            } else {
+                                echo 'Type : Interne <br>';
+                            }
+                        }
+                        if (!empty($_POST['rechercheSpecialite'])) {
+                            echo "Spécialité : '" . htmlspecialchars($_POST['rechercheSpecialite']) . "' :<br>";
+                        }
+                        if (!empty($_POST['rechercheMotsCles'])) {
+                            echo "Mots Clés : '" . htmlspecialchars($_POST['rechercheMotsCles']) . "' :<br>";
+                        }
+                        echo '<hr>';
                         
                     } else {
                         $conferenciers = getConferenciers($pdo);

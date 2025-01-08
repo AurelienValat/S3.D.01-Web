@@ -214,12 +214,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                         $utilisateurs = rechercheUtilisateurs($pdo, $nomRecherche, $prenomRecherche);
 
                         echo '<a href="utilisateurs.php"><button class="btn-action btn-modify btn-blue"><span class="fa fa-refresh"></span> Effacer les filtres</button></a><br>';
+                        echo '<h2>Filtres appliqués :</h2>';
+                        
+                        // Affichage des filtres appliqués
                         if (!empty($_POST['rechercheNom'])) {
-                            echo "Recherche par Nom correspondant à '" . htmlspecialchars($_POST['rechercheNom']) . "' :<br>";
+                            echo "Nom : '" . htmlspecialchars($_POST['rechercheNom']) . "' :<br>";
                         }
                         
                         if (!empty($_POST['recherchePrenom'])) {
-                            echo "Recherche par Prénom correspondant à '" . htmlspecialchars($_POST['recherchePrenom']) . "' :<br>";
+                            echo "Prénom : '" . htmlspecialchars($_POST['recherchePrenom']) . "' :<br>";
                         }
 
                         
