@@ -81,7 +81,8 @@ body:not(.no-bg){
   margin: 0; /* Supprime les marges */
   overflow: hidden; /* Empêche le débordement */
   overflow-y: auto; /* Permet le défilement vertical */
-  
+  display: flex;
+  flex-direction: column;
 }
 
 .fond {
@@ -347,6 +348,7 @@ body:not(.no-bg){
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex: 1; /* Fait en sorte que le contenu prenne tout l'espace disponible */
 }
 
 .btn-pink {
@@ -445,12 +447,12 @@ button.btn {
     gap: 0.5rem;
 }
 
+
 footer {
     text-align: center;
     padding: 5px;
     background-color: #2c3e50;
     color: white;
-
 }
 
 /* Cacher pour le bouton filtres */

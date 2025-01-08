@@ -150,7 +150,7 @@
     require("../ressources/filtres.php");
     ?>
     
-        <div class="container content">
+    <div class="container content">
         <div class="container-blanc">
             <h1 class="text-center">Gestion des Conférenciers</h1>
             <div class="d-flex justify-content-between align-items-center">

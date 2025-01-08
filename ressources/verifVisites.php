@@ -42,7 +42,7 @@ function verifVisites($pdo, $erreurs, $horaire_debut, $intitule_client, $no_tel_
         $erreurs['intitule_client'] = "L’intitulé client est requis et ne doit pas dépasser 50 caractères.";
     }
     
-    if (!preg_match("/^[0-9]{10}$/", $no_tel_client) && $no_tel_client != "") {
+    if (!preg_match("/^[0-9]{10}$/", $no_tel_client)) {
         $erreurs['no_tel_client'] = 'Numéro de téléphone invalide. Il doit contenir 10 chiffres.';
     }
     

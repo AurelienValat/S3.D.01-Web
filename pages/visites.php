@@ -483,6 +483,6 @@ if (!empty($erreurs_modif)) {
                                     ."\");</script>\n";
 }?>
 
-<?php require("../ressources/footer.php"); var_dump($_POST);?>
+<?php require("../ressources/footer.php");?>
 </body>
 </html>

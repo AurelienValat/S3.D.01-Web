@@ -106,15 +106,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['formType']) && $_POST
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Planning du Conférencier</title>
-
     <link href="../css/style.css" rel="stylesheet">
     <!-- FullCalendar CSS -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>
-
+    <title>Planning du Conférencier</title>
 </head>
 <body>
 <?php require("../ressources/navBar.php"); ?>
@@ -239,6 +237,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['formType']) && $_POST
     </div>
 
     
+
     <!-- FullCalendar JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
@@ -295,9 +294,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['formType']) && $_POST
 
         calendar.render(); // Rendu du calendrier
     });
-    </script>
-
-    <?php require("../ressources/footer.php");?>
-    
+    </script>   
+        <?php require("../ressources/footer.php");?> 
 </body>
 </html>
