@@ -114,7 +114,7 @@ function getVisites($pdo) {
                                   Conferencier.prenom AS prenom_conferencier, 
                                   Employe.nom AS nom_employe, 
                                   Employe.prenom AS prenom_employe, 
-                                  CONCAT(HOUR(horaire_debut), 'h', MINUTE(horaire_debut)) AS horaire_debut, 
+                                  DATE_FORMAT(horaire_debut, '%Hh%i') AS horaire_debut, 
                                   DATE_FORMAT(date_visite, '%d/%m/%Y') AS date_visite, 
                                   intitule_client, 
                                   no_tel_client

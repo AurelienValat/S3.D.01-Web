@@ -378,7 +378,7 @@
               if (!empty($expositions)) {
                   foreach ($expositions as $exposition) {
                       echo "<option value='".htmlentities($exposition["intitule"], ENT_QUOTES)."'";
-                      // Trim car un espace se balade ???????
+                      // Trim car un espace se balade
                       if(isset($_POST['intitule_Modif']) && trim($_POST['intitule_Modif']) === $exposition["intitule"]) {
                           echo ' selected';
                       }
