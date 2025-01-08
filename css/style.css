@@ -84,6 +84,11 @@ body:not(.no-bg){
   
 }
 
+.fond {
+    background-color: white; /* Fond blanc pour que le tableau soit lisible */
+    border-radius: 5px; /* Optionnel : pour arrondir les coins du tableau */   
+}
+
 /* Conteneur du formulaire de connexion */
 .login-container {
   display: flex;

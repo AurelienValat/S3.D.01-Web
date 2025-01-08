@@ -399,7 +399,7 @@ function modifExposition($pdo, $idExposition, $description) {
 
 function recupIndisponibilite($pdo, $idConferencier) {
     try {
-        $sql = "SELECT id_indisponibilite, debut, fin FROM indisponibilite WHERE id_conferencier = :idConferencier";
+        $sql = "SELECT id_indisponibilite, debut, fin FROM Indisponibilite WHERE id_conferencier = :idConferencier";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':idConferencier', $idConferencier);  
         $stmt->execute();
@@ -411,7 +411,7 @@ function recupIndisponibilite($pdo, $idConferencier) {
 
 // Exemple de vérification si une expo a une visite
 function verifierVisitePourExpo($pdo, $idExposition) {
-    $sql = "SELECT COUNT(*) FROM visite WHERE id_exposition = :idExposition ";
+    $sql = "SELECT COUNT(*) FROM Visite WHERE id_exposition = :idExposition ";
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam('idExposition', $idExposition);
     $stmt->execute();
@@ -436,6 +436,48 @@ function recupVisites($pdo, $idConferencier){
         throw $e;
     }
 
+}
+
+function recupNomConferencier($pdo, $idConferencier){
+    try {
+        $sql = "SELECT nom, prenom
+            FROM Conferencier 
+            WHERE id_conferencier = :idConferencier";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam('idConferencier', $idConferencier);
+        $stmt->execute();
+        return $stmt ->fetch();
+    } catch (Exception $e) {
+        throw $e;
+    }
+}
+
+function creerIndisponibilite($pdo, $idConferencier, $debut, $fin) {
+    try {
+        $sql = "INSERT INTO Indisponibilite(id_conferencier, debut, fin) VALUES(:idConferencier, :debut, :fin)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam('idConferencier', $idConferencier);
+        $stmt->bindParam('debut', $debut);
+        $stmt->bindParam('fin', $fin);
+        $stmt->execute();
+    } catch (Exception $e) {
+        throw $e;
+    }
+}
+
+function modifierIndisponibilite($pdo, $idIndisponibilite, $idConferencier, $debut, $fin) {
+    try {
+        $sql = "UPDATE Indisponibilite SET debut = :debut, fin = :fin WHERE id_conferencier = :idConferencier AND id_indisponibilite = :idIndisponibilite";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam('idConferencier', $idConferencier);
+        $stmt->bindParam('idIndisponibilite', $idIndisponibilite);
+        $stmt->bindParam('debut', $debut);
+        $stmt->bindParam('fin', $fin);
+        $stmt->execute();
+    } catch (Exception $e) {
+        throw $e;
+    }
 }
 
 

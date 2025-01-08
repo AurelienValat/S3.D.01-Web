@@ -62,9 +62,6 @@
             if (!preg_match("#^[0-9]{10}#", $telephone) or strlen($telephone)>10 ) {
                 $erreurs['telephone'] = 'Numéro de téléphone invalide. Il doit contenir 10 chiffres.';
             }
-            // if (($indisponibilite_debut != "") || strlen($indisponibilite_debut) > 50) {
-            //     $erreurs['indisponibilite_debut'] = '';
-            // }
             // Si aucun champ n'a d'erreur, procéder à l'insertion
             if (empty($erreurs)) {
                 if (verifierExistanceConferencier($pdo, $nom, $prenom)) {
@@ -144,7 +141,7 @@
     <script src="../js/conferenciers.js" type="text/javascript"></script>
     <title>MUSEOFLOW - Gestion des Conférenciers</title>
 </head>
-<body class="fond">
+<body>
 
     <?php 
     // Pour afficher les options de filtrages spécifiques aux conférenciers
@@ -451,7 +448,7 @@
                 });
             });
         });
-</script>
+    </script>
 
 </body>
 </html>

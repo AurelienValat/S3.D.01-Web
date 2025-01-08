@@ -206,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
     <script src="../js/expositions.js" type="text/javascript"></script>
     <title>MUSEOFLOW - Gestion des Expositions</title>
 </head>
-<body class="fond">
+<body>
 
     <?php 
     require("../ressources/navBar.php");
