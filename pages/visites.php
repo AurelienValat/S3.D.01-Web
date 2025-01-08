@@ -34,9 +34,9 @@
     // Indicateur pour savoir si une visite a été créée avec succès
     $visiteCree = false;
 
-    // Vérif des données pour l'ajout de visite
-    // Vérifie que la requête est de type POST et qu'elle n'est pas destinée à supprimer une visite ni à une modification
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerVisite']) && isset($_POST['type_formulaire']) && $_POST['type_formulaire'] === 'ajout') {
+
+    // Vérifie que la requête est de type POST et qu'elle n'est pas destinée à supprimer une visite
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerVisite']) && isset($_POST['type_formulaire']) && $_POST['type_formulaire'] === 'ajout' && !isset($_POST['demandeFiltrage'])) {
         try {
             $id_exposition = isset($_POST['id_exposition']) ? (int) $_POST['id_exposition'] : 0;
             $id_conferencier = isset($_POST['id_conferencier']) ? (int) $_POST['id_conferencier'] : 0;
@@ -88,8 +88,12 @@
             if ($exposition_concernee_modifie === "" || $exposition_concernee_modifie === "Sélectionner dans la liste") {
                 $erreurs_modif['id_exposition'] = "Veuillez sélectionner une exposition.";
             }
+          
             if ($conferencier_modifie === "" || $conferencier_modifie === "Sélectionner dans la liste") {
                 $erreurs_modif['id_conferencier'] = "Veuillez sélectionner un conférencier.";
+              
+            if (!preg_match("/^[0-9]{10}$/", $no_tel_client) && $no_tel_client != "") {
+                $erreurs['no_tel_client'] = 'Numéro de téléphone invalide. Il doit contenir 10 chiffres.';
             }
             if ($id_employe_modifie === "" || $id_employe_modifie === "Sélectionner dans la liste") {
                 $erreurs_modif['id_employe'] = "Veuillez sélectionner un employé.";
@@ -124,17 +128,24 @@
 </head>
 <body class="fond">
    
-    <?php require("../ressources/navBar.php");?>
+    <?php 
+    require("../ressources/navBar.php");
+    require("../ressources/filtres.php");
+    // Pour afficher les options de filtrages spécifiques aux visites
+    $_SESSION['filtreAApliquer'] = 'visites';
+    ?>
 
     <div class="container content col-12">
         <div class="container-blanc">
             <h1 class="text-center">Gestion des Visites</h1>
             <div class="d-flex justify-content-between align-items-center">
                 <!-- Menu Ajouter/Réserver -->
-                <button class="btn-action btn-modify btn-blue" data-bs-toggle="modal" data-bs-target="#modalAjouterVisite" id="modalAjouterVisiteLabel">Ajouter/Réserver Visite</button>                 
+                <button class="btn-action btn-modify btn-blue"  title="Réserver une visite" data-bs-toggle="modal" data-bs-target="#modalAjouterVisite" id="modalAjouterVisiteLabel"><i class="fa-solid fa-plus"></i></button>                 
                 <!-- Menu Filtres -->
-                <button class="btn btn-light d-flex align-items-center gap-2">
-                <i class="fa-solid fa-filter"></i>Filtres
+                <button
+                    class="btn btn-light d-flex align-items-center gap-2"
+                    data-bs-toggle="modal" data-bs-target="#modalFiltrage" >
+                    <i class="fa-solid fa-filter" ></i>Filtres
                 </button>
             </div>
             <div class="table">
@@ -185,7 +196,7 @@
                                           </button>";?>
                                         <form method="POST" action= "visites.php" style="display:inline;">
                                         <?php echo "<input type='hidden' name='supprimerVisite' value='" . $ligne['id_visite'] . "'>";
-                                        ?> <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette visite ?');">Supprimer</button>
+                                        ?> <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette visite ?');"><i class="fa-solid fa-trash"></button>
                                         </form>
                                         <?php 
                                     echo "</td>";
@@ -337,7 +348,7 @@
                         </a>
                     </div>
                     <div class="modal-body">
-                        <p>Visite créé avec succès.</p>
+                        <p>Visite créée avec succès.</p>
                     </div>
                     <div class="modal-footer">
                         <a href="visites.php" class="btn btn-secondary">Fermer</a>
@@ -473,5 +484,7 @@ if (!empty($erreurs_modif)) {
                                     ."\",\"". $_POST['horaire_debut_Modif']
                                     ."\");</script>\n";
 }?>
+
+<?php require("../ressources/footer.php");?>
 </body>
 </html>

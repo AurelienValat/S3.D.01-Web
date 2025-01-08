@@ -37,7 +37,7 @@ if (isset($_POST['supprimerEmploye']) && $_POST['supprimerEmploye'] != trim(''))
 $erreurs = [];
 
 $utilisateurCree = false;
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']) && !isset($_POST['idUtilisateur'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']) && !isset($_POST['idUtilisateur']) && !isset($_POST['demandeFiltrage'])) {
     try {
         // Initialisation des variables de formulaire
         $pseudo = isset($_POST['pseudo']) ? trim($_POST['pseudo']) : ""; 
@@ -95,16 +95,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']) 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
     try {
         $idUtilisateur = intval($_POST['idUtilisateur']); // Identifiant unique de l'utilisateur
-        $pseudo = isset($_POST['pseudoUtilisateur']) ? trim($_POST['pseudoUtilisateur']) : null;
-        $prenom = isset($_POST['prenomUtilisateur']) ? trim($_POST['prenomUtilisateur']) : null;
-        $nom = isset($_POST['nomUtilisateur']) ? trim($_POST['nomUtilisateur']) : null;
-        $telephone = isset($_POST['telephoneUtilisateur']) ? trim($_POST['telephoneUtilisateur']) : null;
-        $motDePasse = isset($_POST['motDePasseUtilisateur']) ? trim($_POST['motDePasseUtilisateur']) : null;
-        $confirmeMotDePasse = isset($_POST['confirmeMotDePasseUtilisateur']) ? trim($_POST['confirmeMotDePasseUtilisateur']) : null;
+        $pseudo = isset($_POST['pseudoUtilisateur']) ? trim($_POST['pseudoUtilisateur']) : "";
+        $prenom = isset($_POST['prenomUtilisateur']) ? trim($_POST['prenomUtilisateur']) : "";
+        $nom = isset($_POST['nomUtilisateur']) ? trim($_POST['nomUtilisateur']) : "";
+        $telephone = isset($_POST['telephoneUtilisateur']) ? trim($_POST['telephoneUtilisateur']) : "";
+        $motDePasse = isset($_POST['motDePasseUtilisateur']) ? trim($_POST['motDePasseUtilisateur']) : "";
+        $confirmeMotDePasse = isset($_POST['confirmeMotDePasseUtilisateur']) ? trim($_POST['confirmeMotDePasseUtilisateur']) : "";
 
         // Validation des champs
         $erreursModif = [];
-        if ($pseudo === null || strlen($pseudo) < 5 || strlen($pseudo) > 20) {
+        if ($pseudo === "" || strlen($pseudo) < 5 || strlen($pseudo) > 20) {
             $erreursModif['pseudo'] = 'Nom d\'utilisateur invalide (5-20 caractères).';
         }
         if (($prenom == "") || strlen($prenom) > 35) {
@@ -128,21 +128,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
 
         // Si aucun champ n'a d'erreur, mettre à jour la BD
         if (empty($erreursModif)) {
-            // Construire les données pour la mise à jour
-            $dataToUpdate = [
-                'nom_utilisateur' => $pseudo,
-                'prenom' => $prenom,
-                'nom' => $nom,
-                'no_tel' => $telephone,
-            ];
-            // Ajouter le mot de passe uniquement s'il est changé
-            if (!empty($motDePasse)) {
-                $dataToUpdate['mot_de_passe'] = hash('sha256', $motDePasse);
-            }
+            if (verifierExistanceUtilisateurModif($pdo, $pseudo, $nom, $prenom, $idUtilisateur)) {
+                $erreursModif['existance'] = 'Un utilisateur avec ce nom d\'utilisateur ou ce nom et prénom existe déjà.';
+            } else {
+                // Construire les données pour la mise à jour
+                $donneesAModif = [
+                    'nom_utilisateur' => $pseudo,
+                    'prenom' => $prenom,
+                    'nom' => $nom,
+                    'no_tel' => $telephone,
+                ];
 
-            // Mettre à jour l'utilisateur dans la BD
-            updateUtilisateur($pdo, $idUtilisateur, $dataToUpdate);
-            echo "<script>alert('Utilisateur ajouté avec succès.')</script>";
+                // Ajouter le mot de passe uniquement s'il est changé
+                if (!empty($motDePasse)) {
+                    $donneesAModif['mot_de_passe'] = hash('sha256', $motDePasse);
+                }
+
+                // Mettre à jour l'utilisateur dans la BD
+                modifUtilisateur($pdo, $idUtilisateur, $donneesAModif);
+
+                // Affichage du message de confirmation
+                echo "<script>alert('Utilisateur modifié avec succès.')</script>";
+            }
+            
         }
     } catch (Exception $e) {
         echo "<p style='color:red;'>Une erreur est survenue : " . $e->getMessage() . "</p>";
@@ -155,23 +163,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
 <head>
     <meta charset="utf-8">
     <link href="../css/style.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" >
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>   
-    <script src="../js/utilisateurs.js"></script>
+    <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>
+    <script src="../js/utilisateurs.js" type="text/javascript"></script>
+  
     <title>MUSEOFLOW - Gestion des Utilisateurs</title>
 </head>
 <body class="fond">
     
-    <?php require("../ressources/navBar.php");?>
+    <?php 
+    // Pour afficher les options de filtrages spécifiques aux employés
+    $_SESSION['filtreAApliquer'] = 'utilisateurs';
+    require("../ressources/navBar.php");
+    require("../ressources/filtres.php");
+
+    ?>
 
     <div class="container content">
     <div class="container-blanc">
         <h1 class="text-center">Gestion des Utilisateurs</h1>
         <div class="d-flex justify-content-between align-items-center">
-        <button class="btn-action btn-modify btn-blue" data-bs-toggle="modal" data-bs-target="#modalAjouterUtilisateur" id="modalAjouterUtilisateurLabel">Ajouter un utilisateur</button>
-            <button class="btn btn-light d-flex align-items-center gap-2">
-            <i class="fa-solid fa-filter"></i>Filtres
+        <button class="btn-action btn-modify btn-blue" onclick="resetFormulaire()" data-bs-toggle="modal" data-bs-target="#modalAjouterUtilisateur" id="modalAjouterUtilisateurLabel" title="Ajouter un utilisateur"><i class="fa-solid fa-user-plus"></i></button>
+            <button
+                class="btn btn-light d-flex align-items-center gap-2"
+                data-bs-toggle="modal" data-bs-target="#modalFiltrage" >
+                <i class="fa-solid fa-filter" ></i>Filtres
             </button>
         </div>
         <div class="table">
@@ -189,8 +206,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                 <tbody>
                     <tr>
                     <?php 
+                     // Traitements si un filtrage est demandé
+                     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['demandeFiltrage']) && $_POST['demandeFiltrage'] === '1') {
+                        $nomRecherche = isset($_POST['rechercheNom']) ? trim($_POST['rechercheNom']) : '';
+                        $prenomRecherche = isset($_POST['recherchePrenom']) ? trim($_POST['recherchePrenom']) : '';
+                    
+                        $utilisateurs = rechercheUtilisateurs($pdo, $nomRecherche, $prenomRecherche);
+
+                        echo '<a href="utilisateurs.php"><button class="btn-action btn-modify btn-blue"><span class="fa fa-refresh"></span> Effacer les filtres</button></a><br>';
+                        if (!empty($_POST['rechercheNom'])) {
+                            echo "Recherche par Nom correspondant à '" . htmlspecialchars($_POST['rechercheNom']) . "' :<br>";
+                        }
+                        
+                        if (!empty($_POST['recherchePrenom'])) {
+                            echo "Recherche par Prénom correspondant à '" . htmlspecialchars($_POST['recherchePrenom']) . "' :<br>";
+                        }
+
+                        
+                    } else {
                         // Récupération de la liste des employés/utilisateurs depuis la BD
                         $utilisateurs = getUtilisateurs($pdo);
+                    }
                         $totalUtilisateurs = 0;
                         $dernierUtilisateur = "";                       
                         while($ligne = $utilisateurs->fetch()) {
@@ -209,6 +245,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                                         class='btn-action btn-modify btn-blue' 
                                         data-bs-toggle='modal'
                                         data-bs-target='#modalMofifierUtilisateur' 
+                                        title='Modifier l&#39;utilisateur'
                                         onclick='remplirFormulaire(
                                             " . intval($ligne['id_employe']) . ", 
                                             \"" . addslashes($ligne['identifiant']) . "\",
@@ -216,15 +253,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                                             \"" . addslashes($ligne['nom']) . "\",
                                             \"" . addslashes($ligne['no_tel']) . "\"
                                         )'>
-                                        Modifier
+                                        <i class='fa-solid fa-pencil'></i>
                                     </button>";
                                         
                                 if ($ligne['est_admin'] == 0){
                                             ?>
                                             <form method="POST" action="utilisateurs.php" style="display:inline;">
                                                 <input type="hidden" name="supprimerEmploye" value="<?php echo $ligne['id_employe']; ?>">
-                                                <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet employé ?');">Supprimer</button>
-                                            </form>
+                                                <button type="submit" class="btn-action btn-delete" title="Supprimer l'exposition"onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');"><i class="fa-solid fa-trash"></i></button>
+                                                </form>
                                             <?php
                                         }
                                     echo "</td>";
@@ -338,8 +375,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
     </div>
 
     
-<!-- Modale Modifier Utilisateur -->
-<div class="modal fade <?php echo !empty($erreursModif) ? 'show' : ''; ?>" 
+    <!-- Modale Modifier Utilisateur -->
+    <div class="modal fade <?php echo !empty($erreursModif) ? 'show' : ''; ?>" 
         id="modalMofifierUtilisateur" 
         style="<?php echo !empty($erreursModif) ? 'display: block;' : 'display: none;'; ?>">
         <div class="modal-dialog">
@@ -375,15 +412,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                     <div class="mb-3">
                         <label for="nomUtilisateur" class="form-label">Nom</label>
                         <input type="text" class="form-control <?php echo isset($erreursModif['nom']) ? 'is-invalid' : ''; ?>" id="nomUtilisateur" name="nomUtilisateur" placeholder="Modifiez le nom" value="<?php echo htmlspecialchars($nom); ?>">
-                        <?php if (isset($erreursModif['prenom'])) { ?>
-                            <div class="invalid-feedback"><?php if(isset($erreursModif['nom'])) {echo $erreursModif['nom'];} ?></div>
+
+                        <?php if (isset($erreursModif['nom'])) { ?>
+                            <div class="invalid-feedback"><?php echo $erreursModif['nom']; ?></div>
                         <?php } ?>
                     </div>
 
                     <!-- Champ pour le numéro de téléphone -->
                     <div class="mb-3">
                         <label for="telephoneUtilisateur" class="form-label">Numéro de téléphone</label>
-                        <input type="tel" class="form-control <?php echo isset($erreursModif['telephone']) ? 'is-invalid' : ''; ?>" id="telephoneUtilisateur" name="telephoneUtilisateur" placeholder="Modifiez le numéro de téléphone" pattern="[0-9]{4}" title="Entrez un numéro de 4 chiffres" value="<?php echo htmlspecialchars($telephone);?>">
+                        <input type="tel" class="form-control <?php echo isset($erreursModif['telephone']) ? 'is-invalid' : ''; ?>" id="telephoneUtilisateur" name="telephoneUtilisateur" placeholder="Modifiez le numéro de téléphone"  value="<?php echo htmlspecialchars($telephone);?>">
                         <?php if (isset($erreursModif['telephone'])) { ?>
                             <div class="invalid-feedback"><?php echo $erreursModif['telephone']; ?></div>
                         <?php } ?>
@@ -407,6 +445,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                         <?php } ?>
                     </div>
 
+                    <?php if (isset($erreursModif['existance'])) { ?>
+                            <div class="alert alert-danger"><?php echo $erreursModif['existance']; ?></div>
+                    <?php } ?>
                     <!-- Bouton pour soumettre le formulaire -->
                     <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
                 </form>
@@ -439,5 +480,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
         </div>
     </div>
 </div>
+<?php require("../ressources/footer.php");?>
 </body>
 </html>

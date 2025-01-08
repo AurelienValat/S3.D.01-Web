@@ -3,38 +3,121 @@ require_once ('fonctions.php');
 
 // Récupère la liste des utilisteurs/employés
 function getUtilisateurs($pdo) {
-    return envoyerRequete("SELECT id_employe, nom_utilisateur AS identifiant, nom, prenom, no_tel, est_admin FROM Employe", $pdo);
+    return envoyerRequete("SELECT id_employe, 
+                                  nom_utilisateur AS identifiant, 
+                                  nom, 
+                                  prenom, 
+                                  no_tel, 
+                                  est_admin 
+                          FROM Employe 
+                          ORDER BY nom, prenom", $pdo);
 }
 
 // Récupèle la liste des expositions
 function getExpositions($pdo) {
-    return envoyerRequete("SELECT id_exposition, intitule, periode_oeuvres, nombre_oeuvres, mots_cles, resume, date_debut, date_fin FROM Exposition", $pdo);
+    return envoyerRequete("SELECT id_exposition, 
+                                  intitule, 
+                                  periode_debut_oeuvres, 
+                                  periode_fin_oeuvres, 
+                                  nombre_oeuvres, 
+                                  mots_cles, 
+                                  resume, 
+                                  DATE_FORMAT(date_debut, '%d/%m/%Y') AS date_debut, 
+                                  DATE_FORMAT(date_fin, '%d/%m/%Y') AS date_fin 
+                           FROM Exposition 
+                           ORDER BY intitule", $pdo);
 }
-// Récupèle la liste des conférenciers
+// Récupèle la liste de tout les conférenciers
 function getConferenciers($pdo) {
-    return envoyerRequete("SELECT id_conferencier, nom, prenom, specialite, mots_cles_specialite, no_tel, est_employe_par_musee FROM Conferencier", $pdo);
+    return envoyerRequete("SELECT id_conferencier, 
+                                  nom, 
+                                  prenom, 
+                                  specialite, 
+                                  mots_cles_specialite, 
+                                  no_tel, 
+                                  est_employe_par_musee 
+                           FROM Conferencier 
+                           ORDER BY nom, prenom", $pdo);
 }
 
-// Fonction qui affiche tous les conférenciers
-function afficherConferenciers($pdo){
+function rechercheConferenciers($pdo, $nomRecherche, $prenomRecherche, $typeRecherche, $specialiteRecherche, $motsClesRecherche) {
     try {
-        $conferenciers = array();
-        
-        $requete = 'SELECT id_conferencier, nom, prenom, specialite, no_tel, est_employe_par_musee, mots_cles_specialite FROM Conferencier ORDER BY nom';
-        $resultats = $pdo->query($requete);
-        
-        while ($ligne = $resultats->fetch()) {
-            $conferenciers[] = $ligne; // Ajoute chaque conférencier au tableau
-        }
-        return $conferenciers; // Retourne le tableau des conférenciers
-    } catch (PDOException $e) {
-        throw new PDOException($e->getMessage(), (int)$e->getCode());
+        $nomRecherche = '%' . $nomRecherche . '%';
+        $prenomRecherche = '%' . $prenomRecherche . '%';
+        $typeRecherche = '%' . $typeRecherche . '%';
+        $specialiteRecherche = '%' . $specialiteRecherche . '%';
+        $motsClesRecherche = '%' . $motsClesRecherche . '%';
+
+        $stmt = $pdo->prepare("SELECT id_conferencier,
+                                      nom,
+                                      prenom,
+                                      specialite,
+                                      mots_cles_specialite,
+                                      no_tel,
+                                      est_employe_par_musee
+                               FROM Conferencier
+                               WHERE nom LIKE :conferencierRecherche1
+                               AND prenom LIKE :conferencierRecherche2
+                               AND est_employe_par_musee LIKE :conferencierRecherche3
+                               AND specialite LIKE :specialiteRecherche
+                               AND mots_cles_specialite LIKE :motsClesRecherche
+                               ORDER BY nom, prenom");
+
+        $stmt->bindValue(":conferencierRecherche1", $nomRecherche, PDO::PARAM_STR);
+        $stmt->bindValue(":conferencierRecherche2", $prenomRecherche, PDO::PARAM_STR);
+        $stmt->bindValue(":conferencierRecherche3", $typeRecherche, PDO::PARAM_STR);
+        $stmt->bindValue(":specialiteRecherche", $specialiteRecherche, PDO::PARAM_STR);
+        $stmt->bindValue(":motsClesRecherche", $motsClesRecherche, PDO::PARAM_STR);
+
+        $stmt->execute();
+        return $stmt;
+    } catch (Exception $e) {
+        throw $e;
     }
 }
 
+function rechercheUtilisateurs($pdo, $nomRecherche, $prenomRecherche) {
+    try {
+        $nomRecherche = '%' . $nomRecherche . '%';
+        $prenomRecherche = '%' . $prenomRecherche . '%';
+        $stmt = $pdo->prepare("SELECT id_employe, 
+                                      nom_utilisateur AS identifiant, 
+                                      nom, 
+                                      prenom, 
+                                      no_tel, 
+                                      est_admin
+                               FROM Employe
+                               WHERE nom LIKE :nomRecherche
+                               AND prenom LIKE :prenomRecherche
+                               ORDER BY nom, prenom");
+        $stmt->bindValue(":nomRecherche", $nomRecherche, PDO::PARAM_STR);
+        $stmt->bindValue(":prenomRecherche", $prenomRecherche, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt;
+    } catch (Exception $e) {
+        throw $e;
+    }
+}
+
+
+// Récupèle la liste des conférenciers
+function getIndisponibilites($pdo) {
+    return envoyerRequete("SELECT id_indisponibilite, id_conferencier, debut, fin FROM Indisponibilite", $pdo);
+}
+
+
 // Récupère la liste des visites avec des noms à la place des ID pour les clés étrangères
 function getVisites($pdo) {
-    return envoyerRequete("SELECT id_visite, Exposition.intitule, Conferencier.nom AS nom_conferencier, Conferencier.prenom AS prenom_conferencier, Employe.nom AS nom_employe, Employe.prenom AS prenom_employe, horaire_debut, date_visite, intitule_client, no_tel_client
+    return envoyerRequete("SELECT id_visite, 
+                                  Exposition.intitule, 
+                                  Conferencier.nom AS nom_conferencier, 
+                                  Conferencier.prenom AS prenom_conferencier, 
+                                  Employe.nom AS nom_employe, 
+                                  Employe.prenom AS prenom_employe, 
+                                  CONCAT(HOUR(horaire_debut), 'h', MINUTE(horaire_debut)) AS horaire_debut, 
+                                  DATE_FORMAT(date_visite, '%d/%m/%Y') AS date_visite, 
+                                  intitule_client, 
+                                  no_tel_client
                            FROM Visite
 
                            INNER JOIN Exposition
@@ -44,7 +127,9 @@ function getVisites($pdo) {
                            ON Conferencier.id_conferencier = Visite.id_conferencier
                             
                            INNER JOIN Employe
-                           ON Employe.id_employe = Visite.id_employe;"
+                           ON Employe.id_employe = Visite.id_employe
+                           
+                           ORDER BY date_visite, Exposition.intitule;"
                           , $pdo);
 }
 
@@ -80,8 +165,26 @@ function verifierExistanceUtilisateur($pdo, $pseudo, $nom, $prenom) {
         FROM Employe 
         WHERE nom_utilisateur = ? 
         OR (nom = ? AND prenom = ?)");
+
     $stmt->execute([$pseudo, $nom, $prenom]);
     return $stmt->fetchColumn() > 0;
+}
+
+
+// Vérifie qu'il n'y a pas d'identifiant, et d'homonyme lors de la modification d'un employé 
+function verifierExistanceUtilisateurModif($pdo, $pseudo, $nom, $prenom, $id_employe) {
+    try {
+        $stmt = $pdo->prepare("SELECT COUNT(*) 
+        FROM employe 
+        WHERE (nom_utilisateur = ? 
+        OR (nom = ? AND prenom = ?))
+        AND id_employe != ?");  
+
+        $stmt->execute([$pseudo, $nom, $prenom, $id_employe]);
+        return $stmt->fetchColumn() > 0;
+    } catch (PDOException $e) {
+        throw new Exception("Erreur lors de la vérification des doublons.");
+    }
 }
 
 // Crée un employé 
@@ -111,13 +214,42 @@ function creerVisite($pdo, $id_exposition, $id_conferencier, $id_employe, $horai
     $stmt->execute([$id_exposition, $id_conferencier, $id_employe, $horaire_debut, $date_visite, $intitule_client, $no_tel_client]);
 }
 
+// Crée Exposition
+function creerExposition($pdo, $intitule, $annee_debut_oeuvres, $annee_fin_oeuvres, $nombre_oeuvres, $mots_cles, $resume, $date_debut, $date_fin) {
+    if (empty($date_fin)) {
+        $date_fin = NULL;
+    }
+    $stmt = $pdo->prepare("
+    INSERT INTO Exposition (intitule, periode_debut_oeuvres, periode_fin_oeuvres, nombre_oeuvres, mots_cles, resume, date_debut, date_fin) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+");
+    $stmt->execute([$intitule, $annee_debut_oeuvres, $annee_fin_oeuvres, $nombre_oeuvres, $mots_cles, $resume, $date_debut, $date_fin]);
+}
+
+// Fonction pour vérifier si l'exposition existe déjà
+function expositionExiste($pdo, $intitule) {
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM Exposition WHERE intitule = :intitule");
+    $stmt->execute(['intitule' => $intitule]);
+    return $stmt->fetchColumn() > 0;
+}
+
 // Vérifie d'homonyme lors de la création d'un conférencier 
 function verifierExistanceConferencier($pdo, $nom, $prenom) {
-    $stmt = $pdo->prepare(
-        "SELECT COUNT(*) 
-        FROM Conferencier 
-        WHERE (nom = ? AND prenom = ?)");
+    $stmt = $pdo->prepare("SELECT COUNT(*) 
+    FROM conferencier 
+    WHERE nom = ? AND prenom = ?");
+  
     $stmt->execute([$nom, $prenom]);
+    return $stmt->fetchColumn() > 0;
+}
+
+// Vérifie d'homonyme lors de la modification d'un conférencier 
+function verifierExistanceConferencierModif($pdo, $nom, $prenom, $idConferencier) {
+    $stmt = $pdo->prepare("SELECT COUNT(*) 
+    FROM conferencier 
+    WHERE (nom = ? AND prenom = ?)
+    AND id_conferencier != ?");
+    $stmt->execute([$nom, $prenom, $idConferencier]);
     return $stmt->fetchColumn() > 0;
 }
 
@@ -203,20 +335,166 @@ function modifierVisite($pdo, $exposition_concernee_modifie, $conferencier_modif
     ]);
 }
 
+function modifUtilisateur($pdo, $idUtilisateur, $donnees) {
+    try {
+        $setClause = [];
+        $params = [];
 
-function updateUtilisateur($pdo, $idUtilisateur, $data) {
-    $columns = [];
-    $values = [];
+        // Construire les clauses et les valeurs dynamiquement
+        foreach ($donnees as $colonne => $value) {
+            $setClause[] = "`$colonne` = :$colonne";
+            $params[":$colonne"] = $value;
+        }
 
-    // Construire dynamiquement la requête SQL
-    foreach ($data as $column => $value) {
-        $columns[] = "$column = ?";
-        $values[] = $value;
+        // Ajouter la condition WHERE avec un paramètre nommé
+        $params[':id'] = $idUtilisateur;
+
+        // Construire la requête SQL
+        $sql = "UPDATE employe SET " . implode(', ', $setClause) . " WHERE id_employe = :id";
+        $stmt = $pdo->prepare($sql);
+
+        // Exécuter la requête
+        return $stmt->execute($params);
+    } catch (Exception $e) {
+        throw $e; 
+    }
+}
+
+function modifConferencier($pdo, $idConferencier, $donnees) {
+    try {
+        $setClause = [];
+        $params = [];
+
+        // Construire les clauses et les valeurs dynamiquement
+        foreach ($donnees as $colonne => $value) {
+            $setClause[] = "`$colonne` = :$colonne";
+            $params[":$colonne"] = $value;
+        }
+
+        // Ajouter la condition WHERE avec un paramètre nommé
+        $params[':id'] = $idConferencier;
+
+        // Construire la requête SQL
+        $sql = "UPDATE conferencier SET " . implode(', ', $setClause) . " WHERE id_conferencier = :id";
+        $stmt = $pdo->prepare($sql);
+
+        // Exécuter la requête
+        return $stmt->execute($params);
+    } catch (Exception $e) {
+        throw $e; 
+    }
+}
+
+
+function modifExposition($pdo, $idExposition, $description) {
+    try {
+        $stmt = $pdo -> prepare("UPDATE exposition SET resume = :description WHERE id_exposition = :id");
+        $stmt ->bindParam("description", $description);
+        $stmt ->bindParam("id", $idExposition);
+        $stmt->execute();
+    }catch (Exception $e) {
+        throw $e; 
+    }
+}
+
+function recupIndisponibilite($pdo, $idConferencier) {
+    try {
+        $sql = "SELECT id_indisponibilite, debut, fin FROM indisponibilite WHERE id_conferencier = :idConferencier";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':idConferencier', $idConferencier);  
+        $stmt->execute();
+        return $stmt ->fetchAll();
+    } catch (Exception $e) {
+        throw $e;
+    }
+}
+
+// Exemple de vérification si une expo a une visite
+function verifierVisitePourExpo($pdo, $idExposition) {
+    $sql = "SELECT COUNT(*) FROM visite WHERE id_exposition = :idExposition ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam('idExposition', $idExposition);
+    $stmt->execute();
+    
+    $count = $stmt->fetchColumn();
+    return $count > 0;  // Retourne true si il y a au moins une visite sur l'expo
+}
+
+function recupVisites($pdo, $idConferencier){
+    try {
+        $sql = "SELECT id_visite, date_visite 
+                FROM Visite 
+                JOIN Conferencier 
+                ON Visite.id_conferencier = Conferencier.id_conferencier
+                WHERE Conferencier.id_conferencier = :idConferencier";
+            
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam('idConferencier', $idConferencier);
+        $stmt->execute();
+        return $stmt ->fetchAll();
+    } catch (Exception $e) {
+        throw $e;
     }
 
-    $values[] = $idUtilisateur; // Ajoutez l'ID à la fin pour le WHERE
+}
 
-    $sql = "UPDATE employe SET " . implode(', ', $columns) . " WHERE id_employe = ?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($values);
+
+function exportationTable($pdo, $table) {
+    // Déterminer les colonnes à sélectionner en fonction de la table
+    if ($table === 'employe') {
+        $stmt = $pdo->query("SELECT id_employe,
+                                        nom,
+                                        prenom,
+                                        no_tel
+                                 FROM Employe
+                                 ORDER BY nom, prenom");
+        $rows = $stmt->fetchAll();
+        
+    } else if ($table === 'visite') {
+        $stmt = $pdo->query("SELECT id_visite,
+                                    id_exposition,
+                                    id_conferencier,
+                                    id_employe,
+                                    DATE_FORMAT(date_visite, '%d/%m/%Y') AS date_visite, 
+                                    CONCAT(HOUR(horaire_debut), 'h', MINUTE(horaire_debut)) AS horaire_debut,
+                                    intitule_client,
+                                    no_tel_client
+                              FROM Visite
+                              ORDER BY date_visite");
+        $rows = $stmt->fetchAll();
+        
+    } else if ($table === 'exposition') {
+        $stmt = $pdo->query("SELECT id_exposition, 
+                                    intitule, 
+                                    periode_debut_oeuvres, 
+                                    periode_fin_oeuvres, 
+                                    nombre_oeuvres, 
+                                    mots_cles, 
+                                    resume, 
+                                    DATE_FORMAT(date_debut, '%d/%m/%Y') AS date_debut, 
+                                    DATE_FORMAT(date_fin, '%d/%m/%Y') AS date_fin 
+                             FROM Exposition 
+                             ORDER BY intitule");
+        $rows = $stmt->fetchAll();
+        
+    } else if ($table === 'conferencier') {
+        $stmt = $pdo->query("SELECT id_conferencier,
+                                        nom,
+                                        prenom,
+                                        mots_cles_specialite,
+                                        no_tel,
+                                        CASE
+                                            WHEN est_employe_par_musee = 1 THEN 'oui'
+                                            ELSE 'non'
+                                        END AS est_employe_par_musee
+                                 FROM Conferencier
+                                 ORDER BY nom, prenom;"); // TODO indispobinilités
+        $rows = $stmt->fetchAll();
+        
+    } else {
+        // Le nom de la table est invalide
+        return false;
+    }
+    // On retourne les lignes de la table
+    return $rows;
 }

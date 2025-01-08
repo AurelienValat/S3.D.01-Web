@@ -1,9 +1,52 @@
 <?php 
     session_start();
     require ('../bdd/fonctions.php');
+    require ('../bdd/connecterBD.php');
+    require ('../bdd/requetes.php');
     verifSession(); // Vérifie si une session valide existe
 
     $estAdmin = isset($_SESSION['est_admin']) && $_SESSION['est_admin'] == 1;
+
+    $pdo = initierConnexion();
+    if ($pdo == FALSE) {
+        header("Location: pages/erreurs/erreurBD.php");
+    }
+
+    //Pour l'exportation
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $table = $_POST['table']; // Table sélectionnée dans le formulaire
+    
+
+        // Récupération depuis la BD
+        $rows = exportationTable($pdo, $table);
+        if ($rows == false) {
+            // Le nom de la table est invalide
+            exit;
+        }
+
+        $dateDuJour = date('d_m_y');
+
+        $nomFichier = "{$table}s {$dateDuJour}.csv"; //Créer le nom du fichier
+        
+        // Indique que le contenu renvoyé est un fichier CSV
+        header('Content-Type: text/csv');
+
+        // Force le téléchargement du fichier avec le nom défini dans $nomFichier
+        header('Content-Disposition: attachment; filename="' . $nomFichier . '"');
+    
+        $output = fopen('php://output', 'w');
+        if ($rows) {
+            fputcsv($output, array_keys($rows[0])); // Écrit les en-têtes des colonnes
+
+            // Parcourt chaque ligne et l'écrit dans le fichier CSV
+            foreach ($rows as $row) {
+                fputcsv($output, $row, ";");
+            }
+        }
+        fclose($output);
+        exit;
+    }
+    
 ?>
 
 <!DOCTYPE html>
@@ -19,55 +62,28 @@
     
     <?php require("../ressources/navBar.php");?>
 
-        <div class="container content">
-            <div class="container-blanc justify-content-center">
+        <div class="container content ">
+            <div class="container-blanc justify-content-center col-12">
                 <p>
-                    Pour éviter tout conflits dans les données nous recommandons d'exporter la totalité des données en même temps.
+                    Nous vous conseillons de sauvegarder vos fichiers une fois dans un même dossier prévu à cet effet.
                 </p>
-                <p>
-                    Attention, nous vous conseillons de mettre vos fichiers une fois exportés dans un dossier prévu à cet effet.
-                </p>
-                <button class="btn-blue btn-action">Exporter les données</button>
+                <form action="exportation.php" method="POST">
+                    <button type="submit" name="table" value="employe" class="btn-blue btn-action">Exporter employés</button>
+                
+                    <button type="submit" name="table" value="exposition" class="btn-blue btn-action">Exporter expositions</button>
+               
+                    <button type="submit" name="table" value="visite" class="btn-blue btn-action">Exporter visites</button>
+               
+                    <button type="submit" name="table" value="conferencier" class="btn-blue btn-action">Exporter conferenciers</button>
+                </form>
+
+
             </div>
         </div>
 
-        <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br>
 
-        <footer>
-
-            <div class=”contenu-footer”>
-
-                <div class=”bloc footer-services”>
-                <h3>Nos services</h3>
-                <ul class=”liste-services”>
-                    <li><a href=”#”>Création de sites web</a></li>
-                    <li><a href=”#”>SEO</a></li>
-                    <li><a href=”#”>SEA</a></li>
-                </ul>
-                </div>
-
-            <div class=”bloc footer-informations”>
-                <h3>A propos</h3>
-                <ul class=”liste-informations”>
-                <li><a href=”#”>Actualités</a></li>
-                <li><a href=”#”>Notre histoire</a></li>
-                <li><a href=”#”>Investisseurs</a></li>
-                <li><a href=”#”>Développement durable</a></li>
-                </ul>
-            </div>
-
-            <div class=”bloc footer-contact”>
-                <h3>Restons en contact</h3>
-                <p>06 06 06 06 06</p>
-                <p>supportclient@contact.com</p>
-                <p>12 rue de l'invention, Paris, 75011</p>
-            </div>
-
-            <p class="copyright">Company Name © 2022</p>
-
-            </div>
-
-        </footer>
+        <?php require("../ressources/footer.php");?>
     </body>
 </html>
 
