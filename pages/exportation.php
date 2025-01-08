@@ -2,6 +2,7 @@
     session_start();
     require ('../bdd/fonctions.php');
     require ('../bdd/connecterBD.php');
+    require ('../bdd/requetes.php');
     verifSession(); // Vérifie si une session valide existe
 
     $estAdmin = isset($_SESSION['est_admin']) && $_SESSION['est_admin'] == 1;
@@ -14,22 +15,19 @@
     //Pour l'exportation
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $table = $_POST['table']; // Table sélectionnée dans le formulaire
-        $tablesValides = ['employe', 'exposition', 'visite', 'conferencier']; 
     
-        // Déterminer les colonnes à sélectionner en fonction de la table
-        if ($table === 'employe') {
-            $colonnes = 'id_employe, nom, prenom, no_tel';
-        } else {
-            $colonnes = '*'; // Sélectionne tout pour les autres tables
+
+        // Récupération depuis la BD
+        $rows = exportationTable($pdo, $table);
+        if ($rows == false) {
+            // Le nom de la table est invalide
+            exit;
         }
 
         $dateDuJour = date('d_m_y');
 
         $nomFichier = "{$table}s {$dateDuJour}.csv"; //Créer le nom du fichier
-        //Requete pour selectionner les données à exporter
-        $stmt = $pdo->query("SELECT {$colonnes} FROM {$table}"); 
-        $rows = $stmt->fetchAll();
-    
+        
         // Indique que le contenu renvoyé est un fichier CSV
         header('Content-Type: text/csv');
 
@@ -42,7 +40,7 @@
 
             // Parcourt chaque ligne et l'écrit dans le fichier CSV
             foreach ($rows as $row) {
-                fputcsv($output, $row);
+                fputcsv($output, $row, ";");
             }
         }
         fclose($output);

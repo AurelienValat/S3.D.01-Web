@@ -3,16 +3,41 @@ require_once ('fonctions.php');
 
 // Récupère la liste des utilisteurs/employés
 function getUtilisateurs($pdo) {
-    return envoyerRequete("SELECT id_employe, nom_utilisateur AS identifiant, nom, prenom, no_tel, est_admin FROM Employe ORDER BY nom, prenom", $pdo);
+    return envoyerRequete("SELECT id_employe, 
+                                  nom_utilisateur AS identifiant, 
+                                  nom, 
+                                  prenom, 
+                                  no_tel, 
+                                  est_admin 
+                          FROM Employe 
+                          ORDER BY nom, prenom", $pdo);
 }
 
 // Récupèle la liste des expositions
 function getExpositions($pdo) {
-    return envoyerRequete("SELECT id_exposition, intitule, periode_oeuvres, nombre_oeuvres, mots_cles, resume, date_debut, date_fin FROM Exposition ORDER BY intitule", $pdo);
+    return envoyerRequete("SELECT id_exposition, 
+                                  intitule, 
+                                  periode_debut_oeuvres, 
+                                  periode_fin_oeuvres, 
+                                  nombre_oeuvres, 
+                                  mots_cles, 
+                                  resume, 
+                                  DATE_FORMAT(date_debut, '%d/%m/%Y') AS date_debut, 
+                                  DATE_FORMAT(date_fin, '%d/%m/%Y') AS date_fin 
+                           FROM Exposition 
+                           ORDER BY intitule", $pdo);
 }
 // Récupèle la liste de tout les conférenciers
 function getConferenciers($pdo) {
-    return envoyerRequete("SELECT id_conferencier, nom, prenom, specialite, mots_cles_specialite, no_tel, est_employe_par_musee FROM Conferencier ORDER BY nom, prenom", $pdo);
+    return envoyerRequete("SELECT id_conferencier, 
+                                  nom, 
+                                  prenom, 
+                                  specialite, 
+                                  mots_cles_specialite, 
+                                  no_tel, 
+                                  est_employe_par_musee 
+                           FROM Conferencier 
+                           ORDER BY nom, prenom", $pdo);
 }
 
 function rechercheConferenciers($pdo, $nomRecherche, $prenomRecherche, $typeRecherche, $specialiteRecherche, $motsClesRecherche) {
@@ -83,7 +108,16 @@ function getIndisponibilites($pdo) {
 
 // Récupère la liste des visites avec des noms à la place des ID pour les clés étrangères
 function getVisites($pdo) {
-    return envoyerRequete("SELECT id_visite, Exposition.intitule, Conferencier.nom AS nom_conferencier, Conferencier.prenom AS prenom_conferencier, Employe.nom AS nom_employe, Employe.prenom AS prenom_employe, horaire_debut, date_visite, intitule_client, no_tel_client
+    return envoyerRequete("SELECT id_visite, 
+                                  Exposition.intitule, 
+                                  Conferencier.nom AS nom_conferencier, 
+                                  Conferencier.prenom AS prenom_conferencier, 
+                                  Employe.nom AS nom_employe, 
+                                  Employe.prenom AS prenom_employe, 
+                                  CONCAT(HOUR(horaire_debut), 'h', MINUTE(horaire_debut)) AS horaire_debut, 
+                                  DATE_FORMAT(date_visite, '%d/%m/%Y') AS date_visite, 
+                                  intitule_client, 
+                                  no_tel_client
                            FROM Visite
 
                            INNER JOIN Exposition
@@ -179,15 +213,15 @@ function creerVisite($pdo, $id_exposition, $id_conferencier, $id_employe, $horai
 }
 
 // Crée Exposition
-function creerExposition($pdo, $intitule, $periode_oeuvres, $nombre_oeuvres, $mots_cles, $resume, $date_debut, $date_fin) {
+function creerExposition($pdo, $intitule, $annee_debut_oeuvres, $annee_fin_oeuvres, $nombre_oeuvres, $mots_cles, $resume, $date_debut, $date_fin) {
     if (empty($date_fin)) {
         $date_fin = NULL;
     }
     $stmt = $pdo->prepare("
-    INSERT INTO Exposition (intitule, periode_oeuvres, nombre_oeuvres, mots_cles, resume, date_debut, date_fin) 
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO Exposition (intitule, periode_debut_oeuvres, periode_fin_oeuvres, nombre_oeuvres, mots_cles, resume, date_debut, date_fin) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 ");
-$stmt->execute([$intitule, $periode_oeuvres, $nombre_oeuvres, $mots_cles, $resume, $date_debut, $date_fin]);
+    $stmt->execute([$intitule, $annee_debut_oeuvres, $annee_fin_oeuvres, $nombre_oeuvres, $mots_cles, $resume, $date_debut, $date_fin]);
 }
 
 // Fonction pour vérifier si l'exposition existe déjà
@@ -368,9 +402,62 @@ function recupVisites($pdo, $idConferencier){
 }
 
 
-
-
-
-
-
-
+function exportationTable($pdo, $table) {
+    // Déterminer les colonnes à sélectionner en fonction de la table
+    if ($table === 'employe') {
+        $stmt = $pdo->query("SELECT id_employe,
+                                        nom,
+                                        prenom,
+                                        no_tel
+                                 FROM Employe
+                                 ORDER BY nom, prenom");
+        $rows = $stmt->fetchAll();
+        
+    } else if ($table === 'visite') {
+        $stmt = $pdo->query("SELECT id_visite,
+                                    id_exposition,
+                                    id_conferencier,
+                                    id_employe,
+                                    DATE_FORMAT(date_visite, '%d/%m/%Y') AS date_visite, 
+                                    CONCAT(HOUR(horaire_debut), 'h', MINUTE(horaire_debut)) AS horaire_debut,
+                                    intitule_client,
+                                    no_tel_client
+                              FROM Visite
+                              ORDER BY date_visite");
+        $rows = $stmt->fetchAll();
+        
+    } else if ($table === 'exposition') {
+        $stmt = $pdo->query("SELECT id_exposition, 
+                                    intitule, 
+                                    periode_debut_oeuvres, 
+                                    periode_fin_oeuvres, 
+                                    nombre_oeuvres, 
+                                    mots_cles, 
+                                    resume, 
+                                    DATE_FORMAT(date_debut, '%d/%m/%Y') AS date_debut, 
+                                    DATE_FORMAT(date_fin, '%d/%m/%Y') AS date_fin 
+                             FROM Exposition 
+                             ORDER BY intitule");
+        $rows = $stmt->fetchAll();
+        
+    } else if ($table === 'conferencier') {
+        $stmt = $pdo->query("SELECT id_conferencier,
+                                        nom,
+                                        prenom,
+                                        mots_cles_specialite,
+                                        no_tel,
+                                        CASE
+                                            WHEN est_employe_par_musee = 1 THEN 'oui'
+                                            ELSE 'non'
+                                        END AS est_employe_par_musee
+                                 FROM Conferencier
+                                 ORDER BY nom, prenom;"); // TODO indispobinilités
+        $rows = $stmt->fetchAll();
+        
+    } else {
+        // Le nom de la table est invalide
+        return false;
+    }
+    // On retourne les lignes de la table
+    return $rows;
+}

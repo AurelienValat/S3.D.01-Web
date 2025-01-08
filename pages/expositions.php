@@ -58,9 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerExposition'
                 // Vérifier que l'année de début est inférieure ou égale à l'année de fin
                 if ((int)$annee_debut_oeuvres > (int)$annee_fin_oeuvres) {
                     $erreurs['periode_oeuvres'] = "L'année de début doit être inférieure ou égale à l'année de fin.";
-                } else {
-                    // Fusionner les années dans le format souhaité
-                    $periode_oeuvres = $annee_debut_oeuvres . ' - ' . $annee_fin_oeuvres;
                 }
             }
         }
@@ -78,6 +75,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerExposition'
         if ($resume == "" || strlen($resume) < 10 || strlen($resume) > 500) {
             $erreurs['resume'] = "Le résumé doit contenir entre 10 et 500 caractères.";
         }
+        
+        if (!preg_match("#^[0-9]{4}#", $annee_debut_oeuvres) or strlen($annee_debut_oeuvres)>4 ) {
+            $erreurs['periode_oeuvres'] = 'L\' année de début n\'est pas valide. Elle doit être au format AAAA.';
+        }
+        
+        if (!preg_match("#^[0-9]{4}#", $annee_fin_oeuvres) or strlen($annee_fin_oeuvres)>4 ) {
+            $erreurs['periode_oeuvres'] = 'L\' année de fin n\'est pas valide. Elle doit être au format AAAA.';
+        }
+        
        // Validation de la date de début de l'exposition
         if (empty($date_debut) || !preg_match("/^\d{4}-\d{2}-\d{2}$/", $date_debut)) {
             $erreurs['date_debut'] = "Date de début invalide ou non renseignée.";
@@ -103,18 +109,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerExposition'
         }
 
         // Validation de la date de fin de l'exposition (uniquement pour les expositions temporaires)
-        if (!($date_fin == "")) {
-            if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $date_fin)) {
-                $erreurs['date_fin'] = "Format de date de fin incorrect.";
-            } else {
-                $date_fin_obj = DateTime::createFromFormat('Y-m-d', $date_fin);
-                $date_debut_obj = isset($date_debut_obj) ? $date_debut_obj : null;
-
-                if (!$date_fin_obj) {
-                    $erreurs['date_fin'] = "La date de fin est invalide.";
-                } elseif (isset($date_debut_obj) && $date_fin_obj < $date_debut_obj) {
-                    $erreurs['date_fin'] = "La date de fin doit être postérieure à la date de début.";
-                }
+        // MODIF A CAUSE DE L'APP JAVA -> date de fin requise pour importer le CSV des expositions        
+        if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $date_fin)) {
+            $erreurs['date_fin'] = "Format de date de fin incorrecte. <br>La date de fin requise pour la compatibilité avec l'application Java.";
+        } else {
+            $date_fin_obj = DateTime::createFromFormat('Y-m-d', $date_fin);
+            $date_debut_obj = isset($date_debut_obj) ? $date_debut_obj : null;
+            
+            if (!$date_fin_obj) {
+                $erreurs['date_fin'] = "La date de fin est invalide.";
+            } elseif (isset($date_debut_obj) && $date_fin_obj < $date_debut_obj) {
+                $erreurs['date_fin'] = "La date de fin doit être postérieure à la date de début.";
             }
         }
 
@@ -127,8 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerExposition'
         
         // Si aucune erreur, créer l'exposition
         if (empty($erreurs)) {
-            creerExposition($pdo, $intitule, $periode_oeuvres, $nombre_oeuvres, $mots_cles, $resume, $date_debut, $date_fin
-            );
+            creerExposition($pdo, $intitule, $annee_debut_oeuvres, $annee_fin_oeuvres, $nombre_oeuvres, $mots_cles, $resume, $date_debut, $date_fin);
             $expositionCree = true;
         }
     } catch (Exception $e) {
@@ -229,7 +233,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
                     <thead class="table-dark">
                         <tr>
                             <th>Intitulé</th>
-                            <th>Période des œuvres</th>
+                            <th>Période de début des œuvres</th>
+                            <th>Période de fin des œuvres</th>
                             <th>Nombre d'œuvres</th>
                             <th>Mots clés</th>
                             <th>Résumé</th>
@@ -247,7 +252,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
                     while ($ligne = $expositions->fetch()) {
                         echo "<tr>";
                         echo "<td>" . $ligne['intitule'] . "</td>";
-                        echo "<td>" . $ligne['periode_oeuvres'] . "</td>";
+                        echo "<td>" . $ligne['periode_debut_oeuvres'] . "</td>";
+                        echo "<td>" . $ligne['periode_fin_oeuvres'] . "</td>";
                         echo "<td>" . $ligne['nombre_oeuvres'] . "</td>";
                         echo "<td>" . $ligne['mots_cles'] . "</td>";
                         echo "<td>" . $ligne['resume'] . "</td>";

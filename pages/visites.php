@@ -91,8 +91,8 @@
             if (($intitule_client == "") || strlen($intitule_client) > 50) {
                 $erreurs['intitule_client'] = "L’intitulé client est requis et ne doit pas dépasser 50 caractères.";
             }
-            if (!preg_match("/^[0-9]{4}$/", $no_tel_client) && $no_tel_client != "") {
-                $erreurs['no_tel_client'] = 'Numéro de téléphone invalide. Il doit contenir 4 chiffre.';
+            if (!preg_match("/^[0-9]{10}$/", $no_tel_client) && $no_tel_client != "") {
+                $erreurs['no_tel_client'] = 'Numéro de téléphone invalide. Il doit contenir 10 chiffres.';
             }
             if (empty($erreurs)) {
                 if (!verifierDisponibiliteConferencier($pdo, $id_conferencier, $date_visite, $horaire_debut)) {
@@ -182,9 +182,9 @@
                                     echo "<td>".$ligne['horaire_debut']."</td>";
                                     echo "<td>";
                                     echo "<button class='btn-action btn-modify btn-blue' data-bs-toggle='modal' data-bs-target='#modifModal'  title='Modifier la visite' data-id='".$ligne['id_visite']."'><i class='fa-solid fa-pencil'></i></button>";?>
-                                        <form method="POST" action= "conferenciers.php" style="display:inline;">
+                                        <form method="POST" action= "visites.php" style="display:inline;">
                                         <?php echo "<input type='hidden' name='supprimerVisite' value='" . $ligne['id_visite'] . "'>";?> 
-                                        <button type="submit" class="btn-action btn-delete"  title="Supprimer la visite"onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce conférencier ?');"><i class="fa-solid fa-trash"></i></button>
+                                        <button type="submit" class="btn-action btn-delete"  title="Supprimer la visite"onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette visite ?');"><i class="fa-solid fa-trash"></i></button>
                                         </form>
                                         <?php 
                                     echo "</td>";
@@ -329,10 +329,10 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="modalConfirmationLabel">Succès</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <a href="visites.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
                     </div>
                     <div class="modal-body">
-                        <p>Visite créé avec succès.</p>
+                        <p>Visite créée avec succès.</p>
                     </div>
                     <div class="modal-footer">
                         <a href="visites.php" class="btn btn-secondary">Fermer</a>
