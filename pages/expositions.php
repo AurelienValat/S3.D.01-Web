@@ -366,7 +366,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
                             </div>
                             <!-- Faire en sorte de pouvoir supprimer la date de fin si l'utilisateur c'est trompé et ne veut pas la mettre -->
                             <div class="mb-3">
-                                <label for="date_fin" class="form-label">Date de fin (optionnelle)</label>
+                                <label for="date_fin" class="form-label">Date de fin </label>
                                 <input type="date" 
                                     id="date_fin" 
                                     name="date_fin" 
@@ -422,7 +422,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <p>Visite créé avec succès.</p>
+                                <p>Exposition créé avec succès.</p>
                             </div>
                             <div class="modal-footer">
                                 <a href="expositions.php" class="btn btn-secondary">Fermer</a>
