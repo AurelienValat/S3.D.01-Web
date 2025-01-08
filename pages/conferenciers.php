@@ -139,6 +139,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>
     <script src="../js/conferenciers.js" type="text/javascript"></script>
+    <link href="../css/style.css" rel="stylesheet">
     <title>MUSEOFLOW - Gestion des Conférenciers</title>
 </head>
 <body>
@@ -156,7 +157,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <button class="btn-action btn-modify btn-blue" data-bs-toggle="modal" data-bs-target="#modalAjouterConferencier" id="modalAjouterConferencierLabel" title="Ajouter un conférencier"><i class="fa-solid fa-user-plus"></i></button>
                 <button
-                    class="btn btn-light d-flex align-items-center gap-2"
+                    class="btn btn-secondary d-flex align-items-center gap-2 filtrage"
                     data-bs-toggle="modal" data-bs-target="#modalFiltrage" >
                     <i class="fa-solid fa-filter" ></i>Filtres
                 </button>

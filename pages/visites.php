@@ -117,11 +117,11 @@
 <html lang="fr">
 <head>
     <meta charset="utf-8">  
-    <link href="../css/style.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <script src="../js/visites.js" type="text/javascript"></script>
+    <link href="../css/style.css" rel="stylesheet">
     <title>MUSEOFLOW - Gestion des Visites</title>
 </head>
 <body class="fond">
@@ -130,7 +130,7 @@
     // Pour afficher les options de filtrages spécifiques aux visites
     $_SESSION['filtreAApliquer'] = 'visites';
     require("../ressources/navBar.php");
-    require("../ressources/filtres.php");
+    require("../ressources/filtres.php");    
     ?>
 
     <div class="container content col-12">
@@ -141,7 +141,7 @@
                 <button class="btn-action btn-modify btn-blue"  title="Réserver une visite" data-bs-toggle="modal" data-bs-target="#modalAjouterVisite" id="modalAjouterVisiteLabel"><i class="fa-solid fa-plus"></i></button>                 
                 <!-- Menu Filtres -->
                 <button
-                    class="btn btn-light d-flex align-items-center gap-2"
+                class="btn btn-secondary d-flex align-items-center gap-2 filtrage"
                     data-bs-toggle="modal" data-bs-target="#modalFiltrage" >
                     <i class="fa-solid fa-filter" ></i>Filtres
                 </button>
@@ -163,10 +163,34 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <?php 
-                            // Récupération de la liste des employés/utilisateurs depuis la BD
+                        <?php                
+                        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['demandeFiltrage'])) {
+                            // Récupération et traitement des champs avec des valeurs par défaut
+                            $rechercheExposition = htmlspecialchars($_POST['rechercheExposition'] ?? '', ENT_QUOTES, 'UTF-8');
+                            $rechercheConferencier = htmlspecialchars($_POST['rechercheConferencier'] ?? '', ENT_QUOTES, 'UTF-8');
+                            $rechercheDateDebut = htmlspecialchars($_POST['rechercheDateDebut'] ?? '', ENT_QUOTES, 'UTF-8');
+                            $rechercheDateFin = htmlspecialchars($_POST['rechercheDateFin'] ?? '', ENT_QUOTES, 'UTF-8');
+                            $rechercheHeureDebut = htmlspecialchars($_POST['rechercheHeureDebut'] ?? '', ENT_QUOTES, 'UTF-8');
+                            $rechercheHeureDebut = $rechercheHeureDebut ? $rechercheHeureDebut : '%';
+
+                            // Filtrage des visites
+                            $visites = rechercheVisite(
+                                $pdo,
+                                $rechercheExposition,
+                                $rechercheConferencier,
+                                $rechercheDateDebut,
+                                $rechercheDateFin,
+                                $rechercheHeureDebut
+                            );
+
+                                echo '<a href="visites.php"><button class="btn-action btn-modify btn-blue"><span class="fa fa-refresh"></span> Effacer les filtres</button></a><br>';
+
+                            
+                        } else {
+                            // Récupère toutes les visites si aucun filtrage n'est demandé
                             $visites = getVisites($pdo);
-                            $totalVisites = 0;
+                        }
+                        $totalVisites = 0;
                                                     
                             while($ligne = $visites->fetch()) {
                                 echo "<tr>";
@@ -211,7 +235,10 @@
         </div>
     </div>
 
-
+    <?php
+    $expositions = getExpositions($pdo);
+    $conferenciers = getConferenciers($pdo);
+    ?>
     <!-- Modal Ajouter Visite -->
     <div class="modal fade <?php echo !empty($erreurs_ajout) ? 'show' : ''; ?>" 
         id="modalAjouterVisite" 

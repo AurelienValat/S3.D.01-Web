@@ -51,6 +51,59 @@
                     <?php } else {?>
                         <h6>Aucun filtre disponible pour la vue actuelle.</h6>
                     <?php }?>
+                    <?php
+                        if ($_SESSION['filtreAApliquer'] === 'visites') { ?>
+                            <p>
+                                <!-- Filtrer par exposition -->
+                                <label for='filtreRechercheExposition'>Exposition :</label>
+                                <select class="form-control" name='rechercheExposition' id='filtreRechercheExposition'>
+                                    <option value="" <?php echo empty($_POST['rechercheExposition']) ? "selected" : ""; ?>>
+                                        -- Sélectionnez une exposition --
+                                    </option>
+                                    <?php
+                                    foreach ($expositions as $expo) {
+                                        $selected = isset($_POST['rechercheExposition']) && $_POST['rechercheExposition'] == $expo['id_exposition'] ? "selected" : "";
+                                        echo "<option value='{$expo['id_exposition']}' $selected>" . htmlspecialchars($expo['intitule']) . "</option>";
+                                    }
+                                    ?>
+                                </select>
+                                <br>
+
+                                <!-- Filtrer par conférencier -->
+                                <label for='filtreRechercheConferencier'>Conférencier :</label>
+                                <select class="form-control" name='rechercheConferencier' id='filtreRechercheConferencier'>
+                                    <option value="" <?php echo empty($_POST['rechercheConferencier']) ? "selected" : ""; ?>>
+                                        -- Sélectionnez un conférencier --
+                                    </option>
+                                    <?php
+                                    $conferenciers = getConferenciers($pdo);
+                                    foreach ($conferenciers as $conf) {
+                                        $selected = isset($_POST['rechercheConferencier']) && $_POST['rechercheConferencier'] == $conf['id_conferencier'] ? "selected" : "";
+                                        echo "<option value='{$conf['id_conferencier']}' $selected>" . htmlspecialchars($conf['nom'] . " " . $conf['prenom']) . "</option>";
+                                    }
+                                    ?>
+                                </select>
+                                <br>
+
+                                <!-- Filtrer par période de l'année -->
+                                <label for='filtreRechercheDateDebut'>Période - Date début :</label>
+                                <input type='date' name='rechercheDateDebut' id='filtreRechercheDateDebut'
+                                    value='<?php echo isset($_POST['rechercheDateDebut']) ? trim($_POST['rechercheDateDebut']) : ""; ?>'>
+                                <br>
+                                <label for='filtreRechercheDateFin'>Période - Date fin :</label>
+                                <input type='date' name='rechercheDateFin' id='filtreRechercheDateFin'
+                                    value='<?php echo isset($_POST['rechercheDateFin']) ? trim($_POST['rechercheDateFin']) : ""; ?>'>
+                                <br>
+
+                                <!-- Filtrer par intervalle horaire -->
+                                <label for='filtreRechercheHeureDebut'>Heure début :</label>
+                                <input type='time' name='rechercheHeureDebut' id='filtreRechercheHeureDebut'
+                                    value='<?php echo isset($_POST['rechercheHeureDebut']) ? trim($_POST['rechercheHeureDebut']) : ""; ?>'>
+                            </p>
+                        <?php } ?>
+                    <hr>
+                    <h6>//Autres recherches//</h6>
+                    <p>autres champs</p>
                 </div>
                 <div class="modal-footer">
                         <button id='btn_retour' class='btn-action btn-modify btn-blue'><span class='fa-solid fa-magnifying-glass'></span> Rechercher</button>

@@ -199,11 +199,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
 <html lang="fr">
 <head>
     <meta charset="utf-8">
-    <link href="../css/style.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script> 
     <script src="../js/expositions.js" type="text/javascript"></script>
+    <link href="../css/style.css" rel="stylesheet">
     <title>MUSEOFLOW - Gestion des Expositions</title>
 </head>
 <body>
@@ -223,7 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
                 class="d-flex justify-content-between align-items-center">
                 <button class="btn-action btn-modify btn-blue" data-bs-toggle="modal" data-bs-target="#modalAjouterExposition" id="modalAjouterExpositionLabel" title="Ajouter une exposition"><i class="fa-solid fa-plus"></i></button>
                 <button
-                    class="btn btn-light d-flex align-items-center gap-2"
+                    class="btn btn-secondary d-flex align-items-center gap-2 filtrage"
                     data-bs-toggle="modal" data-bs-target="#modalFiltrage" >
                     <i class="fa-solid fa-filter" ></i>Filtres
                 </button>

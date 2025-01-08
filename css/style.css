@@ -21,9 +21,6 @@
     align-items: center;
   }
 
-
-  
-  
   .logo {
     font-size: 1.5rem;
     font-weight: bold;
@@ -111,6 +108,11 @@ body:not(.no-bg){
   align-items: center; /* Centre horizontalement */
 }
 
+.filtrage {
+    color: #000000;
+    background-color: #e0e0e0;
+    border-color: #6c757d;
+}
   
 .caveat {
   color: white;

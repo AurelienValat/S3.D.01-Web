@@ -99,6 +99,50 @@ function rechercheUtilisateurs($pdo, $nomRecherche, $prenomRecherche) {
     }
 }
 
+function rechercheVisite($pdo, $idExposition = null, $idConferencier = null, $dateDebut = '', $dateFin = '', $heureDebut = '') {
+    try {
+        $idExposition = $idExposition ? (int) $idExposition : null;
+        $idConferencier = $idConferencier ? (int) $idConferencier : null;
+        $dateDebut = $dateDebut ? $dateDebut : '0000-01-01';
+        $dateFin = $dateFin ? $dateFin : '9999-12-31';
+        $heureDebut = $heureDebut ? $heureDebut : '%';
+
+        $stmt = $pdo->prepare("SELECT v.id_visite,
+                                e.intitule AS intitule,
+                                CONCAT(c.nom, ' ', c.prenom) AS nom_conferencier,
+                                c.prenom AS prenom_conferencier,
+                                emp.nom AS nom_employe,
+                                emp.prenom AS prenom_employe,
+                                v.intitule_client,
+                                v.no_tel_client,
+                                v.date_visite,
+                                v.horaire_debut
+                            FROM Visite v
+                            INNER JOIN Exposition e ON v.id_exposition = e.id_exposition
+                            INNER JOIN Conferencier c ON v.id_conferencier = c.id_conferencier
+                            INNER JOIN Employe emp ON v.id_employe = emp.id_employe
+                            WHERE (v.id_exposition = IFNULL(:idExposition, v.id_exposition))
+                            AND (v.id_conferencier = IFNULL(:idConferencier, v.id_conferencier))
+                            AND (v.date_visite BETWEEN :dateDebut AND :dateFin)
+                            AND (v.horaire_debut LIKE :heureDebut)
+                            ORDER BY v.date_visite, v.horaire_debut");
+
+        $stmt->bindValue(":heureDebut", '%' . $heureDebut . '%', PDO::PARAM_STR);  
+        $stmt->bindValue(":idExposition", $idExposition, PDO::PARAM_INT);
+        $stmt->bindValue(":idConferencier", $idConferencier, PDO::PARAM_INT);
+        $stmt->bindValue(":dateDebut", $dateDebut, PDO::PARAM_STR);
+        $stmt->bindValue(":dateFin", $dateFin, PDO::PARAM_STR);
+
+        $stmt->execute();
+        return $stmt;
+    } catch (Exception $e) {
+        throw $e;
+    }
+}
+
+
+
+
 
 // Récupèle la liste des conférenciers
 function getIndisponibilites($pdo) {
@@ -132,7 +176,6 @@ function getVisites($pdo) {
                            ORDER BY date_visite, Exposition.intitule;"
                           , $pdo);
 }
-
 
 // Supprime la ligne correspondant à l'ID en paramètre
 function supprimerLigne($pdo, $id, $table) {

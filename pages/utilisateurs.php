@@ -162,12 +162,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
 <html lang="fr">
 <head>
     <meta charset="utf-8">
-    <link href="../css/style.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" >
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>
     <script src="../js/utilisateurs.js" type="text/javascript"></script>
-  
+    <link href="../css/style.css" rel="stylesheet">
+
     <title>MUSEOFLOW - Gestion des Utilisateurs</title>
 </head>
 <body class="fond">
@@ -186,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
         <div class="d-flex justify-content-between align-items-center">
         <button class="btn-action btn-modify btn-blue" onclick="resetFormulaire()" data-bs-toggle="modal" data-bs-target="#modalAjouterUtilisateur" id="modalAjouterUtilisateurLabel" title="Ajouter un utilisateur"><i class="fa-solid fa-user-plus"></i></button>
             <button
-                class="btn btn-light d-flex align-items-center gap-2"
+                class="btn btn-secondary d-flex align-items-center gap-2 filtrage"
                 data-bs-toggle="modal" data-bs-target="#modalFiltrage" >
                 <i class="fa-solid fa-filter" ></i>Filtres
             </button>
