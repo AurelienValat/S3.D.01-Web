@@ -175,7 +175,7 @@ function verifierExistanceUtilisateur($pdo, $pseudo, $nom, $prenom) {
 function verifierExistanceUtilisateurModif($pdo, $pseudo, $nom, $prenom, $id_employe) {
     try {
         $stmt = $pdo->prepare("SELECT COUNT(*) 
-        FROM employe 
+        FROM Employe 
         WHERE (nom_utilisateur = ? 
         OR (nom = ? AND prenom = ?))
         AND id_employe != ?");  
@@ -236,7 +236,7 @@ function expositionExiste($pdo, $intitule) {
 // Vérifie d'homonyme lors de la création d'un conférencier 
 function verifierExistanceConferencier($pdo, $nom, $prenom) {
     $stmt = $pdo->prepare("SELECT COUNT(*) 
-    FROM conferencier 
+    FROM Conferencier 
     WHERE nom = ? AND prenom = ?");
   
     $stmt->execute([$nom, $prenom]);
@@ -246,7 +246,7 @@ function verifierExistanceConferencier($pdo, $nom, $prenom) {
 // Vérifie d'homonyme lors de la modification d'un conférencier 
 function verifierExistanceConferencierModif($pdo, $nom, $prenom, $idConferencier) {
     $stmt = $pdo->prepare("SELECT COUNT(*) 
-    FROM conferencier 
+    FROM Conferencier 
     WHERE (nom = ? AND prenom = ?)
     AND id_conferencier != ?");
     $stmt->execute([$nom, $prenom, $idConferencier]);
@@ -254,11 +254,11 @@ function verifierExistanceConferencierModif($pdo, $nom, $prenom, $idConferencier
 }
 
 function recupExpositions($pdo){
-    return envoyerRequete("SELECT id_exposition,intitule FROM exposition", $pdo);
+    return envoyerRequete("SELECT id_exposition,intitule FROM Exposition", $pdo);
 }
 
 function recupConferenciers($pdo){
-    return envoyerRequete("SELECT id_conferencier, nom, prenom FROM conferencier", $pdo);
+    return envoyerRequete("SELECT id_conferencier, nom, prenom FROM Conferencier", $pdo);
 }
 
 /**
@@ -350,7 +350,7 @@ function modifUtilisateur($pdo, $idUtilisateur, $donnees) {
         $params[':id'] = $idUtilisateur;
 
         // Construire la requête SQL
-        $sql = "UPDATE employe SET " . implode(', ', $setClause) . " WHERE id_employe = :id";
+        $sql = "UPDATE Employe SET " . implode(', ', $setClause) . " WHERE id_employe = :id";
         $stmt = $pdo->prepare($sql);
 
         // Exécuter la requête
@@ -375,7 +375,7 @@ function modifConferencier($pdo, $idConferencier, $donnees) {
         $params[':id'] = $idConferencier;
 
         // Construire la requête SQL
-        $sql = "UPDATE conferencier SET " . implode(', ', $setClause) . " WHERE id_conferencier = :id";
+        $sql = "UPDATE Conferencier SET " . implode(', ', $setClause) . " WHERE id_conferencier = :id";
         $stmt = $pdo->prepare($sql);
 
         // Exécuter la requête
@@ -388,7 +388,7 @@ function modifConferencier($pdo, $idConferencier, $donnees) {
 
 function modifExposition($pdo, $idExposition, $description) {
     try {
-        $stmt = $pdo -> prepare("UPDATE exposition SET resume = :description WHERE id_exposition = :id");
+        $stmt = $pdo -> prepare("UPDATE Exposition SET resume = :description WHERE id_exposition = :id");
         $stmt ->bindParam("description", $description);
         $stmt ->bindParam("id", $idExposition);
         $stmt->execute();
