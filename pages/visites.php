@@ -4,6 +4,7 @@
     require ('../bdd/fonctions.php');
     require ('../bdd/connecterBD.php');
     require ('../bdd/requetes.php');
+    require ('../ressources/verifVisites.php');
     verifSession(); // Vérifie si une session valide existe
 
     $estAdmin = isset($_SESSION['est_admin']) && $_SESSION['est_admin'] == 1;
@@ -27,14 +28,15 @@
         }
     }
 
-    // Initialisation des erreurs
-    $erreurs = [];
+    // Initialisation des erreurs pour l'ajout de visite
+    $erreurs_ajout = [];
 
     // Indicateur pour savoir si une visite a été créée avec succès
     $visiteCree = false;
 
+
     // Vérifie que la requête est de type POST et qu'elle n'est pas destinée à supprimer une visite
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerVisite']) && !isset($_POST['demandeFiltrage'])) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerVisite']) && isset($_POST['type_formulaire']) && $_POST['type_formulaire'] === 'ajout' && !isset($_POST['demandeFiltrage'])) {
         try {
             $id_exposition = isset($_POST['id_exposition']) ? (int) $_POST['id_exposition'] : 0;
             $id_conferencier = isset($_POST['id_conferencier']) ? (int) $_POST['id_conferencier'] : 0;
@@ -46,71 +48,69 @@
             
             // Validation des identifiants pour s'assurer qu'ils sont valides
             if ($id_exposition <= 0) {
-            $erreurs['id_exposition'] = "Veuillez sélectionner une exposition.";
+                $erreurs_ajout['id_exposition'] = "Veuillez sélectionner une exposition.";
             }
             if ($id_conferencier <= 0) {
-            $erreurs['id_conferencier'] = "Veuillez sélectionner un conférencier.";
+                $erreurs_ajout['id_conferencier'] = "Veuillez sélectionner un conférencier.";
             }
             if ($id_employe <= 0) {
-            $erreurs['id_employe'] = "Veuillez sélectionner un employé.";
+                $erreurs_ajout['id_employe'] = "Veuillez sélectionner un employé.";
             }
             
-            // Validation de la date de visite
-            if (($date_visite == "") || !preg_match("/^\d{4}-\d{2}-\d{2}$/", $date_visite)) {
-                $erreurs['date_visite'] = "Date invalide.";
-            } else {
-                // Vérification du jour (mardi à dimanche)
-                $jour_semaine = date('N', strtotime($date_visite)); // 1 = lundi, 7 = dimanche
-                if ($jour_semaine == 1) { // 1 correspond à lundi
-                    $erreurs['date_visite'] = "Les visites ne peuvent pas avoir lieu le lundi.";
-                } else {
-                    // Vérifier si la date est entre aujourd'hui et dans 3 ans
-                    $aujourd_hui = new DateTime();
-                    $date_max = (clone $aujourd_hui)->modify('+3 years');
-                    $date_visite_obj = DateTime::createFromFormat('Y-m-d', $date_visite);
+            $erreurs_ajout = verifVisites($pdo, $erreurs_ajout, $horaire_debut, $intitule_client, $no_tel_client, $id_conferencier, $date_visite, $id_exposition);
             
-                    if (!$date_visite_obj) {
-                        $erreurs['date_visite'] = "Format de date incorrect.";
-                    } elseif ($date_visite_obj < $aujourd_hui) {
-                        $erreurs['date_visite'] = "La date doit être aujourd'hui ou dans le futur.";
-                    } elseif ($date_visite_obj > $date_max) {
-                        $erreurs['date_visite'] = "La date ne peut pas dépasser 3 ans à partir d'aujourd'hui.";
-                    }
-                }
-            }            
-            if (($horaire_debut == "") || !preg_match("/^(?:[01]\d|2[0-3]):[0-5]\d$/", $horaire_debut)) {
-                $erreurs['horaire_debut'] = "Heure invalide.";
-            } else {
-                // Vérification des horaires d'ouverture
-                $heure = (int) substr($horaire_debut, 0, 2);
-                if ($heure < 9 || $heure >= 18) {
-                    $erreurs['horaire_debut'] = "Les visites doivent avoir lieu entre 9 heures et 19 heures.";
-                }
+            if (empty($erreurs_ajout)) {
+                creerVisite($pdo, $id_exposition, $id_conferencier, $id_employe, $horaire_debut, $date_visite, $intitule_client, $no_tel_client);
+                $visiteCree = true;
             }
-    
-            if (($intitule_client == "") || strlen($intitule_client) > 50) {
-                $erreurs['intitule_client'] = "L’intitulé client est requis et ne doit pas dépasser 50 caractères.";
-            }
-            if (!preg_match("/^[0-9]{10}$/", $no_tel_client) && $no_tel_client != "") {
-                $erreurs['no_tel_client'] = 'Numéro de téléphone invalide. Il doit contenir 10 chiffres.';
-            }
-            if (empty($erreurs)) {
-                if (!verifierDisponibiliteConferencier($pdo, $id_conferencier, $date_visite, $horaire_debut)) {
-                    $erreurs['horaire_debut'] = "Le conférencier n’est pas disponible à cet horaire.";
-                }
-                if (!verifierEspacementVisites($pdo, $id_exposition, $date_visite, $horaire_debut)) {
-                    $erreurs['horaire_debut'] = "Les visites doivent être espacées de 10 minutes.";
-                }
-                if (empty($erreurs)) {
-                    creerVisite($pdo, $id_exposition, $id_conferencier, $id_employe, $horaire_debut, $date_visite, $intitule_client, $no_tel_client);
-                    $visiteCree = true;
-                }
-            }
+            
         } catch (Exception $e) {
             echo "<p style='color:red;'>" . htmlspecialchars($e->getMessage()) . "</p>";
         }
     }
 
+    
+    // Vérif des données pour la modif de visite
+    // Tableau des erreurs éventuelles
+    $erreurs_modif = [];
+    // Vérifie que la requête est de type POST et qu'elle n'est pas destinée à supprimer une visite ni à un ajout
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerVisite']) && isset($_POST['type_formulaire']) && $_POST['type_formulaire'] === 'modif') {
+        try {
+            $exposition_concernee_modifie = isset($_POST['intitule_Modif']) ? $_POST['intitule_Modif'] : "";
+            $conferencier_modifie = isset($_POST['id_conferencier_Modif']) ? $_POST['id_conferencier_Modif'] : "";
+            $id_employe_modifie = isset($_POST['id_employe_Modif']) ? $_POST['id_employe_Modif'] : "";
+            $intitule_client_modifie = isset($_POST['intitule_client_Modif']) ? $_POST['intitule_client_Modif'] : "";
+            $no_tel_client_modifie = isset($_POST['no_tel_client_Modif']) ? trim($_POST['no_tel_client_Modif']) : "";
+            $date_visite_modifie = isset($_POST['date_visite_Modif']) ? trim($_POST['date_visite_Modif']) : "";
+            $horaire_debut_modifie = isset($_POST['horaire_debut_Modif']) ? trim($_POST['horaire_debut_Modif']) : "";
+            
+            // Validation des identifiants pour s'assurer qu'ils sont valides
+            if ($exposition_concernee_modifie === "" || $exposition_concernee_modifie === "Sélectionner dans la liste") {
+                $erreurs_modif['id_exposition'] = "Veuillez sélectionner une exposition.";
+            }
+          
+            if ($conferencier_modifie === "" || $conferencier_modifie === "Sélectionner dans la liste") {
+                $erreurs_modif['id_conferencier'] = "Veuillez sélectionner un conférencier.";
+              
+            if (!preg_match("/^[0-9]{10}$/", $no_tel_client) && $no_tel_client != "") {
+                $erreurs['no_tel_client'] = 'Numéro de téléphone invalide. Il doit contenir 10 chiffres.';
+            }
+            if ($id_employe_modifie === "" || $id_employe_modifie === "Sélectionner dans la liste") {
+                $erreurs_modif['id_employe'] = "Veuillez sélectionner un employé.";
+            }
+            
+            $erreurs_modif = verifVisites($pdo, $erreurs_modif, $horaire_debut_modifie, $intitule_client_modifie, $no_tel_client_modifie, $conferencier_modifie, $date_visite_modifie, $exposition_concernee_modifie);
+            
+            // S'il n'y a pas d'erreurs
+            if (empty($erreurs_modif)) {
+                modifierVisite($pdo, $exposition_concernee_modifie, $conferencier_modifie, $id_employe_modifie, $intitule_client_modifie, $no_tel_client_modifie, $date_visite_modifie, $horaire_debut_modifie, $_POST['id_visite_Modif']);
+            }
+            
+        } catch (Exception $e) {
+            echo "<p style='color:red;'>" . htmlspecialchars($e->getMessage()) . "</p>";
+        }
+    }
+    
     $expositions = getExpositions($pdo);
     $conferenciers = getConferenciers($pdo);
     $employes = getUtilisateurs($pdo);
@@ -122,7 +122,7 @@
     <link href="../css/style.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <script src="../js/visites.js" type="text/javascript"></script>
     <title>MUSEOFLOW - Gestion des Visites</title>
 </head>
@@ -181,10 +181,22 @@
                                     echo "<td>".$ligne['date_visite']."</td>";
                                     echo "<td>".$ligne['horaire_debut']."</td>";
                                     echo "<td>";
-                                    echo "<button class='btn-action btn-modify btn-blue' data-bs-toggle='modal' data-bs-target='#modifModal'  title='Modifier la visite' data-id='".$ligne['id_visite']."'><i class='fa-solid fa-pencil'></i></button>";?>
+                                    echo "<button class='btn-action btn-modify btn-blue' 
+                                                  data-bs-toggle='modal' 
+                                                  data-bs-target='#modifModal' 
+                                                  data-id='".$ligne['id_visite']."' 
+                                                  onclick='remplirModalModif(
+                                                    " . intval($ligne['id_visite']) . ", 
+                                                    \"" . addslashes($ligne['intitule_client']) . "\",
+                                                    \"" . addslashes($ligne['no_tel_client']) . "\",
+                                                    \"" . addslashes($ligne['date_visite']) . "\",
+                                                    \"" . addslashes($ligne['horaire_debut']) . "\"
+                                                  )'>
+                                                  Modifier
+                                          </button>";?>
                                         <form method="POST" action= "visites.php" style="display:inline;">
-                                        <?php echo "<input type='hidden' name='supprimerVisite' value='" . $ligne['id_visite'] . "'>";?> 
-                                        <button type="submit" class="btn-action btn-delete"  title="Supprimer la visite"onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette visite ?');"><i class="fa-solid fa-trash"></i></button>
+                                        <?php echo "<input type='hidden' name='supprimerVisite' value='" . $ligne['id_visite'] . "'>";
+                                        ?> <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette visite ?');"><i class="fa-solid fa-trash"></button>
                                         </form>
                                         <?php 
                                     echo "</td>";
@@ -203,9 +215,9 @@
 
 
     <!-- Modal Ajouter Visite -->
-    <div class="modal fade <?php echo !empty($erreurs) ? 'show' : ''; ?>" 
+    <div class="modal fade <?php echo !empty($erreurs_ajout) ? 'show' : ''; ?>" 
         id="modalAjouterVisite" 
-        style="<?php echo !empty($erreurs) ? 'display: block;' : 'display: none;'; ?>">
+        style="<?php echo !empty($erreurs_ajout) ? 'display: block;' : 'display: none;'; ?>">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -214,11 +226,13 @@
                 </div>
                 <div class="modal-body">
                     <form id="formAjouterVisite" method="POST" action="visites.php">
+                    <!-- Pour ne pas déclencher l'ajout et la modification en même temps -->
+                    <input type="hidden" id="type_formulaire" name="type_formulaire" value="ajout">
                         <div class="mb-3">
                             <label for="id_exposition" class="form-label">Exposition</label>
                             <select id="id_exposition" 
                                     name="id_exposition" 
-                                    class="form-control <?php echo isset($erreurs['id_exposition']) ? 'is-invalid' : ''; ?>">
+                                    class="form-control <?php echo isset($erreurs_ajout['id_exposition']) ? 'is-invalid' : ''; ?>">
                                 <option value="">-- Sélectionnez une exposition --</option>
                                 <?php foreach ($expositions as $expo): ?>
                                     <option value="<?= htmlspecialchars($expo['id_exposition']); ?>" 
@@ -227,15 +241,15 @@
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-                            <?php if (isset($erreurs['id_exposition'])): ?>
-                                <div class="invalid-feedback"><?php echo $erreurs['id_exposition']; ?></div>
+                            <?php if (isset($erreurs_ajout['id_exposition'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs_ajout['id_exposition']; ?></div>
                             <?php endif; ?>
                         </div>
                         <div class="mb-3">
                             <label for="id_conferencier" class="form-label">Conférencier</label>
                             <select id="id_conferencier" 
                                     name="id_conferencier" 
-                                    class="form-control <?php echo isset($erreurs['id_conferencier']) ? 'is-invalid' : ''; ?>">
+                                    class="form-control <?php echo isset($erreurs_ajout['id_conferencier']) ? 'is-invalid' : ''; ?>">
                                 <option value="">-- Sélectionnez un conférencier --</option>
                                 <?php foreach ($conferenciers as $conf): ?>
                                     <option value="<?= htmlspecialchars($conf['id_conferencier']); ?>" 
@@ -244,15 +258,15 @@
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-                            <?php if (isset($erreurs['id_conferencier'])): ?>
-                                <div class="invalid-feedback"><?php echo $erreurs['id_conferencier']; ?></div>
+                            <?php if (isset($erreurs_ajout['id_conferencier'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs_ajout['id_conferencier']; ?></div>
                             <?php endif; ?>
                         </div>
                         <div class="mb-3">
                             <label for="id_employe" class="form-label">Employé</label>
                             <select id="id_employe" 
                                     name="id_employe" 
-                                    class="form-control <?php echo isset($erreurs['id_employe']) ? 'is-invalid' : ''; ?>">
+                                    class="form-control <?php echo isset($erreurs_ajout['id_employe']) ? 'is-invalid' : ''; ?>">
                                 <option value="">-- Sélectionnez un employé --</option>
                                 <?php foreach ($employes as $emp): ?>
                                     <option value="<?= htmlspecialchars($emp['id_employe']); ?>" 
@@ -261,8 +275,8 @@
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-                            <?php if (isset($erreurs['id_employe'])): ?>
-                                <div class="invalid-feedback"><?php echo $erreurs['id_employe']; ?></div>
+                            <?php if (isset($erreurs_ajout['id_employe'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs_ajout['id_employe']; ?></div>
                             <?php endif; ?>
                         </div>
                         <div class="mb-3">
@@ -270,10 +284,10 @@
                             <input type="date" 
                                 id="date_visite" 
                                 name="date_visite" 
-                                class="form-control <?php echo isset($erreurs['date_visite']) ? 'is-invalid' : ''; ?>" 
+                                class="form-control <?php echo isset($erreurs_ajout['date_visite']) ? 'is-invalid' : ''; ?>" 
                                 value="<?php echo htmlspecialchars($date_visite ?? ''); ?>">
-                            <?php if (isset($erreurs['date_visite'])): ?>
-                                <div class="invalid-feedback"><?php echo $erreurs['date_visite']; ?></div>
+                            <?php if (isset($erreurs_ajout['date_visite'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs_ajout['date_visite']; ?></div>
                             <?php endif; ?>
                         </div>
                         <div class="mb-3">
@@ -281,10 +295,10 @@
                             <input type="time" 
                                 id="horaire_debut" 
                                 name="horaire_debut" 
-                                class="form-control <?php echo isset($erreurs['horaire_debut']) ? 'is-invalid' : ''; ?>" 
+                                class="form-control <?php echo isset($erreurs_ajout['horaire_debut']) ? 'is-invalid' : ''; ?>" 
                                 value="<?php echo htmlspecialchars($horaire_debut ?? ''); ?>">
-                            <?php if (isset($erreurs['horaire_debut'])): ?>
-                                <div class="invalid-feedback"><?php echo $erreurs['horaire_debut']; ?></div>
+                            <?php if (isset($erreurs_ajout['horaire_debut'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs_ajout['horaire_debut']; ?></div>
                             <?php endif; ?>
                         </div>
                         <div class="mb-3">
@@ -292,10 +306,10 @@
                             <input type="text" 
                                 id="intitule_client" 
                                 name="intitule_client" 
-                                class="form-control <?php echo isset($erreurs['intitule_client']) ? 'is-invalid' : ''; ?>" 
+                                class="form-control <?php echo isset($erreurs_ajout['intitule_client']) ? 'is-invalid' : ''; ?>" 
                                 value="<?php echo htmlspecialchars($intitule_client ?? ''); ?>">
-                            <?php if (isset($erreurs['intitule_client'])): ?>
-                                <div class="invalid-feedback"><?php echo $erreurs['intitule_client']; ?></div>
+                            <?php if (isset($erreurs_ajout['intitule_client'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs_ajout['intitule_client']; ?></div>
                             <?php endif; ?>
                         </div>
                         <div class="mb-3">
@@ -303,14 +317,14 @@
                             <input type="text" 
                                 id="no_tel_client" 
                                 name="no_tel_client" 
-                                class="form-control <?php echo isset($erreurs['no_tel_client']) ? 'is-invalid' : ''; ?>" 
+                                class="form-control <?php echo isset($erreurs_ajout['no_tel_client']) ? 'is-invalid' : ''; ?>" 
                                 value="<?php echo htmlspecialchars($no_tel_client ?? ''); ?>">
-                            <?php if (isset($erreurs['no_tel_client'])): ?>
-                                <div class="invalid-feedback"><?php echo $erreurs['no_tel_client']; ?></div>
+                            <?php if (isset($erreurs_ajout['no_tel_client'])): ?>
+                                <div class="invalid-feedback"><?php echo $erreurs_ajout['no_tel_client']; ?></div>
                             <?php endif; ?>
                         </div>
-                        <?php if (isset($erreurs['existance'])): ?>
-                            <div class="alert alert-danger"><?php echo $erreurs['existance']; ?></div>
+                        <?php if (isset($erreurs_ajout['existance'])): ?>
+                            <div class="alert alert-danger"><?php echo $erreurs_ajout['existance']; ?></div>
                         <?php endif; ?>
                         <button type="submit" class="btn btn-primary">Créer</button>
                     </form>
@@ -329,7 +343,9 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="modalConfirmationLabel">Succès</h5>
-                        <a href="visites.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
+                        <a href="visites.php">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </a>
                     </div>
                     <div class="modal-body">
                         <p>Visite créée avec succès.</p>
@@ -341,10 +357,9 @@
             </div>
         </div>
 
-
 <!-- Modal Bootstrap pour modifier une visite -->
-<div class="modal fade" id="modifModal" tabindex="-1" role="dialog" aria-labelledby="modifModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+<div class="modal fade <?php echo !empty($erreurs_modif) ? 'show' : ''; ?>" id="modifModal" aria-labelledby="modifModalLabel" style="<?php echo !empty($erreurs_modif) ? 'display: block;' : 'display: none;'; ?>">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modifModalLabel">Modifier la visite</h5>
@@ -352,54 +367,105 @@
       </div>
       <div class="modal-body">
         <form id="formModifVisite" method="post" action="visites.php">
-          <input type="hidden" name="id_visite" value="">
+          <input type="hidden" id="id_visite_Modif" name="id_visite_Modif" value="">
+          <!-- Pour ne pas déclencher l'ajout et la modification en même temps -->
+          <input type="hidden" id="type_formulaire" name="type_formulaire" value="modif">
           <div class="mb-3">
-            <label for="intitule" class="form-label">Intitulé de l'exposition</label>
-            <input type="text" class="form-control" id="intitule" name="intitule" required>
+            <label for="intitule" class="form-label">Exposition concernée</label>
+              <select class="form-control <?php echo isset($erreurs_modif['id_exposition']) ? 'is-invalid' : ''; ?>" id="intitule_Modif" name="intitule_Modif" required>
+              <option value="Sélectionner dans la liste">--- Sélectionner dans la liste ---</option>
+              <!-- Options des conférenciers remplies dynamiquement -->
+              <?php 
+              $expositions = getExpositions($pdo);
+              if (!empty($expositions)) {
+                  foreach ($expositions as $exposition) {
+                      echo "<option value='".htmlentities($exposition["intitule"], ENT_QUOTES)."'";
+                      // Trim car un espace se balade ???????
+                      if(isset($_POST['intitule_Modif']) && trim($_POST['intitule_Modif']) === $exposition["intitule"]) {
+                          echo ' selected';
+                      }
+                      echo ">".htmlentities($exposition["intitule"], ENT_QUOTES)."</option>";
+                  }
+              }?>
+            </select>
+            <?php if (isset($erreurs_modif['id_exposition'])): ?>
+                <div class="invalid-feedback"><?php echo $erreurs_modif['id_exposition']; ?></div>
+            <?php endif; ?>
           </div>
           <div class="mb-3">
-            <label for="id_conferencier" class="form-label">Conférencier</label>
-            <select class="form-control" id="id_conferencier" name="id_conferencier" required>
+            <label for="id_conferencier" class="form-label">Conférencier assurant la visite</label>
+            <select class="form-control <?php echo isset($erreurs_modif['id_conferencier']) ? 'is-invalid' : ''; ?>" id="id_conferencier_Modif" name="id_conferencier_Modif" required>
               <option value="Sélectionner dans la liste">--- Sélectionner dans la liste ---</option>
               <!-- Options des conférenciers remplies dynamiquement -->
               <?php 
               $conferenciers = afficherConferenciers($pdo);
               if (!empty($conferenciers)) {
                   foreach ($conferenciers as $conferencier) {
-                      echo "<option value='".htmlentities($conferencier["prenom"], ENT_QUOTES). " " .htmlentities($conferencier["nom"], ENT_QUOTES)."'>".htmlentities($conferencier["prenom"], ENT_QUOTES). " " .htmlentities($conferencier["nom"], ENT_QUOTES)."</option>";
+                      $nom_prenom = htmlentities($conferencier["nom"], ENT_QUOTES)." ".htmlentities($conferencier["prenom"]);
+                      echo "<option value='".$nom_prenom."' ";
+                      // On ne réutilise pas $nom_prenom car ils peuvent contenir des caractères convertis en html entities qui faussent la comparaison
+                      if(isset($_POST['id_conferencier_Modif']) && $_POST['id_conferencier_Modif'] === $conferencier["nom"].' '.$conferencier["prenom"]) {
+                          echo 'selected';
+                      }
+                      echo ">".$nom_prenom." "."</option>";
                   }
               }?>
             </select>
+            <?php if (isset($erreurs_modif['id_conferencier'])): ?>
+                <div class="invalid-feedback"><?php echo $erreurs_modif['id_conferencier']; ?></div>
+            <?php endif; ?>
           </div>
           <div class="mb-3">
             <label for="id_employe" class="form-label">Employé</label>
-            <select class="form-control" id="id_employe" name="id_employe" required>
+            <select class="form-control <?php echo isset($erreurs_modif['id_employe']) ? 'is-invalid' : ''; ?>" id="id_employe_Modif" name="id_employe_Modif" required>
               <option value="Sélectionner dans la liste">--- Sélectionner dans la liste ---</option>
               <!-- Options des employés remplies dynamiquement -->
               <?php 
               $utilisateurs = getUtilisateurs($pdo);
               if (!empty($utilisateurs)) {
                   foreach ($utilisateurs as $utilisateur) {
-                      echo "<option value='".htmlentities($utilisateur["prenom"], ENT_QUOTES). " " .htmlentities($utilisateur["nom"], ENT_QUOTES)."'>".htmlentities($utilisateur["prenom"], ENT_QUOTES). " " .htmlentities($utilisateur["nom"], ENT_QUOTES)."</option>";
+                      $nom_prenom = htmlentities($utilisateur["prenom"], ENT_QUOTES). " " .htmlentities($utilisateur["nom"], ENT_QUOTES);
+                      echo "<option value='".$nom_prenom."'";
+                      // On ne réutilise pas $nom_prenom car ils peuvent contenir des caractères convertis en html entities qui faussent la comparaison
+                      if(isset($_POST['id_employe_Modif']) && $_POST['id_employe_Modif'] === $utilisateur["prenom"].' '.$utilisateur["nom"]) {
+                          echo ' selected';
+                      }
+                      echo ">".$nom_prenom."</option>
+              ";
                   }
               }?>
             </select>
+            <?php if (isset($erreurs_modif['id_employe'])): ?>
+                <div class="invalid-feedback"><?php echo $erreurs_modif['id_employe']; ?></div>
+            <?php endif; ?>
           </div>
           <div class="mb-3">
-            <label for="intitule_client" class="form-label">Client</label>
-            <input type="text" class="form-control" id="intitule_client" name="intitule_client" required>
+            <label for="intitule_client" class="form-label">Client ayant réservé</label>
+            <input type="text" class="form-control <?php echo isset($erreurs_modif['intitule_client']) ? 'is-invalid' : ''; ?>" id="intitule_client_Modif" name="intitule_client_Modif" value="" required>
+            <?php if (isset($erreurs_modif['intitule_client'])): ?>
+                <div class="invalid-feedback"><?php echo $erreurs_modif['intitule_client']; ?></div>
+            <?php endif; ?>
           </div>
           <div class="mb-3">
             <label for="no_tel_client" class="form-label">Téléphone du client</label>
-            <input type="text" class="form-control" id="no_tel_client" name="no_tel_client" required>
+            <input type="text" class="form-control <?php echo isset($erreurs_modif['no_tel_client']) ? 'is-invalid' : ''; ?>" id="no_tel_client_Modif" name="no_tel_client_Modif" value="" required>
+            <?php if (isset($erreurs_modif['no_tel_client'])): ?>
+                <div class="invalid-feedback"><?php echo $erreurs_modif['no_tel_client']; ?></div>
+            <?php endif; ?>
           </div>
           <div class="mb-3">
             <label for="date_visite" class="form-label">Date de la visite</label>
-            <input type="date" class="form-control" id="date_visite" name="date_visite" required>
+            <input type="date" class="form-control <?php echo isset($erreurs_modif['date_visite']) ? 'is-invalid' : ''; ?>" id="date_visite_Modif" name="date_visite_Modif" value="" required>
+            <?php if (isset($erreurs_modif['date_visite'])): ?>
+                <div class="invalid-feedback"><?php echo $erreurs_modif['date_visite']; ?></div>
+            <?php endif; ?>
           </div>
           <div class="mb-3">
             <label for="horaire_debut" class="form-label">Heure de début</label>
-            <input type="time" class="form-control" id="horaire_debut" name="horaire_debut" required>
+            <input type="time" class="form-control <?php echo isset($erreurs_modif['horaire_debut']) ? 'is-invalid' : ''; ?>" id="horaire_debut_Modif" name="horaire_debut_Modif" value="" required>
+            <?php if (isset($erreurs_modif['horaire_debut'])): ?>
+                <div class="invalid-feedback"><?php echo $erreurs_modif['horaire_debut']; ?></div>
+            <?php endif; ?>
           </div>
           <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
         </form>
@@ -407,6 +473,18 @@
     </div>
   </div>
 </div>
+<?php 
+// On ré-affiche les valeurs précédentes en cas de saisie incorrecte
+if (!empty($erreurs_modif)) {
+    // On appelle le script de ré-affichage de la saisie
+    echo "<script>remplirModalModif(\"".$_POST['id_visite_Modif']
+                                    ."\",\"". $_POST['intitule_client_Modif']
+                                    ."\",\"". $_POST['no_tel_client_Modif']
+                                    ."\",\"". $_POST['date_visite_Modif']
+                                    ."\",\"". $_POST['horaire_debut_Modif']
+                                    ."\");</script>\n";
+}?>
+
 <?php require("../ressources/footer.php");?>
 </body>
 </html>

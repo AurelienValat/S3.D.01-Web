@@ -167,6 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>
     <script src="../js/utilisateurs.js" type="text/javascript"></script>
+  
     <title>MUSEOFLOW - Gestion des Utilisateurs</title>
 </head>
 <body class="fond">
@@ -411,6 +412,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                     <div class="mb-3">
                         <label for="nomUtilisateur" class="form-label">Nom</label>
                         <input type="text" class="form-control <?php echo isset($erreursModif['nom']) ? 'is-invalid' : ''; ?>" id="nomUtilisateur" name="nomUtilisateur" placeholder="Modifiez le nom" value="<?php echo htmlspecialchars($nom); ?>">
+
                         <?php if (isset($erreursModif['nom'])) { ?>
                             <div class="invalid-feedback"><?php echo $erreursModif['nom']; ?></div>
                         <?php } ?>

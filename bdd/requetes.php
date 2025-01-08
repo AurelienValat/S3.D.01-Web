@@ -160,10 +160,12 @@ function supprimerEmploye($pdo, $id) {
 
 // Vérifie qu'il n'y a pas d'identifiant, et d'homonyme lors de la création d'un employé 
 function verifierExistanceUtilisateur($pdo, $pseudo, $nom, $prenom) {
-    $stmt = $pdo->prepare("SELECT COUNT(*) 
-    FROM employe 
-    WHERE nom_utilisateur = ? 
-    OR (nom = ? AND prenom = ?)");  
+    $stmt = $pdo->prepare(
+        "SELECT COUNT(*) 
+        FROM Employe 
+        WHERE nom_utilisateur = ? 
+        OR (nom = ? AND prenom = ?)");
+
     $stmt->execute([$pseudo, $nom, $prenom]);
     return $stmt->fetchColumn() > 0;
 }
@@ -189,7 +191,7 @@ function verifierExistanceUtilisateurModif($pdo, $pseudo, $nom, $prenom, $id_emp
 function creerEmploye($pdo, $pseudo, $nom, $prenom, $telephone, $motDePasse) {
     $motDePasseHash = hash('sha256', $motDePasse);
 
-    $stmt = $pdo->prepare("INSERT INTO employe (nom_utilisateur, nom, prenom, no_tel, mot_de_passe, est_admin) 
+    $stmt = $pdo->prepare("INSERT INTO Employe (nom_utilisateur, nom, prenom, no_tel, mot_de_passe, est_admin) 
     VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->execute([$pseudo, $nom, $prenom, $telephone, $motDePasseHash, 0]);
 
@@ -198,12 +200,12 @@ function creerEmploye($pdo, $pseudo, $nom, $prenom, $telephone, $motDePasse) {
 
 // Crée un Conférencier 
 function creerConferencier($pdo, $nom, $prenom, $type, $specialite, $motSpecialite, $telephone) {
-    $stmt = $pdo->prepare("INSERT INTO conferencier (nom, prenom, specialite, mots_cles_specialite, no_tel, est_employe_par_musee) 
+    $stmt = $pdo->prepare("INSERT INTO Conferencier (nom, prenom, specialite, mots_cles_specialite, no_tel, est_employe_par_musee) 
     VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->execute([$nom, $prenom, $specialite, $motSpecialite, $telephone, $type]);
 }
 
-// Crée Visite
+// Crée une Visite
 function creerVisite($pdo, $id_exposition, $id_conferencier, $id_employe, $horaire_debut, $date_visite, $intitule_client, $no_tel_client) {
     $stmt = $pdo->prepare("
         INSERT INTO Visite (id_exposition, id_conferencier, id_employe, horaire_debut, date_visite, intitule_client, no_tel_client) 
@@ -236,6 +238,7 @@ function verifierExistanceConferencier($pdo, $nom, $prenom) {
     $stmt = $pdo->prepare("SELECT COUNT(*) 
     FROM conferencier 
     WHERE nom = ? AND prenom = ?");
+  
     $stmt->execute([$nom, $prenom]);
     return $stmt->fetchColumn() > 0;
 }
@@ -298,6 +301,39 @@ function verifierEspacementVisites($pdo, $id_exposition, $date_visite, $horaire_
     ]);
     return $stmt->fetchColumn() == 0;
 }
+// TODO on suppose que 2 expositions ne peuvent pas avoir le même nom, VERIFIER AU PRES DU CLIENT
+function modifierVisite($pdo, $exposition_concernee_modifie, $conferencier_modifie, $id_employe_modifie, $intitule_client_modifie, $no_tel_client_modifie, $date_visite_modifie, $horaire_debut_modifie, $id_visite_modifie) {
+    $stmt = $pdo->prepare("
+        UPDATE Visite 
+        SET id_exposition = (SELECT Exposition.id_exposition
+                             FROM Exposition
+                             WHERE Exposition.intitule = :exposition_concernee_modifie), 
+
+            id_conferencier = (SELECT Conferencier.id_conferencier
+                               FROM Conferencier
+                               WHERE CONCAT(Conferencier.nom, ' ', Conferencier.prenom) = :conferencier_modifie), 
+
+            id_employe = (SELECT Employe.id_employe
+                          FROM Employe
+                          WHERE CONCAT(Employe.prenom, ' ', Employe.nom) = :id_employe_modifie), 
+
+            horaire_debut = :horaire_debut_modifie, 
+            date_visite = :date_visite_modifie, 
+            intitule_client = :intitule_client_modifie, 
+            no_tel_client = :no_tel_client_modifie 
+        WHERE Visite.id_visite = :id_visite_modifie;
+    ");
+    $stmt->execute([
+        'exposition_concernee_modifie' => $exposition_concernee_modifie,
+        'conferencier_modifie' => $conferencier_modifie,
+        'horaire_debut_modifie' => $horaire_debut_modifie,
+        'date_visite_modifie' => $date_visite_modifie,
+        'intitule_client_modifie' => $intitule_client_modifie,
+        'no_tel_client_modifie' => $no_tel_client_modifie,
+        'id_visite_modifie' => $id_visite_modifie,
+        'id_employe_modifie' => $id_employe_modifie
+    ]);
+}
 
 function modifUtilisateur($pdo, $idUtilisateur, $donnees) {
     try {
@@ -348,6 +384,7 @@ function modifConferencier($pdo, $idConferencier, $donnees) {
         throw $e; 
     }
 }
+
 
 function modifExposition($pdo, $idExposition, $description) {
     try {
