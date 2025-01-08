@@ -47,10 +47,28 @@ function remplirModalModif(id_visite, intitule_client, no_tel_client, date_visit
 	
 	console.log(id_visite, intitule_client, no_tel_client, date_visite, horaire_debut);
 	
+	let formattedDate;
+	let formattedTime;
+			
+	// Convertir les champs date heure JJ/MM/AAAA HHhMM en AAAA-MM-JJ HH:MM si besoin
+	if (!date_visite.match(/^\d{4}-\d{2}-\d{2}/) && !horaire_debut.match(/^\d{2}:\d{2}$/)) {
+		// Séparer la date et l'heure
+		const [day, month, year] = date_visite.split('/');
+		const [hours, minutes] = horaire_debut.split('h');
+		
+		// Formater la date et l'heure au format attendu
+		formattedDate = `${year}-${month}-${day}`;
+		formattedTime = `${hours}:${minutes}`;
+		
+	} else {
+		formattedDate = date_visite;
+		formattedTime = horaire_debut;
+	}
+		
     // Remplir les champs du formulaire
 	document.getElementById('id_visite_Modif').value = id_visite;
     document.getElementById('intitule_client_Modif').value = intitule_client;
     document.getElementById('no_tel_client_Modif').value = no_tel_client;
-    document.getElementById('date_visite_Modif').value = date_visite;
-    document.getElementById('horaire_debut_Modif').value = horaire_debut;
+    document.getElementById('date_visite_Modif').value = formattedDate;
+    document.getElementById('horaire_debut_Modif').value = formattedTime;
 }
