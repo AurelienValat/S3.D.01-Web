@@ -92,10 +92,7 @@
             if ($conferencier_modifie === "" || $conferencier_modifie === "Sélectionner dans la liste") {
                 $erreurs_modif['id_conferencier'] = "Veuillez sélectionner un conférencier.";
             }
-              
-            if (!preg_match("/^[0-9]{10}$/", $no_tel_client) && $no_tel_client != "") {
-                $erreurs['no_tel_client'] = 'Numéro de téléphone invalide. Il doit contenir 10 chiffres.';
-            }
+            
             if ($id_employe_modifie === "" || $id_employe_modifie === "Sélectionner dans la liste") {
                 $erreurs_modif['id_employe'] = "Veuillez sélectionner un employé.";
             }
@@ -372,7 +369,7 @@
           <!-- Pour ne pas déclencher l'ajout et la modification en même temps -->
           <input type="hidden" id="type_formulaire" name="type_formulaire" value="modif">
           <div class="mb-3">
-            <label for="intitule" class="form-label">Exposition concernée</label>
+            <label for="intitule_Modif" class="form-label">Exposition concernée</label>
               <select class="form-control <?php echo isset($erreurs_modif['id_exposition']) ? 'is-invalid' : ''; ?>" id="intitule_Modif" name="intitule_Modif" required>
               <option value="Sélectionner dans la liste">--- Sélectionner dans la liste ---</option>
               <!-- Options des conférenciers remplies dynamiquement -->
@@ -394,7 +391,7 @@
             <?php endif; ?>
           </div>
           <div class="mb-3">
-            <label for="id_conferencier" class="form-label">Conférencier assurant la visite</label>
+            <label for="id_conferencier_Modif" class="form-label">Conférencier assurant la visite</label>
             <select class="form-control <?php echo isset($erreurs_modif['id_conferencier']) ? 'is-invalid' : ''; ?>" id="id_conferencier_Modif" name="id_conferencier_Modif" required>
               <option value="Sélectionner dans la liste">--- Sélectionner dans la liste ---</option>
               <!-- Options des conférenciers remplies dynamiquement -->
@@ -417,7 +414,7 @@
             <?php endif; ?>
           </div>
           <div class="mb-3">
-            <label for="id_employe" class="form-label">Employé</label>
+            <label for="id_employe_Modif" class="form-label">Employé</label>
             <select class="form-control <?php echo isset($erreurs_modif['id_employe']) ? 'is-invalid' : ''; ?>" id="id_employe_Modif" name="id_employe_Modif" required>
               <option value="Sélectionner dans la liste">--- Sélectionner dans la liste ---</option>
               <!-- Options des employés remplies dynamiquement -->
@@ -441,28 +438,28 @@
             <?php endif; ?>
           </div>
           <div class="mb-3">
-            <label for="intitule_client" class="form-label">Client ayant réservé</label>
+            <label for="intitule_client_Modif" class="form-label">Client ayant réservé</label>
             <input type="text" class="form-control <?php echo isset($erreurs_modif['intitule_client']) ? 'is-invalid' : ''; ?>" id="intitule_client_Modif" name="intitule_client_Modif" value="" required>
             <?php if (isset($erreurs_modif['intitule_client'])): ?>
                 <div class="invalid-feedback"><?php echo $erreurs_modif['intitule_client']; ?></div>
             <?php endif; ?>
           </div>
           <div class="mb-3">
-            <label for="no_tel_client" class="form-label">Téléphone du client</label>
+            <label for="no_tel_client_Modif" class="form-label">Téléphone du client</label>
             <input type="text" class="form-control <?php echo isset($erreurs_modif['no_tel_client']) ? 'is-invalid' : ''; ?>" id="no_tel_client_Modif" name="no_tel_client_Modif" value="" required>
             <?php if (isset($erreurs_modif['no_tel_client'])): ?>
                 <div class="invalid-feedback"><?php echo $erreurs_modif['no_tel_client']; ?></div>
             <?php endif; ?>
           </div>
           <div class="mb-3">
-            <label for="date_visite" class="form-label">Date de la visite</label>
+            <label for="date_visite_Modif" class="form-label">Date de la visite</label>
             <input type="date" class="form-control <?php echo isset($erreurs_modif['date_visite']) ? 'is-invalid' : ''; ?>" id="date_visite_Modif" name="date_visite_Modif" value="" required>
             <?php if (isset($erreurs_modif['date_visite'])): ?>
                 <div class="invalid-feedback"><?php echo $erreurs_modif['date_visite']; ?></div>
             <?php endif; ?>
           </div>
           <div class="mb-3">
-            <label for="horaire_debut" class="form-label">Heure de début</label>
+            <label for="horaire_debut_Modif" class="form-label">Heure de début</label>
             <input type="time" class="form-control <?php echo isset($erreurs_modif['horaire_debut']) ? 'is-invalid' : ''; ?>" id="horaire_debut_Modif" name="horaire_debut_Modif" value="" required>
             <?php if (isset($erreurs_modif['horaire_debut'])): ?>
                 <div class="invalid-feedback"><?php echo $erreurs_modif['horaire_debut']; ?></div>
@@ -486,6 +483,6 @@ if (!empty($erreurs_modif)) {
                                     ."\");</script>\n";
 }?>
 
-<?php require("../ressources/footer.php");?>
+<?php require("../ressources/footer.php"); var_dump($_POST);?>
 </body>
 </html>

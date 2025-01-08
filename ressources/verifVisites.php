@@ -41,9 +41,11 @@ function verifVisites($pdo, $erreurs, $horaire_debut, $intitule_client, $no_tel_
     if (($intitule_client == "") || strlen($intitule_client) > 50) {
         $erreurs['intitule_client'] = "L’intitulé client est requis et ne doit pas dépasser 50 caractères.";
     }
-    if (!preg_match("/^[0-9]{4}$/", $no_tel_client) && $no_tel_client != "") {
-        $erreurs['no_tel_client'] = 'Numéro de téléphone invalide. Il doit contenir 4 chiffre.';
+    
+    if (!preg_match("/^[0-9]{10}$/", $no_tel_client) && $no_tel_client != "") {
+        $erreurs['no_tel_client'] = 'Numéro de téléphone invalide. Il doit contenir 10 chiffres.';
     }
+    
     if (empty($erreurs)) {
         if (!verifierDisponibiliteConferencier($pdo, $id_conferencier, $date_visite, $horaire_debut)) {
             $erreurs['horaire_debut'] = "Le conférencier n’est pas disponible à cet horaire.";
