@@ -44,6 +44,9 @@ document.addEventListener('DOMContentLoaded', function() {
  * @param {string} horaire_debut - Horaire de début.
  */
 function remplirModalModif(id_visite, intitule_client, no_tel_client, date_visite, horaire_debut) {
+	
+	console.log(id_visite, intitule_client, no_tel_client, date_visite, horaire_debut);
+	
     // Remplir les champs du formulaire
 	document.getElementById('id_visite_Modif').value = id_visite;
     document.getElementById('intitule_client_Modif').value = intitule_client;

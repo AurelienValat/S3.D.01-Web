@@ -91,6 +91,7 @@
           
             if ($conferencier_modifie === "" || $conferencier_modifie === "Sélectionner dans la liste") {
                 $erreurs_modif['id_conferencier'] = "Veuillez sélectionner un conférencier.";
+            }
               
             if (!preg_match("/^[0-9]{10}$/", $no_tel_client) && $no_tel_client != "") {
                 $erreurs['no_tel_client'] = 'Numéro de téléphone invalide. Il doit contenir 10 chiffres.';
@@ -192,11 +193,11 @@
                                                     \"" . addslashes($ligne['date_visite']) . "\",
                                                     \"" . addslashes($ligne['horaire_debut']) . "\"
                                                   )'>
-                                                  Modifier
+                                                  <i class='fa-solid fa-pencil' aria-hidden='true'></i>
                                           </button>";?>
                                         <form method="POST" action= "visites.php" style="display:inline;">
                                         <?php echo "<input type='hidden' name='supprimerVisite' value='" . $ligne['id_visite'] . "'>";
-                                        ?> <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette visite ?');"><i class="fa-solid fa-trash"></button>
+                                        ?> <button type="submit" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette visite ?');"><i class="fa-solid fa-trash"></i></button>
                                         </form>
                                         <?php 
                                     echo "</td>";
@@ -398,7 +399,7 @@
               <option value="Sélectionner dans la liste">--- Sélectionner dans la liste ---</option>
               <!-- Options des conférenciers remplies dynamiquement -->
               <?php 
-              $conferenciers = afficherConferenciers($pdo);
+              $conferenciers = getConferenciers($pdo);
               if (!empty($conferenciers)) {
                   foreach ($conferenciers as $conferencier) {
                       $nom_prenom = htmlentities($conferencier["nom"], ENT_QUOTES)." ".htmlentities($conferencier["prenom"]);
