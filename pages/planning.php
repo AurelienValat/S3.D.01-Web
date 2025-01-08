@@ -171,11 +171,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['formType']) && $_POST
                             <form id="formAjouterIndispo" method="POST" action="planning.php">
                                 <input type="hidden" name="formType" value="ajouterIndispo">
 
-                                <div class="mb-3">
+                                <div class="col-12">
                                     <label for="debutIndispo" class="form-label">Début (compris)</label>
                                     <input type="date" id="debutIndispo" name="debutIndispo" class="form-control">
                                 </div>
-                                <div class="mb-3">
+                                <div class="col-12">
                                     <label for="finIndispo" class="form-label">Fin (non-comprise)</label>
                                     <input type="date" id="finIndispo" name="finIndispo" class="form-control">
                                 </div>
@@ -204,16 +204,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['formType']) && $_POST
                             <input type="hidden" name="formType" value="modifierIndispo">
                             <input type="hidden" id="idIndisponibilite" name="idIndisponibilite">
 
-                            <div class="mb-3">
+                            <div class="col-12">
                                 <label for="debutIndispo" class="form-label">Début (compris)</label>
                                 <input type="date" id="debut" name="debut" class="form-control">
                             </div>
-                            <div class="mb-3">
+                            <div class="col-12">
                                 <label for="finIndispo" class="form-label">Fin (non-comprise)</label>
                                 <input type="date" id="fin" name="fin" class="form-control">
                             </div>
-                            <div class="modal-footer">
-                                
+                            <div class="modal-footer"> 
                                 <?php if (isset($erreursModifier['vide'])) { ?>
                                         <div class="alert alert-danger"><?php echo $erreursModifier['vide']; ?></div>
                                 <?php } elseif(isset($erreursModifier['superieur'])) {?>
@@ -235,8 +234,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['formType']) && $_POST
             </div>
         </div>
     </div>
+    <?php require("../ressources/footer.php");?> 
 
-    
 
     <!-- FullCalendar JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -295,6 +294,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['formType']) && $_POST
         calendar.render(); // Rendu du calendrier
     });
     </script>   
-        <?php require("../ressources/footer.php");?> 
+       
 </body>
 </html>

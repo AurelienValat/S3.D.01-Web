@@ -237,6 +237,7 @@ body:not(.no-bg){
 .actualites-section {
     margin: 20px auto;
     text-align: center;
+    flex-grow: 1; 
 }
 
 .actualites-section h2 {

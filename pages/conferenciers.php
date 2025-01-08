@@ -139,7 +139,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>
     <script src="../js/conferenciers.js" type="text/javascript"></script>
-    <link href="../css/style.css" rel="stylesheet">
     <title>MUSEOFLOW - Gestion des Conférenciers</title>
 </head>
 <body>
@@ -173,7 +172,7 @@
                         $specialiteRecherche = $_POST['rechercheSpecialite'] ?? '';
                         $motsClesRecherche = $_POST['rechercheMotsCles'] ?? '';
 
-                        $conferenciers = rechercheConferenciers($pdo, $nomRecherche, $prenomRecherche, $typeRecherche, $specialiteRecherche, $motsClesRecherche);
+                        $conferenciers = rechercheConferenciers($pdo, $nomRecherche, $prenomRecherche, $typeRecherche, $specialiteRecherche, $motsClesRecherche, $date);
                        
                         echo '<a href="conferenciers.php"><button class="btn-action btn-modify btn-blue"><span class="fa fa-refresh"></span> Effacer les filtres</button></a><br>';
                         echo '<h5>Filtres appliqués :</h5>';
