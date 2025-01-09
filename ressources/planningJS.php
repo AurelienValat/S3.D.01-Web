@@ -47,6 +47,12 @@
                 }
             }
         });
+        
+        // On passe le calendrier en fracais
+        calendar.setOption('locale', 'fr');
+        
+        // On indique que la semaine commence le lundi
+        calendar.setOption('firstDay', 1);
 
         calendar.render(); // Rendu du calendrier
     });

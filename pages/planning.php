@@ -127,6 +127,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['formType']) && $_POST
             <a href="conferenciers.php" class="btn btn-secondary mt-3"><i class="fa-solid fa-arrow-left"></i></a>
 
             <h2>Planning du Conférencier <?php echo htmlspecialchars($nom['prenom'] . " " . $nom['nom']) ?></h2>
+            
+            <?php if (count($indisponibilites) != 0){ ?>
+                <p>Vous pouvez cliquer sur une indisponibilité pour la modifier.</p>
+            <?php } ?>
+            
             <!-- Tableau des indisponibilités -->
             <?php if (count($indisponibilites) == 0){ ?>
                 <p>Aucune indisponibilité enregistrée.</p>
@@ -218,17 +223,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['formType']) && $_POST
                                 <?php } elseif(isset($erreursModifier['superieur'])) {?>
                                         <div class="alert alert-danger"><?php echo $erreursModifier['superieur']; ?></div>
                                 <?php } ?>
-                                <button type="submit" title="Modifier l'indisponibilité" class="btn btn-primary">Modifier</button>
-                            </div>
-                        </form> 
-                        <form id="formSuppr" method="POST" action="planning.php">
-                            <input type="hidden" name="supprimerIndisponibilite" id="hiddenDeleteInput">
-                            <button type="submit" class="btn-action btn-delete" 
-                                id="deleteBtn"
-                                title="Supprimer l'indisponibilité">
-                                Supprimer
-                            </button>
-                        </form> 
+                                <button type="submit" title="Modifier l'indisponibilité" class="btn-action btn-modify btn-blue">Modifier</button>
+                            </form> 
+                            <form id="formSuppr" method="POST" action="planning.php">
+                                <input type="hidden" name="supprimerIndisponibilite" id="hiddenDeleteInput">
+                                <button type="submit" class="btn-action btn-delete" 
+                                    id="deleteBtn"
+                                    title="Supprimer l'indisponibilité"
+                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette indisponibilité ?');">
+                                    Supprimer
+                                </button>
+                            </form> 
+                        </div>
                     </div>
                 </div>
             </div>
