@@ -120,7 +120,8 @@
                         ]);
 
                         // Affichage du message de succès
-                        echo "<script>alert('Conférencier modifié avec succès.');</script>";
+                        header("Location: conferenciers.php?message=" . urlencode("Conférencier modifié avec succès."));
+
                     }
                 }
             } catch (Exception $e) {
@@ -152,6 +153,11 @@
     
     <div class="container content">
         <div class="container-blanc">
+            <?php
+            if (isset($_GET['message'])) {
+                echo "<script>alert('" . addslashes($_GET['message']) . "');</script>";
+            }
+            ?>
             <h1 class="text-center">Gestion des Conférenciers</h1>
             <div class="d-flex justify-content-between align-items-center">
                 <button class="btn-action btn-modify btn-blue" data-bs-toggle="modal" data-bs-target="#modalAjouterConferencier" id="modalAjouterConferencierLabel" title="Ajouter un conférencier"><i class="fa-solid fa-user-plus"></i></button>

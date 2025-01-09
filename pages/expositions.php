@@ -184,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
 
             // Si l'exposition n'est pas en cours de visite ou confirmation donnée
             modifExposition($pdo, $idExposition, $description);
-            echo "<script>alert('Exposition modifiée avec succès.')</script>";
+            header("Location: expositions.php?message=" . urlencode("Exposition modifiée avec succès."));
         }
 
     } catch (Exception $e) {
@@ -216,8 +216,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
     ?>
 
     <div class="container content">
-
-        <div class="container-blanc">
+        <div class="container-blanc">:
+            <?php
+            if (isset($_GET['message'])) {
+                echo "<script>alert('" . addslashes($_GET['message']) . "');</script>";
+            }
+            ?>
             <h1 class="text-center">Gestion des Expositions</h1>
             <div
                 class="d-flex justify-content-between align-items-center">
