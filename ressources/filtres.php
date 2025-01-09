@@ -49,11 +49,7 @@
                         <label for='recherchePrenom'>Prénom :</label> 
                         <input type='text' name='recherchePrenom' id='recherchePrenom' placeholder='Entrez un prénom' value='<?php if (isset($_POST['recherchePrenom'])) {echo trim($_POST['recherchePrenom']);}?>'>  
                     </p>
-                    <?php } else {?>
-                        <h6>Aucun filtre disponible pour la vue actuelle.</h6>
-                    <?php }?>
-                    <?php
-                        if ($_SESSION['filtreAApliquer'] === 'visites') { ?>
+                    <?php } else if ($_SESSION['filtreAApliquer'] === 'visites') { ?>
                             <p>
                                 <!-- Filtrer par exposition -->
                                 <label for='filtreRechercheExposition'>Exposition :</label>
@@ -101,7 +97,9 @@
                                 <input type='time' name='rechercheHeureDebut' id='filtreRechercheHeureDebut'
                                     value='<?php echo isset($_POST['rechercheHeureDebut']) ? trim($_POST['rechercheHeureDebut']) : ""; ?>'>
                             </p>
-                        <?php } ?>
+                        <?php } else {?>
+                        <h6>Aucun filtre disponible pour la vue actuelle.</h6>
+                        <?php }?>
                     <hr>
                 </div>
                 <div class="modal-footer">
