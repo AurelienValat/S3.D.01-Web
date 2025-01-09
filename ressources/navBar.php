@@ -33,7 +33,7 @@
                     class="fa-solid fa-angle-down"></i>
             </div>
             <div class="dropdown-menu">
-                <a href="/S3.D.01-Web/pages/deconnexion.php" class="btn-red"><span class="fa-solid fa-power-off"></span> Déconnection</a>
+                <a href="/S3.D.01-Web/pages/deconnexion.php" class="btn-red"><span class="fa-solid fa-power-off"></span> Déconnexion</a>
             </div>
         </div>
     </div>

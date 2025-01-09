@@ -541,7 +541,7 @@ function exportationTable($pdo, $table) {
                                     id_conferencier,
                                     id_employe,
                                     DATE_FORMAT(date_visite, '%d/%m/%Y') AS date_visite, 
-                                    CONCAT(HOUR(horaire_debut), 'h', MINUTE(horaire_debut)) AS horaire_debut,
+                                   DATE_FORMAT(horaire_debut, '%Hh%i') AS horaire_debut, 
                                     intitule_client,
                                     no_tel_client
                               FROM Visite
@@ -564,18 +564,24 @@ function exportationTable($pdo, $table) {
         
     } else if ($table === 'conferencier') {
         $stmt = $pdo->query("SELECT id_conferencier,
-                                        nom,
-                                        prenom,
-                                        mots_cles_specialite,
-                                        no_tel,
-                                        CASE
-                                            WHEN est_employe_par_musee = 1 THEN 'oui'
-                                            ELSE 'non'
-                                        END AS est_employe_par_musee
+                                    nom,
+                                    prenom,
+                                    mots_cles_specialite,
+                                    no_tel,
+                                    CASE
+                                        WHEN est_employe_par_musee = 1 THEN 'oui'
+                                        ELSE 'non'
+                                    END AS est_employe_par_musee,
+
+                                        -- Recuperation des indisponibilites
+                                        (SELECT GROUP_CONCAT(CONCAT(DATE_FORMAT(debut,'%d/%m/%Y'), ';', DATE_FORMAT(fin,'%d/%m/%Y')) SEPARATOR ';') AS periodes_indisponibilites
+                                        FROM Indisponibilite
+                                        WHERE Indisponibilite.id_conferencier = Conferencier.id_conferencier
+                                        ORDER BY debut) AS indisponibilite
+
                                  FROM Conferencier
-                                 ORDER BY nom, prenom;"); // TODO indispobinilités
-        $rows = $stmt->fetchAll();
-        
+                                 ORDER BY nom, prenom;");
+        $rows = $stmt->fetchAll();        
     } else {
         // Le nom de la table est invalide
         return false;

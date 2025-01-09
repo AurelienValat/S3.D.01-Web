@@ -17,7 +17,7 @@
     
         <?php require("../ressources/navBar.php");?>
        
-        <h1 class="blanc">Bienvenue <?php echo htmlspecialchars($_SESSION['prenom']) . ','; ?></h1><br>
+        <h1 class="blanc">Bienvenue <?php echo htmlspecialchars($_SESSION['prenom']); ?></h1><br>
         <section class="actualites-section">
             <h2 class="blanc">Actualités</h2>
             <div class="news-widget">

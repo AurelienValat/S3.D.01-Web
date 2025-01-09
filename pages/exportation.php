@@ -40,9 +40,16 @@
 
             // Parcourt chaque ligne et l'écrit dans le fichier CSV
             foreach ($rows as $row) {
-                fputcsv($output, $row, ";");
+                // Il ne faut pas que les dates des indisponibilités soitent encadrés par des guillemets, 
+                // ce qui se produit en utilisant fputcsv
+                if ($table === 'conferencier') {
+                    fputs($output, implode(';', $row)."\n");
+                } else {
+                    fputcsv($output, $row, ";");
+                }
             }
         }
+        
         fclose($output);
         exit;
     }

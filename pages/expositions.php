@@ -184,6 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
 
             // Si l'exposition n'est pas en cours de visite ou confirmation donnée
             modifExposition($pdo, $idExposition, $description);
+            // Message de confirmation
             header("Location: expositions.php?message=" . urlencode("Exposition modifiée avec succès."));
         }
 
@@ -191,8 +192,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
         echo "<p style='color:red;'>Une erreur est survenue : " . $e->getMessage() . "</p>";
     }
 }
-
-
 
 ?>
 <!DOCTYPE html>
@@ -226,11 +225,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
             <div
                 class="d-flex justify-content-between align-items-center">
                 <button class="btn-action btn-modify btn-blue" data-bs-toggle="modal" data-bs-target="#modalAjouterExposition" id="modalAjouterExpositionLabel" title="Ajouter une exposition"><i class="fa-solid fa-plus"></i></button>
-                <button
-                    class="btn btn-secondary d-flex align-items-center gap-2 filtrage"
-                    data-bs-toggle="modal" data-bs-target="#modalFiltrage" >
-                    <i class="fa-solid fa-filter" ></i>Filtres
-                </button>
+                    <!-- Pas de filtres sur cette page -->
+<!--                 <button -->
+<!--                     class="btn btn-secondary d-flex align-items-center gap-2 filtrage" -->
+<!--                     data-bs-toggle="modal" data-bs-target="#modalFiltrage" > -->
+<!--                     <i class="fa-solid fa-filter" ></i>Filtres -->
+<!--                 </button> -->
             </div>
             <div class="table">
                 <table class="table table-striped table-bordered">
@@ -280,7 +280,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
 
                             <form method="POST" action= "expositions.php" style="display:inline;">
                                 <?php echo "<input type='hidden' name='supprimerExposition' value='" . $ligne['id_exposition'] . "'>";?>
-                                <button type="submit" class="btn-action btn-delete" title="Supprimer l'exposition" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce conférencier ?');"><i class="fa-solid fa-trash"></i></button>
+                                <button type="submit" class="btn-action btn-delete" title="Supprimer l'exposition" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette exposition ?');"><i class="fa-solid fa-trash"></i></button>
                             </form>
                         </td>
                         <?php
@@ -423,7 +423,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="modalConfirmationLabel">Succès</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <a href="expositions.php" class="btn-close" aria-label="Close"></a>
                             </div>
                             <div class="modal-body">
                                 <p>Exposition créé avec succès.</p>
@@ -467,7 +467,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
                 </div>
             </div>
         </div>
-    </div>
     <?php require("../ressources/footer.php");?>
 </body>
 </html>

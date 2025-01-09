@@ -148,7 +148,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                 modifUtilisateur($pdo, $idUtilisateur, $donneesAModif);
 
                 // Affichage du message de confirmation
-                echo "<script>alert('Utilisateur modifié avec succès.')</script>";
+                // désactivé car s'affiche avant le doctype
+                //echo "<script>alert('Utilisateur modifié avec succès.')</script>";
             }
             
         }
@@ -298,13 +299,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                 <div class="modal-body">
                     <form id="formAjouterUtilisateur" method="POST" action="utilisateurs.php">
                         <div class="mb-3">
-                            <label for="pseudo" class="form-label">Nom d'utilisateur</label>
+                            <label for="pseudo" class="form-label">Identifiant</label>
                             <input type="text" 
                                 class="form-control <?php echo isset($erreurs['pseudo']) ? 'is-invalid' : ''; ?>" 
                                 id="pseudo" 
                                 name="pseudo" 
                                 value="<?php echo htmlspecialchars($pseudo); ?>" 
-                                placeholder="Entrez un nom d'utilisateur">
+                                placeholder="Entrez un l'identifiant de l'utilisateur">
                             <?php if (isset($erreurs['pseudo'])): ?>
                                 <div class="invalid-feedback"><?php echo $erreurs['pseudo']; ?></div>
                             <?php endif; ?>
@@ -395,8 +396,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
 
                     <!-- Champ pour le pseudo -->
                     <div class="mb-3">
-                        <label for="pseudoUtilisateur" class="form-label">Nom d'utilisateur</label>
-                        <input type="text" class="form-control <?php echo isset($erreursModif['pseudo']) ? 'is-invalid' : ''; ?>" id="pseudoUtilisateur" name="pseudoUtilisateur" placeholder="Modifiez le nom d'utilisateur" value="<?php echo htmlspecialchars($pseudo); ?>">
+                        <label for="pseudoUtilisateur" class="form-label">Identifiant</label>
+                        <input type="text" class="form-control <?php echo isset($erreursModif['pseudo']) ? 'is-invalid' : ''; ?>" id="pseudoUtilisateur" name="pseudoUtilisateur" placeholder="Modifiez l'identifiant" value="<?php echo htmlspecialchars($pseudo); ?>">
                         <?php if (isset($erreursModif['pseudo'])) { ?>
                             <div class="invalid-feedback"><?php echo $erreursModif['pseudo']; ?></div>
                         <?php } ?>

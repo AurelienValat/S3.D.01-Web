@@ -332,7 +332,8 @@
                                 id="intitule_client" 
                                 name="intitule_client" 
                                 class="form-control <?php echo isset($erreurs_ajout['intitule_client']) ? 'is-invalid' : ''; ?>" 
-                                value="<?php echo htmlspecialchars($intitule_client ?? ''); ?>">
+                                value="<?php echo htmlspecialchars($intitule_client ?? ''); ?>"
+                                placeholder="Nom du client">
                             <?php if (isset($erreurs_ajout['intitule_client'])): ?>
                                 <div class="invalid-feedback"><?php echo $erreurs_ajout['intitule_client']; ?></div>
                             <?php endif; ?>
@@ -343,7 +344,8 @@
                                 id="no_tel_client" 
                                 name="no_tel_client" 
                                 class="form-control <?php echo isset($erreurs_ajout['no_tel_client']) ? 'is-invalid' : ''; ?>" 
-                                value="<?php echo htmlspecialchars($no_tel_client ?? ''); ?>">
+                                value="<?php echo htmlspecialchars($no_tel_client ?? ''); ?>"*
+                                placeholder="Ex. 0123456789">
                             <?php if (isset($erreurs_ajout['no_tel_client'])): ?>
                                 <div class="invalid-feedback"><?php echo $erreurs_ajout['no_tel_client']; ?></div>
                             <?php endif; ?>

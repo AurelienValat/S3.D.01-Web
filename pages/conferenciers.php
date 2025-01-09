@@ -178,7 +178,7 @@
                         $specialiteRecherche = $_POST['rechercheSpecialite'] ?? '';
                         $motsClesRecherche = $_POST['rechercheMotsCles'] ?? '';
 
-                        $conferenciers = rechercheConferenciers($pdo, $nomRecherche, $prenomRecherche, $typeRecherche, $specialiteRecherche, $motsClesRecherche, $date);
+                        $conferenciers = rechercheConferenciers($pdo, $nomRecherche, $prenomRecherche, $typeRecherche, $specialiteRecherche, $motsClesRecherche);
                        
                         echo '<a href="conferenciers.php"><button class="btn-action btn-modify btn-blue"><span class="fa fa-refresh"></span> Effacer les filtres</button></a><br>';
                         echo '<h5>Filtres appliqués :</h5>';
