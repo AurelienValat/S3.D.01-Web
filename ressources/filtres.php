@@ -15,87 +15,110 @@
                     <!-- Filtres destinés à la vue des conférenciers -->
                     <?php if ($_SESSION['filtreAApliquer'] === 'conférenciers') {?>
                         <p>
-                            <label for='rechercheSpecialite'>Spécialité :</label>
-                            <input type='text' name='rechercheSpecialite' id='rechercheSpecialite' placeholder='Ex. Temps modernes' 
-                                value='<?php if (isset($_POST['rechercheSpecialite'])) {echo trim($_POST['rechercheSpecialite']);}?>'> <br>
+                            <div class="form-group">
+                                <label for='rechercheSpecialite'>Spécialité :</label>
+                                <input type='text' name='rechercheSpecialite' id='rechercheSpecialite' placeholder='Ex. Temps modernes' 
+                                    value='<?php if (isset($_POST['rechercheSpecialite'])) {echo trim($_POST['rechercheSpecialite']);}?>'> <br>
+                            </div>
 
-                            <label for='rechercheMotsCles'>Mots clés :</label>
-                            <input type='text' name='rechercheMotsCles' id='rechercheMotsCles' placeholder='Ex. histoire, art' 
-                                value='<?php if (isset($_POST['rechercheMotsCles'])) {echo trim($_POST['rechercheMotsCles']);}?>'> <br>
+                            <div class="form-group">    
+                                <label for='rechercheMotsCles'>Mots clés :</label>
+                                <input type='text' name='rechercheMotsCles' id='rechercheMotsCles' placeholder='Ex. histoire, art' 
+                                    value='<?php if (isset($_POST['rechercheMotsCles'])) {echo trim($_POST['rechercheMotsCles']);}?>'> <br>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for='rechercheNom'>Nom :</label>
+                                <input type='text' name='rechercheNom' id='rechercheNom' placeholder='Entrez un nom' 
+                                    value='<?php if (isset($_POST['rechercheNom'])) {echo trim($_POST['rechercheNom']);}?>'> <br>
+                            </div>
 
-                            <label for='rechercheNom'>Nom :</label>
-                            <input type='text' name='rechercheNom' id='rechercheNom' placeholder='Entrez un nom' 
-                                value='<?php if (isset($_POST['rechercheNom'])) {echo trim($_POST['rechercheNom']);}?>'> <br>
+                            <div class="form-group">
+                                <label for='recherchePrenom'>Prénom :</label> 
+                                <input type='text' name='recherchePrenom' id='recherchePrenom' placeholder='Entrez un prénom' 
+                                    value='<?php if (isset($_POST['recherchePrenom'])) {echo trim($_POST['recherchePrenom']);}?>'> <br>
+                            </div>
 
-                            <label for='recherchePrenom'>Prénom :</label> 
-                            <input type='text' name='recherchePrenom' id='recherchePrenom' placeholder='Entrez un prénom' 
-                                value='<?php if (isset($_POST['recherchePrenom'])) {echo trim($_POST['recherchePrenom']);}?>'> <br>
-
-                            <label for='rechercheType'>Type :</label>
-                            <select class="form-control" name='rechercheType' id='rechercheType'>
-                                <option value="" <?php echo empty($_POST['rechercheType']) ? "selected" : ""; ?>>-- Sélectionnez un type --</option>
-                                <option value="1" <?php echo isset($_POST['rechercheType']) && $_POST['rechercheType'] === "1" ? "selected" : ""; ?>>Interne</option>
-                                <option value="0" <?php echo isset($_POST['rechercheType']) && $_POST['rechercheType'] === "0" ? "selected" : ""; ?>>Externe</option>
-                            </select>
-
+                            <div class="form-group">
+                                <label for='rechercheType'>Type :</label>
+                                <select class="form-control" name='rechercheType' id='rechercheType'>
+                                    <option value="" <?php echo empty($_POST['rechercheType']) ? "selected" : ""; ?>>-- Sélectionnez un type --</option>
+                                    <option value="1" <?php echo isset($_POST['rechercheType']) && $_POST['rechercheType'] === "1" ? "selected" : ""; ?>>Interne</option>
+                                    <option value="0" <?php echo isset($_POST['rechercheType']) && $_POST['rechercheType'] === "0" ? "selected" : ""; ?>>Externe</option>
+                                </select>
+                            </div>
                         </p>
                         
                     <!-- Filtres destinés à la vue des utilisateurs -->
                     <?php } else if ($_SESSION['filtreAApliquer'] === 'utilisateurs') {?>
                     <p>
                         <!-- TODO mettre une taille max pour le nom et prénom  -->
-                        <label for='rechercheNom'>Nom :</label>
-                        <input type='text' name='rechercheNom' id='rechercheNom' placeholder='Entrez un nom' value='<?php if (isset($_POST['rechercheNom'])) {echo trim($_POST['rechercheNom']);}?>'> <br >
-                        <label for='recherchePrenom'>Prénom :</label> 
-                        <input type='text' name='recherchePrenom' id='recherchePrenom' placeholder='Entrez un prénom' value='<?php if (isset($_POST['recherchePrenom'])) {echo trim($_POST['recherchePrenom']);}?>'>  
-                    </p>
+                        <div class="form-group"> 
+                            <label for='rechercheNom'>Nom :</label>
+                            <input type='text' name='rechercheNom' id='rechercheNom' placeholder='Entrez un nom' value='<?php if (isset($_POST['rechercheNom'])) {echo trim($_POST['rechercheNom']);}?>'> <br >
+                        </div>
+
+                        <div class="form-group"> 
+                            <label for='recherchePrenom'>Prénom :</label> 
+                            <input type='text' name='recherchePrenom' id='recherchePrenom' placeholder='Entrez un prénom' value='<?php if (isset($_POST['recherchePrenom'])) {echo trim($_POST['recherchePrenom']);}?>'>  
+                        </div>
+                        </p>
                     <?php } else if ($_SESSION['filtreAApliquer'] === 'visites') { ?>
                             <p>
-                                <!-- Filtrer par exposition -->
-                                <label for='filtreRechercheExposition'>Exposition :</label>
-                                <select class="form-control" name='rechercheExposition' id='filtreRechercheExposition'>
-                                    <option value="" <?php echo empty($_POST['rechercheExposition']) ? "selected" : ""; ?>>
-                                        -- Sélectionnez une exposition --
-                                    </option>
-                                    <?php
-                                    foreach ($expositions as $expo) {
-                                        $selected = isset($_POST['rechercheExposition']) && $_POST['rechercheExposition'] == $expo['id_exposition'] ? "selected" : "";
-                                        echo "<option value='{$expo['id_exposition']}' $selected>" . htmlspecialchars($expo['intitule']) . "</option>";
-                                    }
-                                    ?>
-                                </select>
-                                <br>
+                                <div class="form-group"> 
+                                    <!-- Filtrer par exposition -->
+                                    <label for='filtreRechercheExposition'>Exposition:</label>
+                                    <select class="form-control" name='rechercheExposition' id='filtreRechercheExposition'>
+                                        <option value="" <?php echo empty($_POST['rechercheExposition']) ? "selected" : ""; ?>>
+                                            -- Sélectionnez une exposition --
+                                        </option>
+                                        <?php
+                                        foreach ($expositions as $expo) {
+                                            $selected = isset($_POST['rechercheExposition']) && $_POST['rechercheExposition'] == $expo['id_exposition'] ? "selected" : "";
+                                            echo "<option value='{$expo['id_exposition']}' $selected>" . htmlspecialchars($expo['intitule']) . "</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                    <br>
+                                </div>
+                                <div class="form-group"> 
+                                    <!-- Filtrer par conférencier -->
+                                    <label for='filtreRechercheConferencier'>Conférencier:</label>
+                                    <select class="form-control" name='rechercheConferencier' id='filtreRechercheConferencier'>
+                                        <option value="" <?php echo empty($_POST['rechercheConferencier']) ? "selected" : ""; ?>>
+                                            -- Sélectionnez un conférencier --
+                                        </option>
+                                        <?php
+                                        $conferenciers = getConferenciers($pdo);
+                                        foreach ($conferenciers as $conf) {
+                                            $selected = isset($_POST['rechercheConferencier']) && $_POST['rechercheConferencier'] == $conf['id_conferencier'] ? "selected" : "";
+                                            echo "<option value='{$conf['id_conferencier']}' $selected>" . htmlspecialchars($conf['nom'] . " " . $conf['prenom']) . "</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                    <br>
+                                </div>
 
-                                <!-- Filtrer par conférencier -->
-                                <label for='filtreRechercheConferencier'>Conférencier :</label>
-                                <select class="form-control" name='rechercheConferencier' id='filtreRechercheConferencier'>
-                                    <option value="" <?php echo empty($_POST['rechercheConferencier']) ? "selected" : ""; ?>>
-                                        -- Sélectionnez un conférencier --
-                                    </option>
-                                    <?php
-                                    $conferenciers = getConferenciers($pdo);
-                                    foreach ($conferenciers as $conf) {
-                                        $selected = isset($_POST['rechercheConferencier']) && $_POST['rechercheConferencier'] == $conf['id_conferencier'] ? "selected" : "";
-                                        echo "<option value='{$conf['id_conferencier']}' $selected>" . htmlspecialchars($conf['nom'] . " " . $conf['prenom']) . "</option>";
-                                    }
-                                    ?>
-                                </select>
-                                <br>
+                                <div class="form-group"> 
+                                    <!-- Filtrer par période de l'année -->
+                                    <label for='filtreRechercheDateDebut'>Période - Date début:</label>
+                                    <input type='date' name='rechercheDateDebut' id='filtreRechercheDateDebut'
+                                        value='<?php echo isset($_POST['rechercheDateDebut']) ? trim($_POST['rechercheDateDebut']) : ""; ?>'>
+                                </div> 
 
-                                <!-- Filtrer par période de l'année -->
-                                <label for='filtreRechercheDateDebut'>Période - Date début :</label>
-                                <input type='date' name='rechercheDateDebut' id='filtreRechercheDateDebut'
-                                    value='<?php echo isset($_POST['rechercheDateDebut']) ? trim($_POST['rechercheDateDebut']) : ""; ?>'>
-                                <br>
-                                <label for='filtreRechercheDateFin'>Période - Date fin :</label>
-                                <input type='date' name='rechercheDateFin' id='filtreRechercheDateFin'
-                                    value='<?php echo isset($_POST['rechercheDateFin']) ? trim($_POST['rechercheDateFin']) : ""; ?>'>
-                                <br>
+                                <div class="form-group">
+                                    <label for='filtreRechercheDateFin'>Période - Date fin:</label>
+                                    <input type='date' name='rechercheDateFin' id='filtreRechercheDateFin'
+                                        value='<?php echo isset($_POST['rechercheDateFin']) ? trim($_POST['rechercheDateFin']) : ""; ?>'>
+                                </div>   
 
-                                <!-- Filtrer par intervalle horaire -->
-                                <label for='filtreRechercheHeureDebut'>Heure début :</label>
-                                <input type='time' name='rechercheHeureDebut' id='filtreRechercheHeureDebut'
-                                    value='<?php echo isset($_POST['rechercheHeureDebut']) ? trim($_POST['rechercheHeureDebut']) : ""; ?>'>
+                                <div class="form-group">
+                                    <!-- Filtrer par intervalle horaire -->
+                                    <label for='filtreRechercheHeureDebut'>Heure début:</label>
+                                    <input type='time' name='rechercheHeureDebut' id='filtreRechercheHeureDebut'
+                                        value='<?php echo isset($_POST['rechercheHeureDebut']) ? trim($_POST['rechercheHeureDebut']) : ""; ?>'>
+                                </div>
+
                             </p>
                         <?php } else {?>
                         <h6>Aucun filtre disponible pour la vue actuelle.</h6>

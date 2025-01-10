@@ -463,3 +463,22 @@ footer {
 .hidden {
     display: none;
 }
+
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    width: 150px; /* Ajustez selon la taille souhaitée */
+    text-align: left;
+    margin-right: 10px;
+}
+
+.form-group input,
+.form-group select {
+    flex: 1;
+    padding: 5px;
+}
+

@@ -215,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
     ?>
 
     <div class="container content">
-        <div class="container-blanc">:
+        <div class="container-blanc">
             <?php
             if (isset($_GET['message'])  && $_GET['message'] === "Exposition modifié avec succès.") {
                 echo "<script>alert('" . addslashes($_GET['message']) . "');</script>";
@@ -362,8 +362,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
                                     id="date_debut" 
                                     name="date_debut" 
                                     class="form-control <?php echo isset($erreurs['date_debut']) ? 'is-invalid' : ''; ?>" 
-                                    value="<?php echo htmlspecialchars($date_debut ?? ''); ?>"
-                                    placeholder="YYYY-MM-DD">
+                                    value="<?php echo htmlspecialchars($date_debut ?? ''); ?>">
                                 <?php if (isset($erreurs['date_debut'])): ?>
                                     <div class="invalid-feedback"><?php echo $erreurs['date_debut']; ?></div>
                                 <?php endif; ?>
@@ -375,8 +374,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
                                     id="date_fin" 
                                     name="date_fin" 
                                     class="form-control <?php echo isset($erreurs['date_fin']) ? 'is-invalid' : ''; ?>" 
-                                    value="<?php echo htmlspecialchars($date_fin ?? ''); ?>"
-                                    placeholder="YYYY-MM-DD (optionnelle)">
+                                    value="<?php echo htmlspecialchars($date_fin ?? ''); ?>">
                                 <?php if (isset($erreurs['date_fin'])): ?>
                                     <div class="invalid-feedback"><?php echo $erreurs['date_fin']; ?></div>
                                 <?php endif; ?>
