@@ -47,21 +47,45 @@
             if ($motSpecialite == "" || count(explode(" ", $motSpecialite)) > 6) {
                 $erreurs['motSpecialite'] = 'La spécialité doit contenir entre 1 et 6 mots-clés séparés par des espaces.';
             }
+            if (str_contains($motSpecialite, ';')) {
+                $erreurs['motSpecialite'] = 'Le caractère \';\' est interdit.';
+            }
+            
             if ($type == "") {
                 $erreurs['type'] = 'Le type est requis.';
             }
+            if (str_contains($type, ';')) {
+                $erreurs['type'] = 'Le caractère \';\' est interdit.';
+            }
+            
             if (($prenom == "") || strlen($prenom) > 50) {
                 $erreurs['prenom'] = 'Le prénom est requis et ne doit pas dépasser 50 caractères.';
             }
+            if (str_contains($prenom, ';')) {
+                $erreurs['prenom'] = 'Le caractère \';\' est interdit.';
+            }
+            
             if (($nom == "") || strlen($nom) > 50) {
                 $erreurs['nom'] = 'Le nom est requis et ne doit pas dépasser 50 caractères.';
             }
+            if (str_contains($nom, ';')) {
+                $erreurs['nom'] = 'Le caractère \';\' est interdit.';
+            }
+            
             if (($specialite == "") || strlen($specialite) > 50) {
                 $erreurs['specialite'] = 'La specialite est requise et ne doit pas dépasser 50 caractères.';
             }
+            if (str_contains($specialite, ';')) {
+                $erreurs['specialite'] = 'Le caractère \';\' est interdit.';
+            }
+            
             if (!preg_match("#^[0-9]{10}#", $telephone) or strlen($telephone)>10 ) {
                 $erreurs['telephone'] = 'Numéro de téléphone invalide. Il doit contenir 10 chiffres.';
             }
+            if (str_contains($telephone, ';')) {
+                $erreurs['telephone'] = 'Le caractère \';\' est interdit.';
+            }
+            
             // Si aucun champ n'a d'erreur, procéder à l'insertion
             if (empty($erreurs)) {
                 if (verifierExistanceConferencier($pdo, $nom, $prenom)) {
@@ -96,14 +120,29 @@
                 if (($prenomModif == "") || strlen($prenomModif) > 35) {
                     $erreursModif['prenom'] = 'Le prénom est requis et ne doit pas dépasser 35 caractères.';
                 }
+                if (str_contains($prenomModif, ';')) {
+                    $erreursModif['prenom'] = 'Le caractère \';\' est interdit.';
+                }
+                
                 if (($nomModif == "") || strlen($nomModif) > 35) {
                     $erreursModif['nom'] = 'Le nom est requis et ne doit pas dépasser 35 caractères.';
                 }
+                if (str_contains($nomModif, ';')) {
+                    $erreursModif['nom'] = 'Le caractère \';\' est interdit.';
+                }
+                
                 if (!preg_match("/^[0-9]{10}$/", $telephoneModif)) {
                     $erreursModif['telephone'] = 'Numéro de téléphone invalide. Il doit contenir 10 chiffres.';
                 }
+                if (str_contains($telephoneModif, ';')) {
+                    $erreursModif['telephone'] = 'Le caractère \';\' est interdit.';
+                }
+                
                 if (($motSpecialiteModif == "") || count(explode(" ", $motSpecialiteModif)) > 6){
                     $erreursModif['motsCleSpecialite'] = 'La spécialité doit contenir entre 1 et 6 mots-clés séparés par des espaces.';
+                }
+                if (str_contains($motSpecialiteModif, ';')) {
+                    $erreursModif['motsCleSpecialite'] = 'Le caractère \';\' est interdit.';
                 }
 
                 // Si aucune erreur, mise à jour
