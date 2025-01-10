@@ -120,6 +120,11 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <link rel="icon" type="image/png" href="../ressources/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="../ressources/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="../ressources/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="../ressources/favicon/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="MuseoFlow" />
     <meta charset="utf-8">  
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/17d5b3fa89.js" crossorigin="anonymous"></script>
