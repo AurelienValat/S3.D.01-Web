@@ -85,7 +85,7 @@
                 </div>
             </div>
         </section>
-        <br><br><br><br><br><br><br><br><br><br><br><br><?php require("../ressources/footer.php");?>
+        <?php require("../ressources/footer.php");?>
         <script src="../js/accueil.js"></script>
     
     </body>
