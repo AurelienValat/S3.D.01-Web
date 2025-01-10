@@ -270,7 +270,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['demandeModif']) && $_
                                             ?>
                                             <form method="POST" action="utilisateurs.php" style="display:inline;">
                                                 <input type="hidden" name="supprimerEmploye" value="<?php echo $ligne['id_employe']; ?>">
-                                                <button type="submit" class="btn-action btn-delete" title="Supprimer l'exposition"onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');"><i class="fa-solid fa-trash"></i></button>
+                                                <button type="submit" class="btn-action btn-delete" title="Supprimer l'employé" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');"><i class="fa-solid fa-trash"></i></button>
                                                 </form>
                                             <?php
                                         }

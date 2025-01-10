@@ -446,13 +446,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
                     <div class="modal-body">
                         <form id="formModifierExposition" method="POST" action="expositions.php">
                             <!-- Champ pour l'ID de l'exposition (caché) -->
-                            <input type="hidden" id="idExposition" name="idExposition" value="<?php echo $idExposition; ?>">
+                            <input type="hidden" id="idExposition" name="idExposition" value="<?php if(isset($idExposition)) {echo $idExposition;} ?>">
 
                             <!-- Champ pour la description -->
                             <div class="mb-3">
                                 <label for="description" class="form-label">Modifier la description</label>
                                 <textarea id="description" name="description" rows="5" cols="60" 
-                                        class="<?php echo isset($erreursModif['description']) ? 'is-invalid' : ''; ?>"> <?php echo htmlspecialchars($description); ?></textarea>
+                                        class="<?php echo isset($erreursModif['description']) ? 'is-invalid' : ''; ?>"> <?php if(isset($description)) {echo htmlspecialchars($description);} ?></textarea>
                                 <?php if (isset($erreursModif['description'])) { ?>
                                     <div class="invalid-feedback"><?php echo $erreursModif['description']; ?></div>
                                 <?php } ?>

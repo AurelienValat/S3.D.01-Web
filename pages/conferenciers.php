@@ -276,7 +276,7 @@
 
                                     ?>
                                     <form method="post" action="planning.php">
-                                        <input type="hidden" name="idConferencier" value="<?php echo $ligne["id_conferencier"]; ?>">
+                                        <input type="hidden" name="idConferencier" value="<?php if(isset($ligne["id_conferencier"])) {echo $ligne["id_conferencier"];} ?>">
                                         <?php $_SESSION['idConferencier'] = $ligne["id_conferencier"];?>
                                         <button type="submit" class="btn-action btn-blue" title="Afficher le planning du conférencier">
                                         <i class="fa-solid fa-calendar"></i>
@@ -434,12 +434,12 @@
                 <div class="modal-body">
                     <form id="formModifierConferencier" method="POST" action="conferenciers.php">
                         <!-- Champ pour l'ID du conférencier (caché) -->
-                        <input type="hidden" id="idConferencier" name="idConferencier" value="<?php echo htmlspecialchars($idConferencier) ?>">
+                        <input type="hidden" id="idConferencier" name="idConferencier" value="<?php if(isset($idConferencier)) {echo htmlspecialchars($idConferencier);} ?>">
 
                         <!-- Champ pour le prénom -->
                         <div class="mb-3">
                             <label for="prenomConferencier" class="form-label">Prénom</label>
-                            <input type="text" class="form-control <?php echo isset($erreursModif['prenom']) ? 'is-invalid' : ''; ?>" id="prenomConferencier" name="prenomConferencier" placeholder="Modifiez le prénom" value="<?php echo htmlspecialchars($prenomModif); ?>">
+                            <input type="text" class="form-control <?php echo isset($erreursModif['prenom']) ? 'is-invalid' : ''; ?>" id="prenomConferencier" name="prenomConferencier" placeholder="Modifiez le prénom" value="<?php if(isset($prenomModif)) {echo htmlspecialchars($prenomModif);} ?>">
                             <?php if (isset($erreursModif['prenom'])) { ?>
                                 <div class="invalid-feedback"><?php echo $erreursModif['prenom']; ?></div>
                             <?php } ?>
@@ -448,7 +448,7 @@
                         <!-- Champ pour le nom -->
                         <div class="mb-3">
                             <label for="nomConferencier" class="form-label">Nom</label>
-                            <input type="text" class="form-control <?php echo isset($erreursModif['nom']) ? 'is-invalid' : ''; ?>" id="nomConferencier" name="nomConferencier" placeholder="Modifiez le nom" value="<?php echo htmlspecialchars($nomModif); ?>">
+                            <input type="text" class="form-control <?php echo isset($erreursModif['nom']) ? 'is-invalid' : ''; ?>" id="nomConferencier" name="nomConferencier" placeholder="Modifiez le nom" value="<?php if(isset($nomModif)) {echo htmlspecialchars($nomModif);} ?>">
                             <?php if (isset($erreursModif['nom'])) { ?>
                                 <div class="invalid-feedback"><?php echo $erreursModif['nom']; ?></div>
                             <?php } ?>
@@ -457,7 +457,7 @@
                         <!-- Champ pour le numéro de téléphone -->
                         <div class="mb-3">
                             <label for="telephoneConferencier" class="form-label">Numéro de téléphone</label>
-                            <input type="tel" class="form-control <?php echo isset($erreursModif['telephone']) ? 'is-invalid' : ''; ?>" id="telephoneConferencier" name="telephoneConferencier" placeholder="Modifiez le numéro de téléphone"  value="<?php echo htmlspecialchars($telephoneModif);?>">
+                            <input type="tel" class="form-control <?php echo isset($erreursModif['telephone']) ? 'is-invalid' : ''; ?>" id="telephoneConferencier" name="telephoneConferencier" placeholder="Modifiez le numéro de téléphone"  value="<?php if(isset($telephoneModif)) {echo htmlspecialchars($telephoneModif);}?>">
                             <?php if (isset($erreursModif['telephone'])) { ?>
                                 <div class="invalid-feedback"><?php echo $erreursModif['telephone']; ?></div>
                             <?php } ?>
@@ -466,7 +466,7 @@
                         <!-- Champ pour les mots clés spécialité-->
                         <div class="mb-3">
                             <label for="motsCleSpe" class="form-label">Spécialité</label>
-                            <input type="text" class="form-control <?php echo isset($erreursModif['motsCleSpecialite']) ? 'is-invalid' : ''; ?>" id="motsCleSpe" name="motsCleSpe" placeholder="Modifiez les mots-clés de la spécialité du conférencier"  value="<?php echo htmlspecialchars($motSpecialiteModif);?>">
+                            <input type="text" class="form-control <?php echo isset($erreursModif['motsCleSpecialite']) ? 'is-invalid' : ''; ?>" id="motsCleSpe" name="motsCleSpe" placeholder="Modifiez les mots-clés de la spécialité du conférencier"  value="<?php if(isset($motSpecialiteModif)) {echo htmlspecialchars($motSpecialiteModif);}?>">
                             <?php if (isset($erreursModif['motsCleSpecialite'])) { ?>
                                 <div class="invalid-feedback"><?php echo $erreursModif['motsCleSpecialite']; ?></div>
                             <?php } ?>
