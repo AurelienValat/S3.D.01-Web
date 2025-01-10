@@ -154,7 +154,7 @@
     <div class="container content">
         <div class="container-blanc">
             <?php
-            if (isset($_GET['message'])) {
+            if (isset($_GET['message']) && $_GET['message'] === "Conférencier modifié avec succès.") {
                 echo "<script>alert('" . addslashes($_GET['message']) . "');</script>";
             }
             ?>

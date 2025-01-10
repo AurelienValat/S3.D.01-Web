@@ -217,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
     <div class="container content">
         <div class="container-blanc">:
             <?php
-            if (isset($_GET['message'])) {
+            if (isset($_GET['message'])  && $_GET['message'] === "Exposition modifié avec succès.") {
                 echo "<script>alert('" . addslashes($_GET['message']) . "');</script>";
             }
             ?>
@@ -426,7 +426,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
                                 <a href="expositions.php" class="btn-close" aria-label="Close"></a>
                             </div>
                             <div class="modal-body">
-                                <p>Exposition créé avec succès.</p>
+                                <p>Exposition créée avec succès.</p>
                             </div>
                             <div class="modal-footer">
                                 <a href="expositions.php" class="btn btn-secondary">Fermer</a>

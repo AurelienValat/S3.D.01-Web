@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['formType']) && $_POST
     <div class="container content">
         <div class="container-blanc">
             <?php
-            if (isset($_GET['message'])) {
+            if (isset($_GET['message']) && $_GET['message'] === "Indisponibilité créée avec succès.") {
                 echo "<script>alert('" . addslashes($_GET['message']) . "');</script>";
             }
             ?>

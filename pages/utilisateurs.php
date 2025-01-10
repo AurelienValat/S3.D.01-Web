@@ -37,7 +37,7 @@ if (isset($_POST['supprimerEmploye']) && $_POST['supprimerEmploye'] != trim(''))
 $erreurs = [];
 
 $utilisateurCree = false;
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']) && !isset($_POST['idUtilisateur']) && !isset($_POST['demandeFiltrage'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']) && (!isset($_POST['demandeModif']) || $_POST['demandeModif'] != 1) && !isset($_POST['demandeFiltrage'])) {
     try {
         // Initialisation des variables de formulaire
         $pseudo = isset($_POST['pseudo']) ? trim($_POST['pseudo']) : ""; 
@@ -69,8 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']) 
         if (($nom == "") || strlen($nom) > 50) {
             $erreurs['nom'] = 'Le nom est requis et ne doit pas dépasser 50 caractères.';
         }
-        if (!preg_match("/^[0-9]{4}$/", $telephone) && $telephone != "") {
-            $erreurs['telephone'] = 'Numéro de téléphone invalide. Il doit contenir 4 chiffre.';
+        if ($telephone === "") {
+            $erreurs['telephone'] = 'Numéro de téléphone requis pour le compatibilité avec l\'application Java.';
+            
+        } else if (!preg_match("/^[0-9]{4}$/", $telephone)) {
+            $erreurs['telephone'] = 'Numéro de téléphone invalide. Il doit contenir 4 chiffres.';
         }
 
         // Si aucun champ n'a d'erreur, procéder à l'insertion
@@ -92,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerEmploye']) 
 }
 
 //Pour la modification
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['demandeModif']) && $_POST['demandeModif'] == 1) {
     try {
         $idUtilisateur = intval($_POST['idUtilisateur']); // Identifiant unique de l'utilisateur
         $pseudo = isset($_POST['pseudoUtilisateur']) ? trim($_POST['pseudoUtilisateur']) : "";
@@ -101,10 +104,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
         $telephone = isset($_POST['telephoneUtilisateur']) ? trim($_POST['telephoneUtilisateur']) : "";
         $motDePasse = isset($_POST['motDePasseUtilisateur']) ? trim($_POST['motDePasseUtilisateur']) : "";
         $confirmeMotDePasse = isset($_POST['confirmeMotDePasseUtilisateur']) ? trim($_POST['confirmeMotDePasseUtilisateur']) : "";
-
+        
         // Validation des champs
         $erreursModif = [];
-        if ($pseudo === "" || strlen($pseudo) < 5 || strlen($pseudo) > 20) {
+        if ($pseudo === "" || strlen($pseudo) < 2 || strlen($pseudo) > 20) {
             $erreursModif['pseudo'] = 'Nom d\'utilisateur invalide (5-20 caractères).';
         }
         if (($prenom == "") || strlen($prenom) > 35) {
@@ -112,9 +115,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
         }
         if (($nom == "") || strlen($nom) > 35) {
             $erreursModif['nom'] = 'Le nom est requis et ne doit pas dépasser 35 caractères.';
-        }
-        if (!preg_match("/^[0-9]{4}$/", $telephone) && $telephone != "") {
-            $erreursModif['telephone'] = 'Numéro de téléphone invalide. Il doit contenir 4 chiffres.';
         }
         if ($motDePasse != "" && strlen($motDePasse) > 35) {
             $erreursModif['motDePasse'] = 'Mot de passe trop long (max 35 caractères).';
@@ -125,34 +125,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
         if ($motDePasse != "" && $motDePasse !== $confirmeMotDePasse) {
             $erreursModif['confirmeMotDePasse'] = 'Les mots de passe ne correspondent pas.';
         }
+        if (strlen($telephone) === 0) {
+            $erreursModif['telephone'] = 'Numéro de téléphone requis pour le compatibilité avec l\'application Java.';
+            
+        } else if (!preg_match("/^[0-9]{4}$/", $telephone)) {
+            $erreursModif['telephone'] = 'Numéro de téléphone invalide. Il doit contenir 4 chiffres.';
+        }
 
         // Si aucun champ n'a d'erreur, mettre à jour la BD
         if (empty($erreursModif)) {
-            if (verifierExistanceUtilisateurModif($pdo, $pseudo, $nom, $prenom, $idUtilisateur)) {
-                $erreursModif['existance'] = 'Un utilisateur avec ce nom d\'utilisateur ou ce nom et prénom existe déjà.';
-            } else {
-                // Construire les données pour la mise à jour
-                $donneesAModif = [
-                    'nom_utilisateur' => $pseudo,
-                    'prenom' => $prenom,
-                    'nom' => $nom,
-                    'no_tel' => $telephone,
-                ];
 
-                // Ajouter le mot de passe uniquement s'il est changé
-                if (!empty($motDePasse)) {
-                    $donneesAModif['mot_de_passe'] = hash('sha256', $motDePasse);
-                }
+            // Construire les données pour la mise à jour
+            $donneesAModif = [
+                'nom_utilisateur' => $pseudo,
+                'prenom' => $prenom,
+                'nom' => $nom,
+                'no_tel' => $telephone,
+            ];
 
-                // Mettre à jour l'utilisateur dans la BD
-                modifUtilisateur($pdo, $idUtilisateur, $donneesAModif);
-
-                // Affichage du message de confirmation
-                // désactivé car s'affiche avant le doctype
-                //echo "<script>alert('Utilisateur modifié avec succès.')</script>";
+             // Ajouter le mot de passe uniquement s'il est changé
+            if (!empty($motDePasse)) {
+                $donneesAModif['mot_de_passe'] = hash('sha256', $motDePasse);
             }
-            
+
+            // Mettre à jour l'utilisateur dans la BD
+            modifUtilisateur($pdo, $idUtilisateur, $donneesAModif);
+
+            // Affichage du message de confirmation
+            header("Location: utilisateurs.php?message=" . urlencode("Utilisateur modifié avec succès."));
         }
+            
     } catch (Exception $e) {
         echo "<p style='color:red;'>Une erreur est survenue : " . $e->getMessage() . "</p>";
     }
@@ -178,11 +180,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
     $_SESSION['filtreAApliquer'] = 'utilisateurs';
     require("../ressources/navBar.php");
     require("../ressources/filtres.php");
-
     ?>
 
     <div class="container content">
     <div class="container-blanc">
+        <?php
+        if (isset($_GET['message']) && $_GET['message'] === "Utilisateur modifié avec succès.") {
+            echo "<script>alert('" . addslashes($_GET['message']) . "');</script>";
+        }
+        ?>
         <h1 class="text-center">Gestion des Utilisateurs</h1>
         <div class="d-flex justify-content-between align-items-center">
         <button class="btn-action btn-modify btn-blue" onclick="resetFormulaire()" data-bs-toggle="modal" data-bs-target="#modalAjouterUtilisateur" id="modalAjouterUtilisateurLabel" title="Ajouter un utilisateur"><i class="fa-solid fa-user-plus"></i></button>
@@ -393,6 +399,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                 <form id="formModifierUtilisateur" method="POST" action="utilisateurs.php">
                     <!-- Champ pour l'ID de l'utilisateur (caché) -->
                     <input type="hidden" id="idUtilisateur" name="idUtilisateur" value="">
+                    <!-- Pour ne pas trigger la modale d'ajout -->
+                    <input type="hidden" id="demandeModif" name="demandeModif" value="1">
 
                     <!-- Champ pour le pseudo -->
                     <div class="mb-3">
@@ -449,9 +457,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idUtilisateur'])) {
                         <?php } ?>
                     </div>
 
-                    <?php if (isset($erreursModif['existance'])) { ?>
-                            <div class="alert alert-danger"><?php echo $erreursModif['existance']; ?></div>
-                    <?php } ?>
                     <!-- Bouton pour soumettre le formulaire -->
                     <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
                 </form>

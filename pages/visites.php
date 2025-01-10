@@ -62,6 +62,8 @@
             if (empty($erreurs_ajout)) {
                 creerVisite($pdo, $id_exposition, $id_conferencier, $id_employe, $horaire_debut, $date_visite, $intitule_client, $no_tel_client);
                 $visiteCree = true;
+                // Message de confirmation
+                header("Location: expositions.php?message=" . urlencode("Visite créée avec succès."));
             }
             
         } catch (Exception $e) {
@@ -102,6 +104,8 @@
             // S'il n'y a pas d'erreurs
             if (empty($erreurs_modif)) {
                 modifierVisite($pdo, $exposition_concernee_modifie, $conferencier_modifie, $id_employe_modifie, $intitule_client_modifie, $no_tel_client_modifie, $date_visite_modifie, $horaire_debut_modifie, $_POST['id_visite_Modif']);
+                // Message de confirmation
+                header("Location: expositions.php?message=" . urlencode("Visite modifiée avec succès."));
             }
             
         } catch (Exception $e) {
@@ -135,6 +139,11 @@
 
     <div class="container content col-12">
         <div class="container-blanc">
+            <?php
+            if (isset($_GET['message']) && ($_GET['message'] === "Visite créée avec succès." || $_GET['message'] === "Visite modifiée avec succès.")) {
+                echo "<script>alert('" . addslashes($_GET['message']) . "');</script>";
+            }
+            ?>
             <h1 class="text-center">Gestion des Visites</h1>
             <div class="d-flex justify-content-between align-items-center">
                 <!-- Menu Ajouter/Réserver -->
