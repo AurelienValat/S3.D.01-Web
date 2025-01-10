@@ -19,6 +19,13 @@
 
         // Récupération depuis la BD
         $rows = exportationTable($pdo, $table);
+        
+        // Affiche un message d'erreur si la table est vide
+        if(empty($rows)) {
+            header("Location: exportation.php?message=" . urlencode("Il n'y a aucune donnée à exporter."));
+            exit;  
+        }
+        
         if ($rows == false) {
             // Le nom de la table est invalide
             exit;
@@ -49,13 +56,11 @@
                 }
             }
         }
-        
         fclose($output);
         exit;
     }
     
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -75,6 +80,11 @@
     <?php require("../ressources/navBar.php");?>
 
         <div class="container content ">
+        <?php
+            if (isset($_GET['message']) && ($_GET['message'] === "Il n'y a aucune donnée à exporter.")) {
+                echo "<script>alert('" . addslashes($_GET['message']) . "');</script>";
+            }
+            ?>
             <div class="container-blanc justify-content-center col-12">
                 <p>
                     Nous vous conseillons de sauvegarder vos fichiers une fois dans un même dossier prévu à cet effet.
