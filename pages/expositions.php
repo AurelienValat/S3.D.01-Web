@@ -222,7 +222,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idExposition'])) {
     <div class="container content">
         <div class="container-blanc">
             <?php
-            if (isset($_GET['message'])  && $_GET['message'] === "Exposition modifié avec succès.") {
+            if (isset($_GET['message'])  && $_GET['message'] === "Exposition modifiée avec succès.") {
                 echo "<script>alert('" . addslashes($_GET['message']) . "');</script>";
             }
             ?>
