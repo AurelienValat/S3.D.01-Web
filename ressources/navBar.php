@@ -19,7 +19,8 @@
         <a href="/S3.D.01-Web/pages/conferenciers.php" class="deco" title="Gérer les conférenciers">
             <div class="menu-item <?php echo ($page_courante == 'conferenciers.php') ? 'active' : ''; ?>">Conférenciers</div>
         </a> 
-        <a href="/S3.D.01-Web/pages/visites.php" class="deco" title="Gérer les vivsistes">
+
+        <a href="/S3.D.01-Web/pages/visites.php" class="deco" title="Gérer les visites">
             <div class="menu-item <?php echo ($page_courante == 'visites.php') ? 'active' : ''; ?>">Visites</div>
         </a> 
         <a href="/S3.D.01-Web/pages/exportation.php" class="deco" title="Exporter des fichiers CSV">
