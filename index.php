@@ -73,7 +73,7 @@ try {
 
                     <div class="form-group ">
                         <label>Identifiant</label><br>
-                        <input type="text" name="login" value ="<?php echo reafficherSaisie('login') ?>" required>
+                        <input type="text" name="login" value ="<?php echo htmlspecialchars(reafficherSaisie('login'));?>" required>
                     </div><br>
                     <div class="form-group ">
                         <label>Mot de passe</label><br>
