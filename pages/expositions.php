@@ -84,35 +84,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['supprimerExposition'
             $erreurs['periode_oeuvres'] = 'L\' année de fin n\'est pas valide. Elle doit être au format AAAA.';
         }
         
-       // Validation de la date de début de l'exposition
-        if (empty($date_debut) || !preg_match("/^\d{4}-\d{2}-\d{2}$/", $date_debut)) {
-            $erreurs['date_debut'] = "Date de début invalide ou non renseignée.";
-        } else {
-            // Vérification du jour (mardi à dimanche)
-            $jour_semaine = date('N', strtotime($date_debut)); // 1 = lundi, 7 = dimanche
-            if ($jour_semaine == 1) { // Lundi interdit
-                $erreurs['date_debut'] = "Les expositions ne peuvent pas commencer un lundi.";
+        
+        // Si l'expo est temporaire (dates renseignées)
+        if (!empty($date_debut)) {
+            // Validation de la date de début de l'exposition
+            if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $date_debut)) {
+                $erreurs['date_debut'] = "Date de début invalide ou non renseignée.";
+                
             } else {
-                // Vérifier si la date est entre aujourd'hui et dans 3 ans
-                $aujourd_hui = new DateTime();
-                $date_max = (clone $aujourd_hui)->modify('+3 years');
-                $date_debut_obj = DateTime::createFromFormat('Y-m-d', $date_debut);
-
-                if (!$date_debut_obj) {
-                    $erreurs['date_debut'] = "Format de date de début incorrect.";
-                } elseif ($date_debut_obj < $aujourd_hui) {
-                    $erreurs['date_debut'] = "La date de début doit être aujourd'hui ou dans le futur.";
-                } elseif ($date_debut_obj > $date_max) {
-                    $erreurs['date_debut'] = "La date de début ne peut pas dépasser 3 ans à partir d'aujourd'hui.";
+                // Vérification du jour (mardi à dimanche)
+                $jour_semaine = date('N', strtotime($date_debut)); // 1 = lundi, 7 = dimanche
+                if ($jour_semaine == 1) { // Lundi interdit
+                    $erreurs['date_debut'] = "Les expositions ne peuvent pas commencer un lundi.";
+                    
+                } else {
+                    // Vérifier si la date est entre aujourd'hui et dans 3 ans
+                    $aujourd_hui = new DateTime();
+                    $aujourd_hui->setTime(0, 0); // Normaliser l'heure à 00:00:00
+                    $date_max = (clone $aujourd_hui)->modify('+3 years');
+                    $date_debut_obj = DateTime::createFromFormat('Y-m-d', $date_debut);
+                    $date_debut_obj->setTime(0, 0); // Normaliser l'heure à 00:00:00
+                    var_dump($aujourd_hui);
+                    
+                    if (!$date_debut_obj) {
+                        $erreurs['date_debut'] = "Format de date de début incorrect.";
+                    } elseif ($date_debut_obj < $aujourd_hui) {
+                        $erreurs['date_debut'] = "La date de début doit être aujourd'hui ou dans le futur.";
+                    } elseif ($date_debut_obj > $date_max) {
+                        $erreurs['date_debut'] = "La date de début ne peut pas dépasser 3 ans à partir d'aujourd'hui.";
+                    }
                 }
             }
         }
 
-        // Validation de la date de fin de l'exposition (uniquement pour les expositions temporaires)
-        // MODIF A CAUSE DE L'APP JAVA -> date de fin requise pour importer le CSV des expositions        
-        if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $date_fin)) {
-            $erreurs['date_fin'] = "Format de date de fin incorrecte. <br>La date de fin requise pour la compatibilité avec l'application Java.";
-        } else {
+        // Validation de la date de fin de l'exposition
+        if (!empty($date_fin) && !preg_match("/^\d{4}-\d{2}-\d{2}$/", $date_fin)) {
+            $erreurs['date_fin'] = "Format de date de fin incorrecte.";
+            
+        // Si une expo des temporaire, aucune des deux dates ne doit être renseignée (compatibilité app java)
+        } else if(!empty($date_debut) && empty($date_fin)) {
+            $erreurs['date_fin'] = "Vous devez renseigner les deux dates ou aucune (exposition permannente)";
+            
+        } else if(empty($date_debut) && !empty($date_fin)) {
+            $erreurs['date_debut'] = "Vous devez renseigner les deux dates ou aucune (exposition permannente)";
+            
+        } else if (!empty($date_fin)) {
             $date_fin_obj = DateTime::createFromFormat('Y-m-d', $date_fin);
             $date_debut_obj = isset($date_debut_obj) ? $date_debut_obj : null;
             

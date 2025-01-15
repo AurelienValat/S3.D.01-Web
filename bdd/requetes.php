@@ -259,8 +259,12 @@ function creerVisite($pdo, $id_exposition, $id_conferencier, $id_employe, $horai
 
 // Crée Exposition
 function creerExposition($pdo, $intitule, $annee_debut_oeuvres, $annee_fin_oeuvres, $nombre_oeuvres, $mots_cles, $resume, $date_debut, $date_fin) {
+    // Si l'expo est permanante
     if (empty($date_fin)) {
         $date_fin = NULL;
+    }
+    if (empty($date_debut)) {
+        $date_debut = NULL;
     }
     $stmt = $pdo->prepare("
     INSERT INTO Exposition (intitule, periode_debut_oeuvres, periode_fin_oeuvres, nombre_oeuvres, mots_cles, resume, date_debut, date_fin) 
