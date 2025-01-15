@@ -126,8 +126,9 @@
                     <hr>
                 </div>
                 <div class="modal-footer">
-                        <button id='btn_retour' class='btn-action btn-modify btn-blue'><span class='fa-solid fa-magnifying-glass'></span> Rechercher</button>
-                        <input type="hidden" name="demandeFiltrage" value="1">
+                    <!-- FIXME ré-affichage du message dans le get si application des filtres car href="" donc ça vire pas le mesage -->
+                	<button id='btn_retour' class='btn-action btn-modify btn-blue'><span class='fa-solid fa-magnifying-glass'></span> Rechercher</button>
+                    <input type="hidden" name="demandeFiltrage" value="1">
                 </div>
             </form>
         </div>

@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['formType']) && $_POST
 
         if (empty($erreursModifier)) {
             modifierIndisponibilite($pdo, $idIndisponibilite, $idConferencier, $debut, $fin);
-            header("Location: planning.php?message=" . urlencode("Indisponibilité créée avec succès."));
+            header("Location: planning.php?message=" . urlencode("Indisponibilité modifiée avec succès."));
             exit();
         }
     } catch (Exception $e) {
@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['formType']) && $_POST
     <div class="container content">
         <div class="container-blanc">
             <?php
-            if (isset($_GET['message']) && $_GET['message'] === "Indisponibilité créée avec succès.") {
+            if (isset($_GET['message']) && ($_GET['message'] === "Indisponibilité créée avec succès." || $_GET['message'] === "Indisponibilité modifiée avec succès.")) {
                 echo "<script>alert('" . addslashes($_GET['message']) . "');</script>";
             }
             ?>

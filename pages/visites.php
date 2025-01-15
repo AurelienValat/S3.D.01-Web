@@ -63,7 +63,7 @@
                 creerVisite($pdo, $id_exposition, $id_conferencier, $id_employe, $horaire_debut, $date_visite, $intitule_client, $no_tel_client);
                 $visiteCree = true;
                 // Message de confirmation
-                header("Location: expositions.php?message=" . urlencode("Visite créée avec succès."));
+                header("Location: visites.php?message=" . urlencode("Visite créée avec succès."));
             }
             
         } catch (Exception $e) {
@@ -105,7 +105,7 @@
             if (empty($erreurs_modif)) {
                 modifierVisite($pdo, $exposition_concernee_modifie, $conferencier_modifie, $id_employe_modifie, $intitule_client_modifie, $no_tel_client_modifie, $date_visite_modifie, $horaire_debut_modifie, $_POST['id_visite_Modif']);
                 // Message de confirmation
-                header("Location: expositions.php?message=" . urlencode("Visite modifiée avec succès."));
+                header("Location: visites.php?message=" . urlencode("Visite modifiée avec succès."));
             }
             
         } catch (Exception $e) {
@@ -198,7 +198,29 @@
                             );
 
                                 echo '<a href="visites.php"><button class="btn-action btn-modify btn-blue"><span class="fa fa-refresh"></span> Effacer les filtres</button></a><br>';
-
+                                echo '<h2>Filtres appliqués :</h2>';
+                                
+                                // TODO afficher les noms des expos et conférenciers au lieu des id
+                                // Affichage des filtres appliqués
+                                if (!empty($_POST['rechercheExposition'])) {
+                                    echo "ID de l'Exposition : '" . htmlspecialchars($_POST['rechercheExposition']) . "' :<br>";
+                                }
+                                
+                                if (!empty($_POST['rechercheConferencier'])) {
+                                    echo "ID du Conférencier : '" . htmlspecialchars($_POST['rechercheConferencier']) . "' :<br>";
+                                }
+                                
+                                if (!empty($_POST['rechercheDateDebut'])) {
+                                    echo "Date de début : '" . htmlspecialchars($_POST['rechercheDateDebut']) . "' :<br>";
+                                }
+                                
+                                if (!empty($_POST['rechercheDateFin'])) {
+                                    echo "Date de fin : '" . htmlspecialchars($_POST['rechercheDateFin']) . "' :<br>";
+                                }
+                                
+                                if (!empty($_POST['rechercheHeureDebut'])) {
+                                    echo "Date de début : '" . htmlspecialchars($_POST['rechercheHeureDebut']) . "' :<br>";
+                                }
                             
                         } else {
                             // Récupère toutes les visites si aucun filtrage n'est demandé
@@ -253,6 +275,8 @@
     $expositions = getExpositions($pdo);
     $conferenciers = getConferenciers($pdo);
     ?>
+    
+    <!-- TODO ré-afficher les valeurs des select -->
     <!-- Modal Ajouter Visite -->
     <div class="modal fade <?php echo !empty($erreurs_ajout) ? 'show' : ''; ?>" 
         id="modalAjouterVisite" 
